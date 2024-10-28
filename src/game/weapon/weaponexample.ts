@@ -1,7 +1,7 @@
-import Actor from "../../engine/actor.js";
+import Weapon from "./weapon.js";
 
 
-export default class Weapon extends Actor
+export default class WeaponExample extends Weapon
 {
     constructor()
     {
@@ -24,4 +24,6 @@ export default class Weapon extends Actor
     }
 
 }
+
+
 

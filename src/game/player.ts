@@ -1,86 +1,136 @@
-import Actor from "../engine/gameobject/actor.js";
-import iRenderable from "../engine/render/renderable.js";
-import idk_Camera from "../engine/gameobject/camera.js";
-import { IO } from "../engine/IO.js";
+import Character from "./character/character.js";
+import { Engine, __engine } from "../engine/engine.js";
+import { IO, KEYCODE } from "../engine/IO.js";
 import vec2 from "../engine/math/vec2.js";
-import Limb from "./bodypart/limb.js";
-import { idk_math } from "../engine/math/math.js";
-import Engine from "../engine/engine.js";
+import sys_Event, { EventEmitter, EventEmitting } from "../engine/sys-event.js";
+import BodyPartHead from "./bodypart/head.js";
+import sys_Render from "../engine/sys-render.js";
+import { math } from "../engine/math/math.js";
+import BodyPartArm from "./bodypart/arm.js";
+import LegControllerBiped from "./bodypart/leg-controller-biped.js";
+import sys_World, { HitInfo } from "../engine/sys-world.js";
+import sys_Image from "../engine/sys-image.js";
+import { Image } from "p5";
+import Rope from "../engine/physics/rope.js";
+import sys_Physics from "../engine/sys-physics.js";
 
-export default class Player extends Actor implements iRenderable
+
+export default class Player extends Character implements EventEmitting<number>
 {
-    camera: idk_Camera;
-    tmpvec: Array<vec2>;
-    limb: Limb;
+    event = new EventEmitter<number>();
+    legcontroller: LegControllerBiped;
+
+    rope: Rope;
+
+    hi_height = 0.999;
+    lo_height = 0.4;
+
+    heightfactor: number = 0;
+    yoffset: number = 0;
+    roffset: number = 0;
+
+    img_body: Image;
 
     constructor( x: number, y: number, engine: Engine )
     {
-        super(x, y, 0.0);
+        super(x, y);
 
-        this.camera = new idk_Camera(engine.ren);
-        this.giveChild(this.camera);
+        const ren = engine.getSystem(sys_Render);
+        ren.view.setXY(x, y);
 
-        this.tmpvec = [new vec2(0, 0), new vec2(0, 0), new vec2(0, 0), new vec2(0, 0)];
-        this.limb   = new Limb(0, 0, 16, 32);
-        this.giveChild(this.limb);
+        const physys = engine.getSystem(sys_Physics);
+        const group  = physys.getGroup("default");
+        this.rope = new Rope(group, x, y, 8, 64, 8, -1);
+
+
+        const img = engine.getSystem(sys_Image);
+        this.img_body = img.get("assets/img/heart-red.png");
+
+        this.addHead(new BodyPartHead(0, -48, img.get("assets/img/michael.png")));
+
+        this.legcontroller = new LegControllerBiped(this);
+        this.addLegController(this.legcontroller);
+
+        this.addArm(new BodyPartArm(-18, -8, -0, 0.0, [35, 40]));
+        this.addArm(new BodyPartArm(+18, -8, +0, 0.2, [35, 40]));
+
+        this.max_vel = 200;
+        this.drag = 2.0;
+
+
+        this.event.on(KEYCODE.Q, () => { this.rlocal -= 0.01; });
+        this.event.on(KEYCODE.E, () => { this.rlocal += 0.01; });
+
+        this.event.on(KEYCODE.A, () => { this.addForce(-512*engine.dtime(),  0); });
+        this.event.on(KEYCODE.D, () => { this.addForce(+512*engine.dtime(),  0); });
+        this.event.on(KEYCODE.W, () => { this.addForce( 0, -512*engine.dtime()); });
+        this.event.on(KEYCODE.S, () => { this.addForce( 0, +512*engine.dtime()); });
+
     }
 
-
-    update()
+    private update_io( engine: Engine )
     {
-        super.update();
+        const tmp = vec2.temp
+        tmp.setXY(0, 0);
 
-        this.tmpvec[0].from(mouseX, mouseY);
-        this.camera.screenToWorld(this.tmpvec[0], this.tmpvec[1]);
-        this.tmpvec[0].direction(this.transform.worldpos, this.tmpvec[1]);
+        const keycodes = [KEYCODE.Q, KEYCODE.E, KEYCODE.A, KEYCODE.D, KEYCODE.W, KEYCODE.S];
 
-        const A = this.limb.transform.theta;
-        const B = this.tmpvec[0].angle();
-
-        this.limb.transform.theta = idk_math.mixRadians(A, B, 0.05);
-
-
-        if (IO.keyDown(IO.keycodes.A))
+        for (let K of keycodes)
         {
-            this.transform.translateLocal(-2, 0);
+            if (IO.keyDown(K))
+            {
+                this.event.emit(K, null);
+            }
         }
 
-        if (IO.keyDown(IO.keycodes.D))
+    }
+
+    update( engine: Engine )
+    {
+        super.update(engine);
+        this.update_io(engine);
+
+        this.rope.bodies[0].setPosition(this.pos);
+        this.legcontroller.update(engine);
+
+        const ren = engine.getSystem(sys_Render);
+        ren.view.mixXY(this.x, this.y, 0.01);
+
+        this.rlocal = 0.2 * (this.vel.x / this.max_vel);
+    }
+
+    draw( engine: Engine )
+    {
+        imageMode(CENTER);
+        this.head[0].draw(engine);
+
+        if (this.legcontroller.legs[0].direction == -1)
         {
-            this.transform.translateLocal(+2, 0);
+            this.arms[0].draw(engine);
+            this.legcontroller.legs[0].draw(engine);
+
+            imageMode(CENTER);
+            image(this.img_body, this.x, this.y, 48, 48);
+
+            this.legcontroller.legs[1].draw(engine);
+            this.arms[1].draw(engine);
+        }
+
+        else
+        {
+            this.arms[1].draw(engine);
+            this.legcontroller.legs[1].draw(engine);
+
+            imageMode(CENTER);
+            image(this.img_body, this.x, this.y, 48, 48);
+    
+            this.legcontroller.legs[0].draw(engine);
+            this.arms[0].draw(engine);
         }
     
-        if (IO.keyDown(IO.keycodes.W))
-        {
-            this.transform.translateLocal(0, -2);
-        }
-
-        if (IO.keyDown(IO.keycodes.S))
-        {
-            this.transform.translateLocal(0, +2);
-        }
-
-
-        if (IO.keyDown(IO.keycodes.E))
-        {
-            this.limb.contract(0.02);
-        }
-
-        if (IO.keyDown(IO.keycodes.Q))
-        {
-            this.limb.contract(-0.02);
-        }
+        this.rope.draw(engine);
     }
 
-    draw()
-    {
-        // this.tmpvec[0].from()
-        this.camera.worldToScreen(this.transform.worldpos, this.tmpvec[0]);
+}
 
-        stroke(0, 255, 0, 255);
-        circle(this.transform.x, this.transform.y, 24);
-        // circle(this.tmpvec[0].x, this.tmpvec[0].y, 24);
-    }
-
-};
 

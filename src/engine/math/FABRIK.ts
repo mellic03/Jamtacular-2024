@@ -1,142 +1,71 @@
-import Transform from "../gameobject/transform.js";
+import Transform from "../transform.js";
 import vec2 from "./vec2.js";
 
 
-export default function FABRIK( joints: Array<vec2>, dists: Array<number>,
-    iterations: number )
+
+const temp = [ new vec2(0, 0), new vec2(0, 0), new vec2(0, 0), new vec2(0, 0) ];
+const start = new vec2(0, 0);
+const end   = new vec2(0, 0);
+const dir   = new vec2(0, 0);
+const tmp   = new vec2(0, 0);
+
+
+export default function FABRIK( joints: Array<vec2>, dists: Array<number>, total_dist: number, iterations=1 )
 {
-    let total_dist = 0.0;
+    // let total_dist = 0.0;
 
-    for (let d of dists)
-    {
-        total_dist += d;
-    }
+    // for (let d of dists)
+    // {
+    //     total_dist += d;
+    // }
 
-    let start = joints[0];
-    let end   = joints[joints.length-1];
-
-    let left  = new vec2();
-    let right = new vec2();
-    let dir   = new vec2();
-    let tmp   = new vec2();
-    let len: number;
+    start.copy(joints[0]);
+    end.copy(joints[joints.length-1]);
 
     {
-        dir.direction(start, end);
-        len = dir.mag();
-        dir.normalize();
+        dir.displacement(start, end);
 
-        if (len > (0.99 * total_dist))
+        if (dir.magSq() > 0.99*total_dist*total_dist)
         {
-            tmp.copy(dir);
-            tmp.mul(total_dist);
-            tmp.add(start);
+            dir.normalizeMul(0.99*total_dist);
 
-            joints[joints.length-1].copy(tmp);
+            let back = joints[joints.length-1];
+            back.copy(start);
+            back.add(dir)
+
+            end.copy(back);
         }
     }
 
     for (let iter=0; iter<iterations; iter++)
     {
         // backward pass
-        for (let i=joints.length-2; i>=1; i--)
+        for (let i=joints.length-2; i>0; i--)
         {
-            left  = joints[i];
-            right = joints[i+1];
+            let left  = joints[i];
+            let right = joints[i+1];
 
-            dir.direction(right, left);
+            dir.displacement(right, left);
+            dir.normalizeMul(dists[i]);
 
-            let desired = dists[i];
-            let derror  = dir.mag() - desired;
-
-            dir.normalizeMul(derror);
-
-            joints[i].add(dir);
+            left.copy(right);
+            left.add(dir);
         }
 
         // forward pass
-        for (let i=1; i<joints.length; i++)
+        for (let i=0; i<joints.length-1; i++)
         {
-            left  = joints[i-1];
-            right = joints[i];
+            let left  = joints[i];
+            let right = joints[i+1];
 
-            dir.direction(left, right);
+            dir.displacement(left, right);
+            dir.normalizeMul(dists[i]);
 
-            let desired = dists[i-1];
-            let derror  = dir.mag() - desired;
-
-            dir.normalizeMul(derror);
-
-            joints[i].add(dir);
+            right.copy(left);
+            right.add(dir);
         }
     }
+
+    joints[joints.length-1].copy(end);
 }
-// export default function FABRIK( joints: Array<vec2>, dists: Array<number>,
-//                                 iterations: number )
-// {
-//     let total_dist = 0.0;
 
-//     for (let d of dists)
-//     {
-//         total_dist += d;
-//     }
-
-//     let start = joints[0].worldpos;
-//     let end   = joints[joints.length-1].worldpos;
-
-//     let left  = new vec2();
-//     let right = new vec2();
-//     let dir   = new vec2();
-//     let tmp   = new vec2();
-//     let len: number;
-
-//     {
-//         dir.direction(start, end);
-//         len = dir.mag();
-//         dir.normalize();
-
-//         if (len > (0.99 * total_dist))
-//         {
-//             tmp.copy(dir);
-//             tmp.mul(total_dist);
-//             tmp.add(start);
-
-//             joints[joints.length-1].worldpos.copy(tmp);
-//         }
-//     }
-
-//     for (let iter=0; iter<iterations; iter++)
-//     {
-//         // backward pass
-//         for (let i=joints.length-2; i>=1; i--)
-//         {
-//             left  = joints[i].worldpos;
-//             right = joints[i+1].worldpos;
-
-//             dir.direction(right, left);
-
-//             let desired = dists[i];
-//             let derror  = dir.mag() - desired;
-        
-//             dir.normalizeMul(derror);
-
-//             joints[i].worldpos.add(dir);
-//         }
-
-//         // forward pass
-//         for (let i=1; i<joints.length; i++)
-//         {
-//             left  = joints[i-1].worldpos;
-//             right = joints[i].worldpos;
-
-//             dir.direction(left, right);
-
-//             let desired = dists[i-1];
-//             let derror  = dir.mag() - desired;
-        
-//             dir.normalizeMul(derror);
-
-//             joints[i].worldpos.add(dir);
-//         }
-//     }
-// }

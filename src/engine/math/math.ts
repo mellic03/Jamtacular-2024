@@ -1,6 +1,6 @@
 
 
-const idk_math = {
+const math = {
     mix( x: number, y: number, a: number ): number
     {
         return (1.0 - a)*x + a*y;
@@ -35,5 +35,5 @@ const idk_math = {
 };
 
 
-export { idk_math };
+export { math };
 

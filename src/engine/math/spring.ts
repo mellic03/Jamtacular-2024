@@ -1,4 +1,4 @@
-import { idk_math } from "./math.js";
+import { math } from "./math.js";
 import vec2 from "./vec2.js";
 
 
@@ -38,7 +38,7 @@ export class Spring
 
     iterate(): number
     {
-        const dt = idk_math.clamp(deltaTime / 1000.0, 0.0, 1.0/15.0);
+        const dt = math.clamp(deltaTime / 1000.0, 0.0, 1.0/15.0);
         this.timer += dt;
 
         const force = (1.0 - this.stiffness) * (this.target - this.curr) - this.damping*this.vel;
@@ -47,7 +47,7 @@ export class Spring
         this.prev  = this.curr;
         this.curr += dt * this.vel;
 
-        if (idk_math.approxEqual(this.curr, this.target, 0.01))
+        if (math.approxEqual(this.curr, this.target, 0.01))
         {
             // this.callback(this);
             const tmp = this.target;
@@ -91,12 +91,12 @@ export class vec2_Spring
 
     iterate( output: vec2 ): void
     {
-        const dt = idk_math.clamp(deltaTime / 1000.0, 0.0, 1.0/15.0);
+        const dt = math.clamp(deltaTime / 1000.0, 0.0, 1.0/15.0);
 
         const A = this.curr;
         const B = this.tmp;
 
-        A.direction(this.curr, this.target);
+        A.displacement(this.curr, this.target);
         A.mul(1.0 - this.stiffness);
 
         B.copy(this.vel);
@@ -106,7 +106,7 @@ export class vec2_Spring
 
         const distSq = A.distSq(this.target);
 
-        if (idk_math.approxEqual(distSq, 0.0, 0.01))
+        if (math.approxEqual(distSq, 0.0, 0.01))
         {
             this.callback(this);
         }

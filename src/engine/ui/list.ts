@@ -1,4 +1,3 @@
-import RenderEngine from "../render/renderengine.js";
 import ui_ElementBase from "./base.js";
 import ui_Bounds from "./bounds.js";
 import ui_Style from "./style.js";
@@ -31,16 +30,16 @@ export default class ui_List extends ui_ElementBase
         }
     }
 
-    draw( ren: RenderEngine, depth: number = 0 )
+    draw( depth: number = 0 )
     {
         rectMode(CORNERS);
         stroke(0);
 
-        super.draw(ren, depth);
+        super.draw(depth);
 
         for (let child of this.children)
         {
-            child.draw(ren, depth+1);
+            child.draw(depth+1);
         }
     }
 }
