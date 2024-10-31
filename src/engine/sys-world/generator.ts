@@ -62,7 +62,7 @@ export default class WorldGenerator
                     output[i][j] = 0;
                 }
 
-                else if (noise((x/2048)+4096, (y/2048)+4096) < 0.35)
+                else if (noise((j/32)+4096, (i/32)+1096) < 0.45)
                 {
                     output[i][j] = 0;
                 }

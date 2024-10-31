@@ -1,11 +1,5 @@
-import Actor from "../../engine/actor.js";
-import { Engine, __engine } from "../../engine/engine.js";
-import FABRIK from "../../engine/math/FABRIK.js";
-import { math } from "../../engine/math/math.js";
-import vec2 from "../../engine/math/vec2.js";
-import sys_World from "../../engine/sys-world/sys-world.js";
+import { __engine } from "../../engine/engine.js";
 import BodyPartLeg from "./leg.js";
-
 
 
 export default class LegOneJoint extends BodyPartLeg

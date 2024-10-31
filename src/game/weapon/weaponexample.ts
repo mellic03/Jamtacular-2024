@@ -1,11 +1,11 @@
-import Weapon from "./weapon.js";
+import { Weapon } from "./weapon.js";
 
 
 export default class WeaponExample extends Weapon
 {
-    constructor()
+    constructor( x: number, y: number )
     {
-        super();
+        super(x, y);
     }
 
     update(): void

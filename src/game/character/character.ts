@@ -1,16 +1,20 @@
 import {} from "p5/global";
 import { __engine } from "../../engine/engine.js";
-import { HierarchicalTransform, iHierarchical, Transform2 } from "../../engine/transform.js";
+import { HierarchicalTransform, Transform } from "../../engine/transform.js";
 import BodyPart from "../bodypart/bodypart.js";
 import { iCharacterController, iControllable } from "./controller.js";
 import RigidBody from "../../engine/physics/rigidbody.js";
+import vec2 from "../../engine/math/vec2.js";
+import { iTransformable } from "../../engine/interface.js";
 
 
-export class RigidBodyCharacter extends RigidBody implements iControllable, iHierarchical
+
+
+export class RigidBodyCharacter extends RigidBody implements iControllable, iTransformable
 {
-    local: Transform2;
-    world: Transform2;
-    children = new Array<iHierarchical>();
+    local: Transform;
+    world: Transform;
+    children = new Array<iTransformable>();
 
     private timer = 0.0;
     private try_jump = false;
@@ -24,8 +28,8 @@ export class RigidBodyCharacter extends RigidBody implements iControllable, iHie
     {
         super(new Sprite(x, y), 1);
 
-        this.local = new Transform2(x, y, 0);
-        this.world = new Transform2(0, 0, 0);
+        this.local = new Transform(x, y, 0);
+        this.world = new Transform(0, 0, 0);
     
         this.pushController(controller);
     }
@@ -92,7 +96,7 @@ export class RigidBodyCharacter extends RigidBody implements iControllable, iHie
     update()
     {
         this.local.pos.setXY(this.sprite.x, this.sprite.y);
-        HierarchicalTransform(this, Transform2.Identity);
+        HierarchicalTransform(this, Transform.Identity);
 
         if (this.getController() != null)
         {
@@ -128,7 +132,20 @@ export class RigidBodyCharacter extends RigidBody implements iControllable, iHie
 
     move( x: number, y: number ): void
     {
-        this.applyForceXY(x, y);
+        const dt = deltaTime / 1000.0;
+        this.applyForceXY(dt*x, dt*y);
+    }
+
+    moveTo( x: number, y: number ): void
+    {
+        const dt   = deltaTime;
+        const disp = vec2.tmp().displacement(this.world.pos, vec2.tmp(x, y));
+
+        if (disp.magSq() > 0.0005)
+        {
+            const dir = disp.normalize();
+            this.applyForce(dir.mulXY(0.01*dt));
+        }
     }
 
     jump(): void

@@ -1,10 +1,8 @@
 import { __engine } from "../../engine/engine.js";
 import vec2 from "../../engine/math/vec2.js";
 import RigidBody from "../../engine/physics/rigidbody.js";
-import BasedRope from "../../engine/physics/rope-based.js";
 import Rope from "../../engine/physics/rope.js";
 import BodyPart from "./bodypart.js";
-
 
 
 
@@ -25,13 +23,6 @@ class FloatRopes1 extends Rope
 
             this.bodies[i].sprite.gravityScale   = 0.75 * (1.0 - this.aggression) + 0.01;
             this.bodies[i+1].sprite.gravityScale = 0.75 * (1.0 - this.aggression) + 0.01;
-            // this.bodies[i].sprite.mass = this.aggression + 0.05;
-            // this.bodies[i+1].sprite.mass = this.aggression + 0.05;
-
-            // this.bodies[i+0].sprite.friction = 0.0;
-            // this.bodies[i+1].sprite.friction = 0.0;
-            // this.bodies[i+0].sprite.drag = 0.0;
-            // this.bodies[i+1].sprite.drag = 0.0;
 
             const a0 = i / this.bodies.length;
             const a1 = 0.002*this.bodies[i+1].vel.magSq();
@@ -39,8 +30,9 @@ class FloatRopes1 extends Rope
 
             // strokeWeight(2*this.bodies.length - 8*a0);
             strokeWeight(16 - 8*a0);
+            this.bodies[i+1].sprite.radius = 0.5 * (16 - 8*a0);
 
-            const r = (50 + 255*a2)         * (1.0 + this.r_offset);
+            const r = (50 + 100*a2)         * (1.0 + this.r_offset);
             const g = (50)                  * (1.0 + this.g_offset);
             const b = Math.max(50-50*a2, 0) * (1.0 + this.b_offset);
 
@@ -61,23 +53,24 @@ class FloatRopes2 extends Rope
     g_offset = 0.0 * (Math.random() * 0.5 + 0.5);
     b_offset = 0.0 * (Math.random() * 0.5 + 0.5);
 
-    draw()
+    drawSegments( start, end )
     {
-        for (let i=0; i<this.bodies.length-1; i++)
+        for (let i=start; i<end; i++)
         {
             const A = vec2.copy(this.bodies[i+0].pos);
             const B = vec2.copy(this.bodies[i+1].pos);
 
+
             const a0 = i / this.bodies.length;
             const a1 = 0.002*this.bodies[i+1].vel.magSq();
-            const a2 = i;
+            const a2 = a0*a1 * this.aggression;
 
-            strokeWeight(8 + 16*a0);
+            strokeWeight(12 + 12*a0);
             // strokeWeight(16 - 8*a0);
 
-            const r = (50 + 255*a0*a1)         * (1.0 + this.r_offset);
-            const g = (50)                     * (1.0 + this.g_offset);
-            const b = 50 * (1.0 + this.b_offset);
+            const r = (50 + 255*a2)         * (1.0 + this.r_offset);
+            const g = (50)                  * (1.0 + this.g_offset);
+            const b = Math.max(50-50*a2, 0) * (1.0 + this.b_offset);
 
             stroke(r, g, b);
 
@@ -92,10 +85,20 @@ class FloatRopes2 extends Rope
 
 type FloatRopes = FloatRopes1;
 
+export enum TentacleState
+{
+    Idle,
+    MovingTo,
+    Grabbing,
+    Retracting
+}
+
 
 export default class BodyPartTentacle extends BodyPart
 {
-    rope: FloatRopes;
+    state: TentacleState = TentacleState.Idle;
+
+    rope: FloatRopes2;
     root: RigidBody;
     hand: RigidBody;
 

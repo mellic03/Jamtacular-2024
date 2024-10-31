@@ -10,78 +10,35 @@ import { iCharacterController } from "./controller.js";
 
 
 
-export class FloatRageTrigger
+
+class TentacleDDL extends BodyPartTentacle
 {
-    private sprite: Sprite;
-
-    constructor( x, y )
+    constructor( x: number, y: number, count=8, length=32, mass=0.25, thickness=8 )
     {
-        this.sprite = new Sprite(x, y, 64, 64);
-        this.sprite.collider = "static";
-        this.sprite.shape    = "box";
-        sys_Physics.GROUP_ANGRY.add(this.sprite);
+        super(x, y, count, length, mass, thickness);
     }
 
-    draw()
+    grab( x: number, y: number )
     {
-        rectMode(CENTER);
-        fill(200, 50, 50);
-        rect(this.sprite.x, this.sprite.y, 64, 64);
+        this.hand.moveTowardsXY(x, y);
     }
+    
 }
 
 
-export class FloatCalmTrigger
+
+export default class CharacterDDL extends RigidBodyCharacter
 {
-    private sprite: Sprite;
-
-    constructor( x, y )
-    {
-        this.sprite = new Sprite(x, y, 64, 64);
-        this.sprite.collider = "static";
-        this.sprite.shape    = "box";
-        sys_Physics.GROUP_CALM.add(this.sprite);
-    }
-
-    draw()
-    {
-        rectMode(CENTER);
-        fill(50, 200, 200);
-        rect(this.sprite.x, this.sprite.y, 64, 64);
-    }
-}
-
-
-export default class CharacterFloatingType extends RigidBodyCharacter
-{
-    // fire: BasedAnimation;
-
     tentacles  = new Array<BodyPartTentacle>()
-    ray_dir    = new vec2(1, 0.001).normalize();
     grabbiness = 0;
     aggression = 0.0;
-
-    testA = new FloatRageTrigger(-300, -300);
-    testB = new FloatCalmTrigger(+300, -300);
 
     constructor( x: number, y: number, controller?: iCharacterController )
     {
         super(x, y, controller);
 
-        // this.fire = BasedAnimation.loadTiled("assets/anim/particle/Flamethrower-Sheet.png", 3, 4, 10);
-        // this.fire.size.setXY(128);
-        // this.fire.duration = 0.35;
-
         const worldgroup = sys_Physics.GROUP_WORLD;
         sys_Physics.GROUP_PLAYER.add(this.sprite);
-
-        this.sprite.collides(sys_Physics.GROUP_ANGRY, (A, B) => {
-            this.aggression = 1.0;
-        });
-
-        this.sprite.collides(sys_Physics.GROUP_CALM, (A, B) => {
-            this.aggression = 0.0;
-        });
 
         this.sprite.shape = "circle";
         this.sprite.mass  = 8;
@@ -103,7 +60,6 @@ export default class CharacterFloatingType extends RigidBodyCharacter
 
             dir.rotate(2*Math.PI / count);
         }
-    
 
         this.tentacles[this.tentacles.length-1].hand.sprite.collider = "dynamic";
         this.tentacles[this.tentacles.length-1].hand.sprite.radius *= 2;
@@ -147,9 +103,6 @@ export default class CharacterFloatingType extends RigidBodyCharacter
     {
         super.draw();
 
-        this.testA.draw();
-        this.testB.draw();
-    
         for (let T of this.tentacles)
         {
             T.drawSegments(0, 0.25);
@@ -200,22 +153,8 @@ export default class CharacterFloatingType extends RigidBodyCharacter
 
     interact( x: number, y: number, msg?: string ): void
     {
-        // this.fire.playing = true;
-        // this.fire.looping = true;
+        const dir = vec2.tmp(x, y).sub(this.world.pos).normalize();
 
-        // const vel = vec2.tmp(x, y).sub(this.pos).normalize().mulXY(2*4096);
-        
-        // ProjectileManager.createProjectile(
-        //     this.x, this.y, vel.x, vel.y, this.fire, ( hit: vec2, vel: vec2 ) => {
-        //         // this.anims[this.anim_idx].playing  = true;
-        //         // this.anims[this.anim_idx].looping  = false;
-        //         // this.anims[this.anim_idx].duration = 0.5;
-        
-        //         // this.anims[this.anim_idx].pos.copy(hit);
-            
-        //         // this.anim_idx = (this.anim_idx + 1) % 32;
-        //     }
-        // );
     }
 
 }

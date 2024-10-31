@@ -6,7 +6,6 @@ import ui_Style from "./style.js";
 
 export default class ui_Button extends ui_ElementBase
 {
-    label: string;
     callback: Function;
 
     constructor( label: string, callback: Function = () => {} )
@@ -14,7 +13,7 @@ export default class ui_Button extends ui_ElementBase
         let style = new ui_Style([50, 50, 50, 225], [255, 255, 255, 255]);
         style.padding   = [8, 8, 8, 16];
         style.radius    = [4, 4, 4, 4];
-        style.center    = [true, false];
+        style.align     = [ui_Style.CENTER, ui_Style.LEFT];
 
         style.maxWidth  = 512;
 

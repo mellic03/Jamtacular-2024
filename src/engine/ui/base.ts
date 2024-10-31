@@ -1,5 +1,6 @@
 import { IO } from "../IO.js";
 import { math } from "../math/math.js";
+import Render from "../sys-render.js";
 import ui_Bounds from "./bounds.js";
 import ui_Style from "./style.js";
 
@@ -16,8 +17,9 @@ export default class ui_ElementBase
     protected style_og = new ui_Style;
     public    style    = new ui_Style;
 
-    children: Array<ui_ElementBase>;
-    bounds: ui_Bounds;
+    public label:    string;
+    public children: Array<ui_ElementBase>;
+    public bounds:   ui_Bounds;
 
     constructor( style: ui_Style = new ui_Style, children: Array<ui_ElementBase> = [] )
     {
@@ -38,6 +40,17 @@ export default class ui_ElementBase
         this.style = deepCopy(this.style_og);
     }
 
+    updateStyle( style: ui_Style = null ): void
+    {
+        if (style == null)
+        {
+            style = this.style;
+        }
+        
+        this.style    = deepCopy(style);
+        this.style_og = deepCopy(style);
+    }
+
     update( bounds: ui_Bounds )
     {
         this.bounds.copy(bounds);
@@ -47,18 +60,24 @@ export default class ui_ElementBase
         this.bounds.ymin += this.style.padding[2] / 2;
         this.bounds.ymax -= this.style.padding[3] / 2;
 
-        const width  = math.clamp(this.style.minWidth, this.style.maxWidth, this.xmax-this.xmin);
-        const height = math.clamp(this.style.minHeight, this.style.maxHeight, this.ymax-this.ymin);
+        let width  = math.clamp(this.style.minWidth, this.style.maxWidth, this.xmax-this.xmin);
+            width  = math.min(width, this.xmax-this.xmin);
         
+        let height = math.clamp(this.style.minHeight, this.style.maxHeight, this.ymax-this.ymin);
+            height = math.min(height, this.ymax-this.ymin);
+
+
         let cx = this.xmin + width/2;
         let cy = this.ymin + height/2;
 
-        if (this.style.center[0])
+        switch (this.style.align[0])
         {
-            cx = 0.5 * (this.xmin + this.xmax);
+            default: break;
+            case ui_Style.CENTER:  cx = 0.5 * (this.xmin + this.xmax);  break;
+            case ui_Style.RIGHT: break;
         }
 
-        if (this.style.center[1])
+        if (this.style.align[1] == ui_Style.CENTER)
         {
             cy = 0.5 * (this.ymin + this.ymax);
         }
@@ -66,14 +85,11 @@ export default class ui_ElementBase
         this.bounds.fromCenterSpan(cx, cy, width, height);
 
 
+        const mouse = Render.screenMouse();
+        const x = math.clamp(mouse.x, this.xmin, this.xmax);
+        const y = math.clamp(mouse.y, this.ymin, this.ymax);
 
-        const mx = mouseX;
-        const my = mouseY;
-
-        const x = math.clamp(this.xmin, this.xmax, mx);
-        const y = math.clamp(this.ymin, this.ymax, my);
-
-        if (x == mx && y == my)
+        if (x == mouse.x && y == mouse.y)
         {
             this.onMouseHover();
 
@@ -110,7 +126,6 @@ export default class ui_ElementBase
         return this.bounds.xmax;
     }
 
-
     get ymin()
     {
         return this.bounds.ymin;
@@ -119,6 +134,16 @@ export default class ui_ElementBase
     get ymax()
     {
         return this.bounds.ymax;
+    }
+
+    get width()
+    {
+        return math.clamp(this.xmax - this.xmin, this.style.minWidth, this.style.maxWidth);
+    }
+
+    get height()
+    {
+        return math.clamp(this.ymax - this.ymin, this.style.minHeight, this.style.maxHeight);
     }
 
 }

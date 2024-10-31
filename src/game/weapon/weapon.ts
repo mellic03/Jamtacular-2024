@@ -1,16 +1,23 @@
-import Actor from "../../engine/actor.js";
+import { iRenderable, iTransformable, iUpdatable } from "../../engine/interface";
+import { Transform } from "../../engine/transform";
 
 
-export default class Weapon extends Actor
+
+export class Weapon implements iUpdatable, iRenderable, iTransformable
 {
-    constructor()
+    public local: Transform;
+    public world: Transform;
+    public children = new Array<iTransformable>();
+
+    constructor( x: number, y: number )
     {
-        super();
+        this.local = new Transform(x, y, 0);
+        this.world = new Transform(0, 0, 0);
     }
 
     update(): void
     {
-        
+
     }
 
     draw(): void

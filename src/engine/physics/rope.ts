@@ -1,17 +1,18 @@
 import { __engine } from "../engine.js";
+import { iTransformable } from "../interface.js";
 import vec2 from "../math/vec2.js";
 import sys_Image from "../sys-image.js";
 import sys_Physics from "../sys-physics.js";
 import sys_Render from "../sys-render.js";
-import { iHierarchical, Transform2 } from "../transform.js";
+import { Transform } from "../transform.js";
 import RigidBody from "./rigidbody.js";
 
 
-export default class Rope implements iHierarchical
+export default class Rope implements iTransformable
 {
-    local: Transform2;
-    world: Transform2;
-    children = new Array<iHierarchical>();
+    local: Transform;
+    world: Transform;
+    children = new Array<iTransformable>();
 
     group:     Group;
     bodies:    Array<RigidBody>;
@@ -21,8 +22,8 @@ export default class Rope implements iHierarchical
 
     constructor( x: number, y: number, count=8, length=32, mass=1.0, thickness=8 )
     {
-        this.local = new Transform2(0, 0, 0);
-        this.world = new Transform2(x, y, 0);
+        this.local = new Transform(0, 0, 0);
+        this.world = new Transform(x, y, 0);
 
         this.group     = sys_Physics.GROUP_ROPES;
         this.bodies    = [];
@@ -45,7 +46,10 @@ export default class Rope implements iHierarchical
             B.curr.x   = x + i*length;
             B.prev.x   = x + i*length;
 
-            this.group.add(B.sprite);
+            if (i != count-1)
+            {
+                this.group.add(B.sprite);
+            }
             this.bodies.push(B);
         }
 

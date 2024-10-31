@@ -2,7 +2,6 @@ import { Engine, __engine } from "../engine.js";
 import vec2 from "../math/vec2.js";
 import { PHYS_GRAVITY, PHYS_TIMESTEP } from "./physics.js";
 
-
 export default class RigidBody
 {
     private static id_count = 0;

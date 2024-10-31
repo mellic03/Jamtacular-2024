@@ -4,14 +4,14 @@ import sys_Audio from "./sys-audio.js";
 import sys_Image from "./sys-image.js";
 import sys_Noise from "./sys-noise.js";
 import sys_Particle from "./sys-particle.js";
-import Scene from "./scene.js";
 import sys_World from "./sys-world/sys-world.js";
 import { math } from "./math/math.js";
 import sys_Physics from "./sys-physics.js";
-import { IO } from "./IO.js";
 import BasedAnimation from "./animation.js";
 import ProjectileManager from "./sys-projectile.js";
 import Render from "./sys-render.js";
+import { IO } from "./IO.js";
+import { SceneManager } from "./gamestate.js";
 
 
 export interface iSystem
@@ -19,6 +19,7 @@ export interface iSystem
     preload(): void;
     setup():   void;
     update():  void;
+    draw():    void;
 }
 
 
@@ -26,7 +27,6 @@ export class Engine
 {
     private isystems = new Array<iSystem>;
     private systems  = new Array<System>;
-    private scenes   = new Array<Scene>;
 
     private lookup  = new Map<string, number>;
     private dt      = 1.0 / 60.0;
@@ -36,8 +36,8 @@ export class Engine
     {
         Render.init(res_x, res_y);
 
-        // this.addSystem(new sys_Render(res_x, res_y));
-        this.addiSystem(Render);
+        this.addiSystem(SceneManager);
+        this.addiSystem(IO);
         this.addSystem(new sys_Audio);
         this.addSystem(new sys_Image);
         this.addSystem(new sys_Event);
@@ -79,20 +79,10 @@ export class Engine
     }
 
 
-
-    addScene( scene: Scene ): void
-    {
-        this.addSystem(scene);
-    }
-
-    getScene<T extends Scene>( scene_type: { new(): T }): T
-    {
-        const idx = this.lookup.get(scene_type.name);
-        return this.systems[idx] as T;
-    }
-
     preload()
     {
+        Render.preload();
+
         for (let sys of this.isystems)
         {
             sys.preload();
@@ -106,6 +96,8 @@ export class Engine
  
     setup()
     {
+        Render.setup();
+
         for (let sys of this.isystems)
         {
             sys.setup();
@@ -121,15 +113,16 @@ export class Engine
 
     draw(): void
     {
-        this.dt  = deltaTime;
-        this.fps = math.mix(this.fps, frameRate(), 1.0/60.0);
-
         for (let sys of this.isystems)
         {
             sys.update();
         }
 
-        IO.update();
+        this.dt  = deltaTime;
+        this.fps = math.mix(this.fps, frameRate(), 1.0/60.0);
+
+        Render.beginFrame();
+
         BasedAnimation.update();
         ProjectileManager.update();
 
@@ -137,6 +130,13 @@ export class Engine
         {
             system.update(this);
         }
+
+        for (let sys of this.isystems)
+        {
+            sys.draw();
+        }
+
+        Render.endFrame();
     }
 }
 

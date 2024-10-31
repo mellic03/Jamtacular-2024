@@ -14,7 +14,7 @@ export default class ui_Image extends ui_ElementBase
         let style = new ui_Style([50, 50, 50, 225], [255, 255, 255, 255]);
         style.padding   = [16, 16, 16, 16];
         style.radius    = [4, 4, 4, 4];
-        style.center    = [false, true];
+        style.align     = [ui_Style.LEFT, ui_Style.CENTER];
 
         style.minWidth  = size;
         style.maxWidth  = size;

@@ -57,11 +57,13 @@ export default class Render
     static width:  number;
     static height: number;
 
+    private static bg_color = [200, 200, 200, 255];
+
     public  static view  = new vec2(0, 0);
-    private static span  = new vec2(0, 0);
-    private static tl    = new vec2(0, 0);
-    private static br    = new vec2(0, 0);
-    private static webgl = false;
+    public  static span  = new vec2(0, 0);
+    public  static tl    = new vec2(0, 0);
+    public  static br    = new vec2(0, 0);
+    public  static webgl = false;
     private static canvas: any;
 
     static scale   = 1.0;
@@ -103,7 +105,7 @@ export default class Render
         // Render.offline_ctx = createGraphics(Render.width, Render.height, WEBGL);
     }
 
-    static update(): void
+    static beginFrame(): void
     {
         this.mouse_screen.setXY(mouseX, mouseY);
         this.mouse_world.copy(this.screenToWorld(this.mouse_screen));
@@ -112,6 +114,8 @@ export default class Render
         Ren.tl.copy(Ren.view).addMul(Ren.span, -0.5);
         Ren.br.copy(Ren.view).addMul(Ren.span, +0.5);
 
+        push();
+
         if (Ren.webgl == false)
         {
             translate(+Ren.width/2, +Ren.height/2, 0);
@@ -119,12 +123,17 @@ export default class Render
 
         scale(Ren.scale);
         translate(-Ren.view.x, -Ren.view.y, 0);
-        background(200);
+        background(...Ren.bg_color);
 
         Ren.avg_fps = math.mix(Ren.avg_fps, frameRate(), 1.0/60.0);
     }
 
-
+    static endFrame(): void
+    {
+        pop();
+        // translate(+Ren.view.x, +Ren.view.y, 0);
+        // scale(1.0 / Ren.scale);
+    }
 
 
 
@@ -135,6 +144,10 @@ export default class Render
         return Ren.avg_fps;
     }
 
+    static setBackground( r: number, g: number, b: number, a: number ): void
+    {
+        Render.bg_color = [r, g, b, a];
+    }
 
     static screenToWorld( screen: vec2 ): vec2
     {
@@ -146,7 +159,6 @@ export default class Render
         return vec2.copy(world).sub(Ren.view).mulXY(Ren.scale).addMul(Ren.span, 0.5);
     }
 
-
     static screenMouse(): vec2
     {
         return vec2.copy(this.mouse_screen);
@@ -157,18 +169,29 @@ export default class Render
         return vec2.copy(this.mouse_world);
     }
 
-    static screenText( label: string, x: number, y: number ): void
+
+    static pushInverseViewTransform(): void
     {
         push();
         translate(+Render.view.x, +Render.view.y, 0);
         scale(1.0 / Render.scale);
     
-        x = x - Ren.width/2;
-        y = y - Ren.height/2;
-        
-        text(label, x, y);
+        if (Ren.webgl == false)
+        {
+            translate(-Render.width/2, -Render.height/2, 0);
+        }
+    }
 
+    static popInverseViewTransform(): void
+    {
         pop();
+    }
+
+    static screenText( label: string, x: number, y: number ): void
+    {
+        Render.pushInverseViewTransform();
+        text(label, x, y);
+        Render.popInverseViewTransform();
     }
 
     static worldText( label: string, x: number, y: number ): void

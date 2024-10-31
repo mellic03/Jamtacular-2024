@@ -1,4 +1,3 @@
-import Transform from "../transform.js";
 import vec2 from "./vec2.js";
 
 

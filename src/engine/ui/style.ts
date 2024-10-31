@@ -2,6 +2,12 @@
 
 export default class ui_Style
 {
+    static LEFT   = 0;
+    static TOP    = 0;
+    static CENTER = 1;
+    static BOTTOM = 2;
+    static RIGHT  = 2;
+
     padding = [8, 8, 8, 8];
     margin  = [0, 0, 0, 0];
     radius  = [2, 2, 2, 2];
@@ -9,7 +15,8 @@ export default class ui_Style
     bg = [75, 75, 75, 220];
     fg = [150, 150, 150, 220];
 
-    center = [false, false];
+
+    align = [ui_Style.LEFT, ui_Style.LEFT]; // 0 -> left,  1 -> mid,  2 -> right
 
     minWidth = 64;
     maxWidth = 512;

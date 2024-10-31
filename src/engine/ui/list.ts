@@ -1,3 +1,4 @@
+import Render from "../sys-render.js";
 import ui_ElementBase from "./base.js";
 import ui_Bounds from "./bounds.js";
 import ui_Style from "./style.js";
@@ -10,7 +11,7 @@ export default class ui_List extends ui_ElementBase
     constructor( ...children: ui_ElementBase[] )
     {
         let style = new ui_Style();
-        style.center = [true, true];
+        style.align = [ui_Style.CENTER, ui_Style.CENTER];
 
         super(style, children);
         this.temp = new ui_Bounds(0, 0, 1024, 1024);

@@ -31,26 +31,32 @@ export const MOUSE = {
 };
 
 
-class IOManager
+export class IO
 {
-    private keystate: Array<number>;
-    private mouse_curr: Array<boolean>;
-    private mouse_prev: Array<boolean>;
-    private mouse_time: number = 0.0;
-    
-    constructor()
+    private static keystate:   Array<number>;
+    private static mouse_curr: Array<boolean>;
+    private static mouse_prev: Array<boolean>;
+    private static mouse_time: number = 0.0;
+
+    public  static mousewheel_delta: number = 0.0;
+
+    public static preload() {  }
+    public static draw() {  }
+
+    public static setup(): void
     {
-        this.mouse_curr = [ false, false, false, false, false ];
-        this.mouse_prev = [ false, false, false, false, false ];
+        IO.keystate   = new Array<number>(222);
+        IO.mouse_curr = [ false, false, false, false, false ];
+        IO.mouse_prev = [ false, false, false, false, false ];
     }
 
 
-    private _check_mouse_down()
+    private static _check_mouse_down()
     {
         return mouseIsPressed;
     }
 
-    private _check_mouse_up()
+    private static _check_mouse_up()
     {
         if (mouseIsPressed == false)
         {
@@ -60,11 +66,11 @@ class IOManager
         return false;
     }
 
-    private _check_mouse_click()
+    private static _check_mouse_click()
     { 
-        const c0 = this.mouse_prev[MOUSE_UP] == false;
-        const c1 = this.mouse_curr[MOUSE_UP] == true;
-        const c2 = this.mouse_time < CLICK_MS;
+        const c0 = IO.mouse_prev[MOUSE_UP] == false;
+        const c1 = IO.mouse_curr[MOUSE_UP] == true;
+        const c2 = IO.mouse_time < CLICK_MS;
 
         if (c0 && c1 && c2)
         {
@@ -78,77 +84,88 @@ class IOManager
     }
 
 
-    update()
+    static update()
     {
-        this.mouse_prev[MOUSE_DOWN]    = this.mouse_curr[MOUSE_DOWN];
-        this.mouse_prev[MOUSE_UP]      = this.mouse_curr[MOUSE_UP];
-        this.mouse_prev[MOUSE_CLICKED] = this.mouse_curr[MOUSE_CLICKED];
+        IO.mouse_prev[MOUSE_DOWN]    = IO.mouse_curr[MOUSE_DOWN];
+        IO.mouse_prev[MOUSE_UP]      = IO.mouse_curr[MOUSE_UP];
+        IO.mouse_prev[MOUSE_CLICKED] = IO.mouse_curr[MOUSE_CLICKED];
 
-        this.mouse_curr[MOUSE_DOWN]    = this._check_mouse_down();
-        this.mouse_curr[MOUSE_UP]      = this._check_mouse_up();
-        this.mouse_curr[MOUSE_CLICKED] = this._check_mouse_click();
+        IO.mouse_curr[MOUSE_DOWN]    = IO._check_mouse_down();
+        IO.mouse_curr[MOUSE_UP]      = IO._check_mouse_up();
+        IO.mouse_curr[MOUSE_CLICKED] = IO._check_mouse_click();
 
-        if (this.mouse_curr[MOUSE_DOWN])
+        if (IO.mouse_curr[MOUSE_DOWN])
         {
-            this.mouse_time += deltaTime;
+            IO.mouse_time += deltaTime;
         }
 
         else
         {
-            this.mouse_time = 0.0;
+            IO.mouse_time = 0.0;
         }
 
-        // for (let i=8; i<=222; i++)
-        // {
-        //     let state = KEY_UP;
+        IO.mousewheel_delta = 0.0;
 
-        //     if (keyIsDown(i))
-        //     {
-        //         state = KEY_DOWN;
-        //     }
 
-        //     else if (this.keystate[i] == KEY_DOWN)
-        //     {
-        //         state = KEY_TAPPED;
-        //     }
+        for (let i=8; i<=222; i++)
+        {
+            let state = KEY_UP;
 
-        //     else
-        //     {
-        //         state = KEY_UP;
-        //     }
+            if (keyIsDown(i))
+            {
+                state = KEY_DOWN;
+            }
 
-        //     this.keystate[i] = state;
-        // }
+            else if (IO.keystate[i] == KEY_DOWN)
+            {
+                state = KEY_TAPPED;
+            }
+
+            else
+            {
+                state = KEY_UP;
+            }
+
+            IO.keystate[i] = state;
+        }
     }
 
-    keyTapped( keycode: number ): boolean
+    static keyTapped( keycode: number ): boolean
     {
-        return false;
+        return (IO.keystate[keycode] == KEY_TAPPED);
     }
 
-    keyUp( keycode: number ): boolean
+    static keyUp( keycode: number ): boolean
     {
         return !keyIsDown(keycode);
     }
 
-    keyDown( keycode: number ): boolean
+    static keyDown( keycode: number ): boolean
     {
         return keyIsDown(keycode);
     }
 
-    mouseDown()
+    static mouseDown()
     {
-        return this.mouse_curr[MOUSE_DOWN];
+        return IO.mouse_curr[MOUSE_DOWN];
     }
     
-    mouseClicked()
+    static mouseClicked()
     {
-        return this.mouse_curr[MOUSE_CLICKED];
+        return IO.mouse_curr[MOUSE_CLICKED];
+    }
+
+    static mouseWheel()
+    {
+        return IO.mousewheel_delta;
     }
 }
 
 
+function mouseWheel( event )
+{
+    IO.mousewheel_delta = event.delta;
+}
 
-const IO = new IOManager;
-export { IO };
+window.mouseWheel = mouseWheel;
 

@@ -1,25 +1,29 @@
-import Actor from "../../engine/actor.js";
 import { Engine, __engine } from "../../engine/engine.js";
-import sys_Image from "../../engine/sys-image.js";
+import { iRenderable, iTransformable, iUpdatable } from "../../engine/interface.js";
+import { Transform } from "../../engine/transform.js";
 
 
-export default class Item extends Actor
+export class Item implements iUpdatable, iRenderable, iTransformable
 {
-    image_path: string;
+    public local: Transform;
+    public world: Transform;
+    public children = new Array<iTransformable>();
 
     constructor( x: number, y: number )
     {
-        super(x, y);
+        this.local = new Transform(x, y, 0);
+        this.world = new Transform(0, 0, 0);
     }
 
-    draw( engine: Engine ): void
+    update(): void
     {
-        super.draw(engine);
 
-        // const imageSys = engine.getSystem(sys_Image);
-        // const img = imageSys.get(this.image_path);
-        // image(img, this.x, this.y)
     }
 
+    draw(): void
+    {
+
+    }
+    
 }
 

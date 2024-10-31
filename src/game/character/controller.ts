@@ -1,7 +1,7 @@
-import Transform, { iHierarchical } from "../../engine/transform";
+import { iTransformable } from "../../engine/interface";
 
 
-export type iControllable = iHierarchical & {
+export type iControllable = iTransformable & {
     move( x: number, y: number ): void;
     jump(): void;
     rotate( theta: number ): void;

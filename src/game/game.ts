@@ -1,82 +1,145 @@
-import BasedAnimation from "../engine/animation.js";
-import { Engine, __engine } from "../engine/engine.js";
-import { IO } from "../engine/IO.js";
-import Scene from "../engine/scene.js";
+import { __engine } from "../engine/engine.js";
+import { GameScene, SceneManager } from "../engine/gamestate.js";
 import sys_Image from "../engine/sys-image.js";
-import sys_Physics from "../engine/sys-physics.js";
-import Render from "../engine/sys-render.js";
+import CharacterBipedType from "./character/biped-type.js";
 import { RigidBodyCharacter } from "./character/character.js";
+import FloatingController from "./character/controller-floating.js";
 import PlayerController from "./character/controller-player.js";
-import TestController from "./character/controller-test.js";
-
 import CharacterFloatingType from "./character/floating-type.js";
-import CharacterPlayerType from "./character/player-type.js";
-// import Player from "./player.js";
+
+import { StateSetup } from "./state-game/state-startup.js";
+import { StateGameplay } from "./state-game/state-gameplay.js";
+import { StatePaused } from "./state-game/state-paused.js";
+import { StateRegion1 } from "./state-game/state-region1.js";
+import { StateRegion2 } from "./state-game/state-region2.js";
+import { SceneMainMenu } from "./ui.js";
+import Render from "../engine/sys-render.js";
 
 
 
-export default class Game extends Scene
+
+
+export class SceneGameplay extends GameScene
 {
-    thing:  RigidBodyCharacter;
-    player: RigidBodyCharacter;
+    public setup(): void
+    {
+        this.addState(new StateSetup);
+        this.addState(new StatePaused);
+        this.addState(new StateGameplay);
+        this.addState(new StateRegion1);
+        this.addState(new StateRegion2);
+
+        this.stateTransition(StateSetup);
+
+        // RootScene.player = new CharacterBipedType(-800, 386, RootScene.pctl);
+        // RootScene.thing  = new CharacterFloatingType(0, 0, RootScene.tctl);
+    }
+
+
+    public update(): void
+    {
+        const state = this.currentState();
+    
+        if (state)
+        {
+            state.update();
+        }
+    }
+
+
+    public draw(): void
+    {
+        const state = this.currentState();
+    
+        if (state)
+        {
+            state.draw();
+        }
+
+        stroke(255);
+        fill(255);
+        textSize(24);
+        textAlign(RIGHT, CENTER);
+
+        Render.screenText(`fps: ${Render.avgFPS().toPrecision(4)}`, Render.width-25, 25);
+
+        // RootScene.thing.draw();
+        // RootScene.player.draw();
+    }
+}
+
+
+
+
+
+export class RootScene extends GameScene
+{
+    static pctl = new PlayerController();
+    static tctl = new FloatingController();
+
+    static player: RigidBodyCharacter;
+    static thing:  RigidBodyCharacter;
 
     constructor()
     {
         super();
+
+        SceneManager.addScene(this.makeActive());
+        SceneManager.addScene(new SceneMainMenu().makeActive());
+        SceneManager.addScene(new SceneGameplay().makeActive());
+
+        // this.addState(new StateSetup);
+        // this.addState(new StatePaused);
+        // this.addState(new StateGameplay);
+        // this.addState(new StateRegion1);
+        // this.addState(new StateRegion2);
+
+        // this.stateTransition(StateSetup);
     }
 
-    preload( engine: Engine ): void
+
+    public preload(): void
     {
-        const imgsys = engine.getSystem(sys_Image);
-    
+        const imgsys = __engine.getSystem(sys_Image);
         imgsys.load("assets/img/meat.jpg");
         imgsys.load("assets/img/michael.png");
         imgsys.load("assets/img/heart-red.png");
         imgsys.load("assets/img/rope.png");
-
     }
 
-    setup( engine: Engine ): void
+
+    public setup(): void
     {
         angleMode(RADIANS);
 
-        const controller1 = new PlayerController();
-        const controller2 = new TestController();
-        this.player = new CharacterPlayerType(0, 128, controller1);
-        this.thing = new CharacterFloatingType(0, 0, controller2);
-
+        RootScene.player = new CharacterBipedType(0, 128, RootScene.pctl);
+        RootScene.thing  = new CharacterFloatingType(0, 0, RootScene.tctl);
     }
 
-    update( engine: Engine ): void
+
+    public update(): void
     {
-        super.update(engine);
-
-        imageMode(CENTER);
-
-        this.player.update();
-        this.player.draw();
-
-        this.thing.update();
-        this.thing.draw();
-
-        const wmouse = Render.worldMouse();
-        const r0 = this.thing.sprite.radius;
-        const r1 = this.player.sprite.radius;
-
-        if (IO.mouseClicked() && wmouse.distSq(this.thing.world.pos) < r0*r0)
-        {
-            const A = this.player.popController();
-            console.log(A);
-            this.thing.pushController(A);
-        }
-
-
-        if (IO.mouseClicked() && wmouse.distSq(this.player.world.pos) < r1*r1)
-        {
-            const A = this.thing.popController();
-            this.player.pushController(A);
-        }
-
+        // const state = this.currentState();
+    
+        // if (state)
+        // {
+        //     state.update();
+        // }
     }
+
+
+    public draw(): void
+    {
+        // const state = this.currentState();
+    
+        // if (state)
+        // {
+        //     state.draw();
+        // }
+
+        RootScene.thing.draw();
+        RootScene.player.draw();
+    }
+
 }
 
