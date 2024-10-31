@@ -28,10 +28,16 @@ const math = {
         return (x > y) ? x : y;
     },
 
-    clamp( lo: number, hi: number, n: number )
+    clamp( n: number, lo: number, hi: number )
     {
         return max(lo, min(n, hi));
+    },
+
+    mod( n: number, m: number )
+    {
+        return ((n % m) + m) % m;
     }
+
 };
 
 

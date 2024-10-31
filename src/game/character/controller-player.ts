@@ -1,20 +1,47 @@
 import { Engine, __engine } from "../../engine/engine.js";
 import { IO, KEYCODE } from "../../engine/IO.js";
 import vec2 from "../../engine/math/vec2.js";
-import sys_Render from "../../engine/sys-render.js";
-import Character from "./character.js";
+import sys_Physics from "../../engine/sys-physics.js";
+import Render from "../../engine/sys-render.js";
+import { RigidBodyCharacter } from "./character.js";
+import { iCharacterController, iControllable } from "./controller.js";
 
 
-export default class PlayerController
+export default class PlayerController implements iCharacterController
 {
     constructor()
     {
 
     }
 
-    update( engine: Engine, C: Character )
+    init( C: RigidBodyCharacter ): void
     {
-        const delta = vec2.temp.setXY(0, 0);
+        sys_Physics.GROUP_PLAYER.add(C.sprite);
+        // sys_Physics.GROUP_BASED_WORLD.addBody(C);
+    }
+
+    private key_rotation( C: iControllable )
+    {
+        let theta = 0.0;
+        let speed = 0.02;
+
+        if (IO.keyDown(KEYCODE.Q))
+        {
+            theta -= 1;
+        }
+
+        if (IO.keyDown(KEYCODE.E))
+        {
+            theta += 1;
+        }
+
+        C.rotate(speed*theta);
+    }
+
+    private key_movement( C: iControllable )
+    {
+        const delta = vec2.tmp().setXY(0, 0);
+        const speed = 1.0;
 
         if (IO.keyDown(KEYCODE.A))
         {
@@ -36,11 +63,27 @@ export default class PlayerController
             delta.y = +1;
         }
 
-        C.move(delta.x, delta.y);
+        if (IO.keyDown(KEYCODE.SPACE))
+        {
+            C.jump();
+        }
 
-        const ren = engine.getSystem(sys_Render);
-        ren.view.mix(C.pos, 0.05);
+        C.move(speed*delta.x, speed*delta.y);
+    }
 
+    update( C: iControllable )
+    {
+        this.key_rotation(C);
+        this.key_movement(C);
+
+        if (IO.mouseClicked())
+        {
+            const wmouse = Render.worldMouse();
+            console.log(wmouse.x, wmouse.y);
+            C.interact(wmouse.x, wmouse.y, "hello");
+        }
+
+        Render.view.mixXY(C.local.x, C.local.y, 0.05);
     }
 
 }

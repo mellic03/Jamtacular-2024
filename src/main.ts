@@ -1,9 +1,16 @@
 import {} from "p5/global";
 import {} from "p5/lib/addons/p5.sound";
-import { Engine, __engine } from "./engine/engine.js";
+import {} from "../lib/p5/addons/p5play";
+
+import { __engine } from "./engine/engine.js";
 import Game from "./game/game.js";
 import sys_Render from "./engine/sys-render.js";
 import { math } from "./engine/math/math.js";
+import ProjectileManager from "./engine/sys-projectile.js";
+import sys_World from "./engine/sys-world/sys-world.js";
+import sys_Physics from "./engine/sys-physics.js";
+import Render from "./engine/sys-render.js";
+import vec2 from "./engine/math/vec2.js";
 
 
 
@@ -22,29 +29,36 @@ function preload()
 function setup()
 {
     engine.setup();
+
+    world.gravity.y = 9.8;
+    allSprites.autoDraw = false;
 }
 
 
 function draw()
 {
     engine.draw();
-    const ren = engine.getSystem(sys_Render);
+
+    ProjectileManager.draw();
+    // sys_Physics.GROUP_BASED_WORLD.draw([50, 255, 50], 2);
+
+    // const tl   = vec2.tmp(-512, -512);
+    // const span = vec2.tmp(1024, 1024);
+    // fill(50, 200, 50);
+    // rectMode(CORNER);
+    // Render.rectCornerTest(tl, span);
 
     stroke(255);
     fill(255);
     textSize(24);
-    text(`fps: ${ren.avgFPS()}`, -300, -300);
+    Render.screenText(`fps: ${Render.avgFPS()}`, 100, 100);
 
-    // group.draw(3, [50, 50, 200], 2);
-    // group.draw(2, [200, 50, 200], 2);
-    // group.draw(1, [200, 50, 50], 4);
-    // group.draw(0, [50, 200, 50], 8);
 }
 
 
 function mouseWheel( event )
 {
-    const ren = engine.getSystem(sys_Render);
+    const ren = Render;
     ren.scale -= 0.001 * event.delta;
     ren.scale = math.clamp(ren.scale, 0.05, 2.0);
 }

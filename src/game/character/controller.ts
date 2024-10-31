@@ -1,19 +1,16 @@
-import { Controllable } from "../../engine/actor";
-import { Engine, __engine } from "../../engine/engine";
-import Character from "./character";
+import Transform, { iHierarchical } from "../../engine/transform";
 
 
-export default class CharacterController
-{
-    constructor()
-    {
-
-    }
-
-
-    update( engine: Engine, C: Controllable )
-    {
-        
-    }
-
+export type iControllable = iHierarchical & {
+    move( x: number, y: number ): void;
+    jump(): void;
+    rotate( theta: number ): void;
+    interact( x: number, y: number, msg: string ): void;
 }
+
+
+export interface iCharacterController
+{
+    update( C: iControllable ): void;
+}
+

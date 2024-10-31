@@ -1,131 +1,150 @@
-import Actor, { Controllable } from "../../engine/actor.js";
-import { Engine, __engine } from "../../engine/engine.js";
-import { IO, KEYCODE } from "../../engine/IO.js";
-import RigidBody from "../../engine/physics/rigidbody.js";
-import sys_Event from "../../engine/sys-event.js";
-import sys_Image from "../../engine/sys-image.js";
-import Transform from "../../engine/transform.js";
-import BodyPartArm from "../bodypart/arm.js";
+import {} from "p5/global";
+import { __engine } from "../../engine/engine.js";
+import { HierarchicalTransform, iHierarchical, Transform2 } from "../../engine/transform.js";
 import BodyPart from "../bodypart/bodypart.js";
-import BodyPartHead from "../bodypart/head.js";
-import LegController from "../bodypart/leg-controller.js";
-import BodyPartLeg from "../bodypart/leg.js";
-import CharacterController from "./controller.js";
+import { iCharacterController, iControllable } from "./controller.js";
+import RigidBody from "../../engine/physics/rigidbody.js";
 
 
-export default class Character extends Actor
+export class RigidBodyCharacter extends RigidBody implements iControllable, iHierarchical
 {
-    public controller: CharacterController | null;
+    local: Transform2;
+    world: Transform2;
+    children = new Array<iHierarchical>();
 
-    public parts  = new Array<BodyPart>
-    public head   = new Array<BodyPartHead>;
-    public arms   = new Array<BodyPartArm>;
-    public legctl = new Array<LegController>;
+    private timer = 0.0;
+    private try_jump = false;
+    private jump_timer = 0.0;
 
+    private controllers = new Array<iCharacterController>();
+    public  parts       = new Array<BodyPart>;
+    public  state       = "idle";
 
-    constructor( x: number, y: number, controller: CharacterController | null = null )
+    constructor( x: number, y: number, controller?: iCharacterController )
     {
-        super(x, y, 0);
-        this.controller = controller;
-    }
+        super(new Sprite(x, y), 1);
 
-    addPart( part: BodyPart )
-    {
-        part.parent = this;
-        this.parts.push(part);
-    }
-
-    addHead( head: BodyPartHead )
-    {
-        this.head.push(head);
-        this.addPart(head);
-    }
-
-    addArm( arm: BodyPartArm )
-    {
-        this.arms.push(arm);
-        this.addPart(arm);
+        this.local = new Transform2(x, y, 0);
+        this.world = new Transform2(0, 0, 0);
+    
+        this.pushController(controller);
     }
 
 
-    addLegController( controller: LegController )
+    pushController( ctl: iCharacterController )
     {
-        this.legctl.push(controller);
-    }
-
-
-    setLimbDirection( dir: number )
-    {
-        for (let arm of this.arms)
+        if (ctl != null)
         {
-            arm.direction = Math.sign(dir);
+            this.controllers.push(ctl);
         }
     }
 
-    update( engine: Engine )
+    popController(): iCharacterController | null
     {
-        super.update(engine);
-
-        if (this.controller != null)
+        if (this.controllers.length > 0)
         {
-            this.controller.update(engine, this);
+            return this.controllers.pop();
         }
 
-        for (let part of this.parts)
+        else
         {
-            part.transform.mult(this.transform);
-            part.update(engine);
+            return null;
         }
     }
 
-    draw( engine: Engine )
+    getController(): iCharacterController | null
     {
+        if (this.controllers.length > 0)
+        {
+            return this.controllers[this.controllers.length-1];
+        }
 
-    }
-
-}
-
-
-
-export class RigidBodyCharacter extends RigidBody implements Controllable
-{
-    public transform: Transform;
-    public controller: CharacterController | null;
-    public parts  = new Array<BodyPart>
-
-    constructor( x: number, y: number, controller: CharacterController | null = null )
-    {
-        super(x, y, 0);
-        this.transform  = new Transform(0, 0, 0);
-        this.controller = controller;
+        return null;
     }
 
 
     addPart( part: BodyPart )
     {
+        this.children.push(part);
         this.parts.push(part);
     }
 
 
-    update( engine: Engine )
+    private _jumping()
     {
-        this.controller.update(engine, this);
+        const dt = deltaTime / 1000.0;
 
-        this.transform.localpos.copy(this.lerp_pos);
-        this.transform.mult(Transform.I);
+        this.jump_timer += (deltaTime / 1000.0);
 
-        for (let part of this.parts)
+        if (this.jump_timer < 0.25)
         {
-            part.transform.ForwardKinematics(this.transform);
-            part.update(engine);
+            this.sprite.vel.y = -4.0;
+        }
+    
+        else
+        {
+            this.state = "idle";
+            this.jump_timer = -1.0;
         }
     }
 
+
+    update()
+    {
+        this.local.pos.setXY(this.sprite.x, this.sprite.y);
+        HierarchicalTransform(this, Transform2.Identity);
+
+        if (this.getController() != null)
+        {
+            this.getController().update(this);
+        }
+
+        if (this.state == "idle")
+        {
+            this.jump_timer += __engine.dtime();
+
+            if (this.try_jump)
+            {
+                this.state = "jumping";
+                this.try_jump = false;
+            }
+        }
+
+        else if (this.state == "jumping")
+        {
+            this._jumping();
+        }
+
+        for (let part of this.parts)
+        {
+            part.update();
+        }
+    }
+
+    rotate( theta: number ): void
+    {
+        this.local.rot += theta;
+    }
 
     move( x: number, y: number ): void
     {
-        this.addForceXY(32*x, 32*y);
+        this.applyForceXY(x, y);
     }
 
+    jump(): void
+    {
+        if (this.state != "jumping" && this.jump_timer > 0.0)
+        {
+            this.try_jump = true;
+            this.jump_timer = 0.0;
+        }
+        // this.applyForceXY(0, -32.0);
+    }
+
+    interact( x: number, y: number, msg: string = "" ): void
+    {
+
+    }
+    
 }
 

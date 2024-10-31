@@ -1,175 +1,143 @@
 import { Engine, __engine } from "../engine.js";
-import { math } from "../math/math.js";
 import vec2 from "../math/vec2.js";
-import Transform from "../transform.js";
-import { PHYS_GRAVITY, PHYS_MASS_SCALE, PHYS_TIMESTEP } from "./physics.js";
-
-
-abstract class RigidBodyConstraint
-{
-    A: RigidBody;
-    B: RigidBody;
-
-    abstract update( engine: Engine ): void;
-}
-
-
-export class RigidBodyDistanceConstraint extends RigidBodyConstraint
-{
-    dist: number
-
-    constructor( dist: number )
-    {
-        super();
-        this.dist = dist;
-    }
-
-    update( engine: Engine ): void
-    {
-        const disp  = vec2.tmpA.displacement(this.A.curr_pos, this.B.curr_pos);
-        const error = this.dist - disp.mag();
-        const dir   = disp.normalize().mul(error);
-
-        if (this.A.fixed == false && this.B.fixed == false)
-        {
-            this.A.curr_pos.addMul(dir, -0.5);
-            this.B.curr_pos.addMul(dir, +0.5);
-        }
-
-        else if (this.A.fixed == true)
-        {
-            this.B.curr_pos.addMul(dir, +1.0);
-        }
-
-        else if (this.B.fixed == true)
-        {
-            this.A.curr_pos.addMul(dir, -1.0);
-        }
-
-    }
-}
+import { PHYS_GRAVITY, PHYS_TIMESTEP } from "./physics.js";
 
 
 export default class RigidBody
 {
     private static id_count = 0;
-    private accum  = 0;
+    private static tmp_pos = new vec2(0, 0);
+    private static tmp_vel = new vec2(0, 0);
 
-    curr_pos: vec2;
-    prev_pos: vec2;
-    lerp_pos: vec2;
+    sprite: Sprite;
 
-    id:  number;
-    vel: vec2;
-    acc: vec2;
-    mass: number;
-    drag: number
-    fixed: boolean;
+    curr   = new vec2(0, 0);
+    prev   = new vec2(0, 0);
+    mixed  = new vec2(0, 0);
+    forces = new vec2(0, 0);
+    acc    = new vec2(0, 0);
 
-    constraints: Array<RigidBodyConstraint>;
+    id:     number;
 
-    constructor( x, y, mass=1, fixed=false )
+    constructor( sprite: Sprite, mass=1, collider="dynamic", shape="box" )
     {
-        this.id   = RigidBody.id_count++;
+        sprite.shape    = shape;
+        sprite.mass     = mass;
+        sprite.collider = collider;
 
-        this.curr_pos  = new vec2(x, y);
-        this.prev_pos  = new vec2(x, y);
-        this.lerp_pos  = new vec2(x, y);
-
-        this.vel   = new vec2(0, 0);
-        this.acc   = new vec2(0, 0);
-        this.mass  = mass;
-        this.drag  = 0.0001;
-        this.fixed = fixed;
-
-        this.constraints = [];
-    }
-
-    get pos(): vec2
-    {
-        return this.lerp_pos;
+        this.sprite     = sprite;
+        this.id         = RigidBody.id_count++;
     }
 
     get x(): number
     {
-        return this.lerp_pos.x;
+        return this.sprite.x;
     }
 
     get y(): number
     {
-        return this.lerp_pos.y;
+        return this.sprite.y;
     }
 
-    setPosition( v: vec2 ): void
+    get pos(): vec2
     {
-        this.curr_pos.copy(v);
+        return RigidBody.tmp_pos.setXY(this.sprite.x, this.sprite.y);
     }
 
-    interpolatePosition( alpha: number ): vec2
+    get vel(): vec2
     {
-        // return this.lerp_pos.copy(this.curr_pos);
-        return this.lerp_pos.copy(this.prev_pos).mix(this.curr_pos, alpha);
+        return RigidBody.tmp_vel.setXY(this.sprite.vel.x, this.sprite.vel.y);
     }
 
-    addConstraint( constraint: RigidBodyConstraint, body: RigidBody )
+    setPosition( pos: vec2 ): void
     {
-        constraint.A = this;
-        constraint.B = body;
-        this.constraints.push(constraint);
+        this.sprite.x = pos.x;
+        this.sprite.y = pos.y;
+    }
+
+    interpolatePosition( alpha: number ): void
+    {
+        this.mixed.copy(this.prev).mix(this.curr, alpha);
     }
 
     translate( v: vec2 ): void
     {
-        this.curr_pos.add(v);
+        this.sprite.x += v.x;
+        this.sprite.y += v.y;
     }
 
-    translateXY( x: number, y: number ): void
+    set radius( r: number )
     {
-        this.curr_pos.addXY(x, y);
+        this.sprite.radius = r;
     }
 
-    addForce( force: vec2 ): void
+    get radius(): number
     {
-        this.acc.add(force);
+        return this.sprite.radius;
     }
 
-    addForceXY( x: number, y: number ): void
+    set mass( m: number )
     {
-        this.acc.addXY(x, y);
+        this.sprite.mass = m;
     }
 
-    moveTo( position: vec2, speed: number = 0.5 )
+    get mass(): number
     {
-        const dir = vec2.temp.displacement(this.curr_pos, position).mul(speed);
-        this.curr_pos.add(dir);
+        return this.sprite.mass;
     }
 
-    integrate( engine: Engine )
+    set rot( theta: number )
     {
-        const dt = PHYS_TIMESTEP;
-
-        for (let C of this.constraints)
-        {
-            C.update(engine);
-        }
-
-
-        const G    = PHYS_GRAVITY*PHYS_MASS_SCALE*this.mass;
-        const prev = vec2.tmpA.copy(this.curr_pos);
-        const acc  = vec2.tmpB.copy(this.acc).addXY(0, G).mul(dt*dt);
-    
-        // const tmp = vec2.temp.copy(this.prev_pos);
-            //   tmp.moveTo(this.curr_pos, 0);
-
-        this.curr_pos.mul(2.0).sub(this.prev_pos).add(acc);
-        this.prev_pos.copy(prev);
-    
-        this.vel.copy(this.curr_pos).sub(this.prev_pos).div(dt);
-        this.acc.setXY(0, 0);
+        this.sprite.rotation = theta;
     }
 
-    draw( engine: Engine )
+    get rot(): number
+    {
+        return this.sprite.rotation;
+    }
+
+    set drag( drag: number )
+    {
+        this.sprite.drag = drag;
+    }
+
+    get drag(): number
+    {
+        return this.sprite.drag;
+    }
+
+    moveTowards( pos: vec2, alpha: number = 0.5 )
+    {
+        this.sprite.moveTowards(pos.x, pos.y, alpha);
+    }
+
+    moveTowardsXY( x: number, y: number, alpha: number = 0.5 )
+    {
+        this.sprite.moveTowards(x, y, alpha);
+    }
+
+    applyForce( f: vec2 ): void
+    {
+        this.sprite.applyForce(f.x, f.y);
+    }
+
+    applyForceXY( x: number, y: number ): void
+    {
+        this.sprite.applyForce(x, y);
+    }
+
+    update()
+    {
+        this.curr.setXY(this.sprite.x, this.sprite.y);
+        this.prev.setXY(this.sprite.prevPos[0], this.sprite.prevPos[1]);
+    }
+
+
+    draw()
     {
 
     }
 }
+
+
+

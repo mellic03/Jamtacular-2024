@@ -1,11 +1,13 @@
 import { math } from "./math.js";
 
+
+const vec2_temp = [];
+const vec2_temp_count = 1024;
+
+
 export default class vec2
 {
-    static temp = new vec2(0, 0);
-    static tmpA = new vec2(0, 0);
-    static tmpB = new vec2(0, 0);
-    static tmpC = new vec2(0, 0);
+    private static tmp_idx = 0;
 
     x: number;
     y: number;
@@ -16,7 +18,23 @@ export default class vec2
         this.y = y;
     }
 
-    setXY( x: number, y: number = x ): vec2
+    static tmp( x=0, y=x ): vec2
+    {
+        vec2.tmp_idx = (vec2.tmp_idx + 1) % vec2_temp_count;
+        return vec2_temp[vec2.tmp_idx].setXY(x, y);
+    }
+
+    static copy( v: vec2 ): vec2
+    {
+        return vec2.tmp(v.x, v.y);
+    }
+
+    static mix( u: vec2, v: vec2, a: number ): vec2
+    {
+        return vec2.tmp(u.x, u.y).mix(v, a);
+    }
+
+    setXY( x: number, y=x ): vec2
     {
         this.x = x;
         this.y = y;
@@ -44,7 +62,7 @@ export default class vec2
         return this;
     }
 
-    addXY( x, y ): vec2
+    addXY( x, y=x ): vec2
     {
         this.x += x;
         this.y += y;
@@ -58,6 +76,13 @@ export default class vec2
         return this;
     }
 
+    subMul( v: vec2, n: number ): vec2
+    {
+        this.x -= n*v.x;
+        this.y -= n*v.y;
+        return this;
+    }
+
     subXY( x, y=x ): vec2
     {
         this.x -= x;
@@ -65,18 +90,37 @@ export default class vec2
         return this;
     }
 
-    mul( n: number ): vec2
+    mul( v: vec2 ): vec2
     {
-        this.x *= n;
-        this.y *= n;
+        this.x *= v.x;
+        this.y *= v.y;
         return this;
     }
 
-    div( n: number ): vec2
+    mulXY( x: number, y=x ): vec2
     {
-        this.x /= n;
-        this.y /= n;
+        this.x *= x;
+        this.y *= y;
         return this;
+    }
+
+    div( v: vec2 ): vec2
+    {
+        this.x /= v.x;
+        this.y /= v.y;
+        return this;
+    }
+
+    divXY( x: number, y=x ): vec2
+    {
+        this.x /= x;
+        this.y /= y;
+        return this;
+    }
+
+    dot( v: vec2 ): number
+    {
+        return this.x*v.x + this.y*v.y;
     }
 
     magSq(): number
@@ -86,7 +130,14 @@ export default class vec2
 
     mag(): number
     {
-        return Math.sqrt(this.magSq());
+        const magSq = this.magSq();
+    
+        if (magSq < 0.00001)
+        {
+            return 0;
+        }
+
+        return Math.sqrt(magSq);
     }
 
     normalize(): vec2
@@ -94,6 +145,17 @@ export default class vec2
         const len = this.mag();
         this.x /= len;
         this.y /= len;
+        return this;
+    }
+
+    reflect( N: vec2 ): vec2
+    {
+        const n = vec2.tmp().copy(N).normalize();
+        const d = this.dot(n);
+
+        this.x -= 2*d * n.x;
+        this.y -= 2*d * n.y;
+
         return this;
     }
 
@@ -116,6 +178,13 @@ export default class vec2
         return this;
     }
 
+    ceil(): vec2
+    {
+        this.x = Math.ceil(this.x);
+        this.y = Math.ceil(this.y);
+        return this;
+    }
+
     displacement( start: vec2, end: vec2 ): vec2
     {
         this.copy(end);
@@ -123,7 +192,7 @@ export default class vec2
         return this;
     }
 
-    normalizedDirection( start: vec2, end: vec2 ): vec2
+    direction( start: vec2, end: vec2 ): vec2
     {
         this.displacement(start, end);
         this.normalize();
@@ -133,7 +202,7 @@ export default class vec2
     normalizeMul( n: number ): vec2
     {
         this.normalize();
-        this.mul(n);
+        this.mulXY(n);
         return this;
     }
 
@@ -160,7 +229,11 @@ export default class vec2
 
     angle(): number
     {
-        return atan2(this.y, this.x);
+        let r = atan2(this.y, this.x);
+        let d = 180.0 * (r / Math.PI);
+            d = (180 + Math.round(d)) % 180;
+
+        return ((d/180) * Math.PI);
     }
 
     /** Rotate a vector theta radians about the origin.
@@ -182,11 +255,11 @@ export default class vec2
 
     moveTo( v: vec2, speed: number ): vec2
     {
-        const tmp = vec2.temp;
+        const tmp = vec2.tmp();
 
         tmp.copy(v);
         tmp.sub(this);
-        tmp.mul(speed);
+        tmp.mulXY(speed);
 
         this.add(tmp);
         return this;
@@ -194,8 +267,16 @@ export default class vec2
 
     moveToXY( x: number, y: number, speed: number ): vec2
     {
-        vec2.temp.setXY(x, y);
-        return this.moveTo(vec2.temp, speed);
+        const tmp = vec2.tmp().setXY(x, y);
+        return this.moveTo(tmp, speed);
     }
 };
 
+
+
+for (let i=0; i<vec2_temp_count; i++)
+{
+    vec2_temp.push(new vec2(0,  0));
+}
+
+    

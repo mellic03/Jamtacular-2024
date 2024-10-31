@@ -1,17 +1,18 @@
 import System from "./system.js";
+import * as p5 from "p5";
 
 
 export default class sys_Image extends System
 {
-    cache: Map<string, any>;
+    cache: Map<string, p5.Image>;
 
     constructor()
     {
         super();
-        this.cache = new Map<string, any>();
+        this.cache = new Map<string, p5.Image>();
     }
 
-    load( path: string )
+    load( path: string ): p5.Image
     {
         if (this.cache.has(path))
         {
@@ -26,7 +27,7 @@ export default class sys_Image extends System
         }
     }
 
-    get( path: string )
+    get( path: string ): p5.Image
     {
         return this.cache.get(path);
     }

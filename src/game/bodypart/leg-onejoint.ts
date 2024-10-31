@@ -3,7 +3,7 @@ import { Engine, __engine } from "../../engine/engine.js";
 import FABRIK from "../../engine/math/FABRIK.js";
 import { math } from "../../engine/math/math.js";
 import vec2 from "../../engine/math/vec2.js";
-import sys_World, { HitInfo } from "../../engine/sys-world.js";
+import sys_World from "../../engine/sys-world/sys-world.js";
 import BodyPartLeg from "./leg.js";
 
 
@@ -39,21 +39,21 @@ export default class LegOneJoint extends BodyPartLeg
     //     this.timer = 0.0;
     // }
 
-    update( engine: Engine )
+    update()
     {
-        if (Math.sign(this.root.x - this.joints[1].x) == Math.sign(this.direction))
-        {
-            this.joints[1].x -= this.root.x;
-            this.joints[1].x *= -1;
-            this.joints[1].x += this.root.x;
-        }
+        // if (Math.sign(this.root.x - this.joints[1].x) == Math.sign(this.direction))
+        // {
+        //     this.joints[1].x -= this.root.x;
+        //     this.joints[1].x *= -1;
+        //     this.joints[1].x += this.root.x;
+        // }
 
-        super.update(engine);
+        super.update();
     }
 
-    draw( engine: Engine )
+    draw()
     {
-        super.draw(engine);
+        super.draw();
     }
 
 }

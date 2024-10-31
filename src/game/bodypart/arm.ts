@@ -3,7 +3,7 @@ import { Engine, __engine } from "../../engine/engine.js";
 import FABRIK from "../../engine/math/FABRIK.js";
 import { math } from "../../engine/math/math.js";
 import vec2 from "../../engine/math/vec2.js";
-import sys_World, { HitInfo } from "../../engine/sys-world.js";
+import sys_World from "../../engine/sys-world/sys-world.js";
 import BodyPart from "./bodypart.js";
 
 
@@ -95,37 +95,30 @@ export default class BodyPartArm extends BodyPart
     }
 
 
-    update( engine: Engine )
+    update()
     {
-        super.update(engine);
+        super.update();
 
-        this.timer += 0.0001 * this.delta.x;
-        this.yoffset = Math.sin(this.timer);
+        // this.timer += 0.0001 * this.delta.x;
+        // this.yoffset = Math.sin(this.timer);
 
-        const tmp = vec2.temp;
+        // const tmp = vec2.tmp();
 
-        tmp.copy(this.posWorld);
-        const dx = 0.2 * this.parent.vel.x; // Math.sign(this.xLocal);
+        // tmp.copy(this.posWorld);
+        // const dx = 0.2 * this.parent.vel.x; // Math.sign(this.xLocal);
 
-        this.foot.copy(this.posWorld);
-        this.foot.addXY(0.2*dx, 64);
+        // this.foot.copy(this.posWorld);
+        // this.foot.addXY(0.2*dx, 64);
     
-        this.joints[1].subXY(dx, 0.0);
+        // this.joints[1].subXY(dx, 0.0);
 
-        this.root.copy(this.pos);
-        this.root.y += this.yoffset;
+        // this.root.copy(this.pos);
+        // this.root.y += this.yoffset;
 
-        // if (Math.sign(this.root.x - this.joints[1].x) == Math.sign(this.direction))
-        // {
-        //     this.joints[1].x -= this.root.x;
-        //     this.joints[1].x *= -1;
-        //     this.joints[1].x += this.root.x;
-        // }
-
-        FABRIK(this.joints, this.dists, this.tdist, 1);
+        // FABRIK(this.joints, this.dists, this.tdist, 1);
     }
 
-    draw( engine: Engine )
+    draw()
     {
         stroke(200);
 

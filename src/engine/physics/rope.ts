@@ -1,62 +1,95 @@
-import { Engine, __engine } from "../engine.js";
+import { __engine } from "../engine.js";
 import vec2 from "../math/vec2.js";
 import sys_Image from "../sys-image.js";
+import sys_Physics from "../sys-physics.js";
 import sys_Render from "../sys-render.js";
-import CollisionGroup from "./group.js";
-import RigidBody, { RigidBodyDistanceConstraint } from "./rigidbody.js";
+import { iHierarchical, Transform2 } from "../transform.js";
+import RigidBody from "./rigidbody.js";
 
 
-export default class Rope
+export default class Rope implements iHierarchical
 {
-    pos:    vec2;
-    group:  CollisionGroup;
-    bodies: Array<RigidBody>;
-    tdist:  number;
+    local: Transform2;
+    world: Transform2;
+    children = new Array<iHierarchical>();
+
+    group:     Group;
+    bodies:    Array<RigidBody>;
+    dist:      number;
+    tdist:     number;
     thickness: number;
 
-    constructor( group: CollisionGroup, x: number, y: number,
-                 count=8, length=32, thickness=8, mass=1.0, elasticity=0.0 )
+    constructor( x: number, y: number, count=8, length=32, mass=1.0, thickness=8 )
     {
-        this.pos       = new vec2(x, y);
-        this.group     = group;
+        this.local = new Transform2(0, 0, 0);
+        this.world = new Transform2(x, y, 0);
+
+        this.group     = sys_Physics.GROUP_ROPES;
         this.bodies    = [];
+        this.dist      = length;
         this.tdist     = count*length;
         this.thickness = thickness;
 
-
-        this.bodies.push(new RigidBody(x, y, mass, true));
-
-        for (let i=1; i<count; i++)
+        for (let i=0; i<count; i++)
         {
-            this.bodies.push(new RigidBody(x+length*i, y, mass, false));
-    
-            const A = this.bodies[i-1];
-            const B = this.bodies[i];
+            const B = new RigidBody(new Sprite(x+i*length/2, y), mass, "dynamic");
 
-            A.addConstraint(new RigidBodyDistanceConstraint(length), B);
+            B.sprite.radius       = thickness/2;
+            B.sprite.drag         = 0.7;
+            B.sprite.friction     = 0.25;
+            B.sprite.gravityScale = 0.01;
+            B.sprite.bounciness   = 0.0;
+            B.sprite.autoDraw     = false;
+
+            B.sprite.x = x + i*length;
+            B.curr.x   = x + i*length;
+            B.prev.x   = x + i*length;
+
+            this.group.add(B.sprite);
+            this.bodies.push(B);
         }
 
-        for (let body of this.bodies)
+        for (let i=0; i<count-1; i++)
         {
-            group.addBody(body);
+            const A = this.bodies[i].sprite;
+            const B = this.bodies[i+1].sprite;
+
+            const J = new RopeJoint(A, B);
+            J.maxLength = length;
         }
     }
 
 
-    draw( engine: Engine )
+    update()
     {
-        const imgsys = engine.getSystem(sys_Image);
+        // this.transform.mult(this.transform.parent);
+    
+        circle(this.world.x, this.world.y, 25);
+        this.bodies[0].moveTowards(this.world.pos, 1.0);
+
+        for (let B of this.bodies)
+        {
+            B.update();
+        }
+    }
+
+
+    draw()
+    {
+        const imgsys = __engine.getSystem(sys_Image);
         const img = imgsys.get("assets/img/rope.png");
+        imageMode(CORNER);
 
         for (let i=0; i<this.bodies.length-1; i++)
         {
-            const A = this.bodies[i+0].lerp_pos;
-            const B = this.bodies[i+1].lerp_pos;
+            const A = vec2.copy(this.bodies[i+0].pos);
+            const B = vec2.copy(this.bodies[i+1].pos);
 
             sys_Render.imageRotated(
-                img, 0, -0.5*this.thickness, A.dist(B), this.thickness, A, B
+                img,
+                0, -0.5*this.thickness, A.dist(B), this.thickness,
+                A, B
             );
-
         }
     }
 }

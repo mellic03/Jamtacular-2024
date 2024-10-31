@@ -5,13 +5,8 @@ import { math } from "./math/math.js";
 
 
 
-export interface Controllable
-{
-    move( x: number, y: number ): void;
-}
 
-
-export default class Actor implements Controllable
+export default class Actor
 {
     private pos_prev  = new vec2(0, 0);
     private pos_delta = new vec2(0, 0);
@@ -149,6 +144,11 @@ export default class Actor implements Controllable
         this.vel.addXY(x, y);
     }
 
+    rotate( theta: number ): void
+    {
+        this.rlocal += theta;
+    }
+
     move( x: number, y: number ): void
     {
         this.transform.localpos.x += x;
@@ -159,4 +159,10 @@ export default class Actor implements Controllable
     {
         this.transform.localpos.moveTo(pos, speed);
     }
+
+    interact( x: number, y: number, msg: string ): void
+    {
+
+    }
+
 }

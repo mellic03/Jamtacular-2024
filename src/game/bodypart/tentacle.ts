@@ -1,145 +1,227 @@
-import Actor from "../../engine/actor.js";
-import { Engine, __engine } from "../../engine/engine.js";
-import FABRIK from "../../engine/math/FABRIK.js";
-import { math } from "../../engine/math/math.js";
+import { __engine } from "../../engine/engine.js";
 import vec2 from "../../engine/math/vec2.js";
-import CollisionGroup from "../../engine/physics/group.js";
 import RigidBody from "../../engine/physics/rigidbody.js";
+import BasedRope from "../../engine/physics/rope-based.js";
 import Rope from "../../engine/physics/rope.js";
-import sys_Image from "../../engine/sys-image.js";
-import sys_Physics from "../../engine/sys-physics.js";
-import sys_World, { HitInfo } from "../../engine/sys-world.js";
 import BodyPart from "./bodypart.js";
 
 
 
 
+
+class FloatRopes1 extends Rope
+{
+    aggression = 1.0;
+    r_offset = 0.5 * (Math.random() * 0.5 + 0.5);
+    g_offset = 0.5 * (Math.random() * 0.5 + 0.5);
+    b_offset = 0.5 * (Math.random() * 0.5 + 0.5);
+
+    drawSegments( start: number, end: number )
+    {
+        for (let i=start; i<end; i++)
+        {
+            const A = vec2.copy(this.bodies[i+0].pos);
+            const B = vec2.copy(this.bodies[i+1].pos);
+
+            this.bodies[i].sprite.gravityScale   = 0.75 * (1.0 - this.aggression) + 0.01;
+            this.bodies[i+1].sprite.gravityScale = 0.75 * (1.0 - this.aggression) + 0.01;
+            // this.bodies[i].sprite.mass = this.aggression + 0.05;
+            // this.bodies[i+1].sprite.mass = this.aggression + 0.05;
+
+            // this.bodies[i+0].sprite.friction = 0.0;
+            // this.bodies[i+1].sprite.friction = 0.0;
+            // this.bodies[i+0].sprite.drag = 0.0;
+            // this.bodies[i+1].sprite.drag = 0.0;
+
+            const a0 = i / this.bodies.length;
+            const a1 = 0.002*this.bodies[i+1].vel.magSq();
+            const a2 = a0*a1 * this.aggression;
+
+            // strokeWeight(2*this.bodies.length - 8*a0);
+            strokeWeight(16 - 8*a0);
+
+            const r = (50 + 255*a2)         * (1.0 + this.r_offset);
+            const g = (50)                  * (1.0 + this.g_offset);
+            const b = Math.max(50-50*a2, 0) * (1.0 + this.b_offset);
+
+            stroke(r, g, b);
+
+            line(A.x, A.y, B.x, B.y);
+        }
+
+        strokeWeight(1);
+    }
+}
+
+
+class FloatRopes2 extends Rope
+{
+    aggression = 1.0;
+    r_offset = 0.0 * (Math.random() * 0.5 + 0.5);
+    g_offset = 0.0 * (Math.random() * 0.5 + 0.5);
+    b_offset = 0.0 * (Math.random() * 0.5 + 0.5);
+
+    draw()
+    {
+        for (let i=0; i<this.bodies.length-1; i++)
+        {
+            const A = vec2.copy(this.bodies[i+0].pos);
+            const B = vec2.copy(this.bodies[i+1].pos);
+
+            const a0 = i / this.bodies.length;
+            const a1 = 0.002*this.bodies[i+1].vel.magSq();
+            const a2 = i;
+
+            strokeWeight(8 + 16*a0);
+            // strokeWeight(16 - 8*a0);
+
+            const r = (50 + 255*a0*a1)         * (1.0 + this.r_offset);
+            const g = (50)                     * (1.0 + this.g_offset);
+            const b = 50 * (1.0 + this.b_offset);
+
+            stroke(r, g, b);
+
+            line(A.x, A.y, B.x, B.y);
+        }
+
+        strokeWeight(1);
+    }
+}
+
+
+
+type FloatRopes = FloatRopes1;
+
+
 export default class BodyPartTentacle extends BodyPart
 {
-    rope:   Rope;
-    // joints: Array<vec2>;
-    // dists:  Array<number>;
-    root:   RigidBody;
-    hand:   RigidBody;
+    rope: FloatRopes;
+    root: RigidBody;
+    hand: RigidBody;
 
-    target = new vec2(0, 0);
-    curr   = new vec2(0, 0);
-    next   = new vec2(0, 0);
-
+    grab_timer = 1.0;
     grabbing   = false;
-    grab_timer = 0.0;
+    aggression = 0.0;
 
-    constructor( group: CollisionGroup, x: number, y: number, segments=8, length=32 )
+    constructor( x: number, y: number, count=8, length=32, mass=0.25, thickness=8 )
     {
         super(x, y);
 
-        this.rope = new Rope(group, x, y, segments, length, 8, 0.0);
+        this.rope = new FloatRopes1(x, y, count, length, mass, thickness);
+        this.children.push(this.rope);
+
         this.root = this.rope.bodies[0];
         this.hand = this.rope.bodies[this.rope.bodies.length-1];
     }
 
 
+    update()
+    {
+        super.update();
+        circle(this.world.x, this.world.y, 12);
+
+        this.update_grab();
+
+        this.rope.aggression = this.aggression;
+        this.rope.update();
+    }
+
+
+    draw()
+    {
+        super.draw();
+    }
+
+
+    drawSegments( a: number, b: number)
+    {
+        const len   = this.rope.bodies.length-1;
+        const start = Math.floor(a * len);
+        const end   = Math.floor(b * len);
+    
+        this.rope.drawSegments(start, end);
+    }
+
+
+
     private update_grab()
     {
-        if (this.grabbing == true)
-        {
-            if (this.hand.pos.distSq(this.target) > 32*32)
-            {
-                this.grab_timer += deltaTime;
-            }
-
-            else
-            {
-                this.grab_timer = 0;
-            }
-
-            if (this.grab_timer > 1500)
-            {
-                this.grabbing = false;
-            }
-
-            this.hand.moveTo(this.target, 0.01);
-            // this.hand.setPosition(this.target);
-        }
-
-        else
-        {
-            this.grab_timer = 0;
-        }
-    
-    }
-
-
-    update( engine: Engine )
-    {
-        this.root.setPosition(this.transform.worldpos);
-        this.update_grab();
-    }
-
-
-    draw( engine: Engine )
-    {
-        stroke(25);
-
-        this.rope.draw(engine);
-
-        // for (let i=1; i<this.joints.length; i++)
+        // if (this.grabbing == true)
         // {
-        //     const A = this.joints[i-1];
-        //     const B = this.joints[i];
+        //     if (this.hand.pos.distSq(this.target) > 32*32)
+        //     {
+        //         this.grab_timer += deltaTime;
+        //     }
 
-        //     strokeWeight(this.joints.length - i);
-        //     line(A.x, A.y, B.x, B.y);
+        //     else
+        //     {
+        //         this.grab_timer = 0;
+        //     }
 
+        //     if (this.grab_timer > 1500)
+        //     {
+        //         this.grabbing = false;
+        //     }
+
+        //     const dir = vec2.tmp().displacement(this.hand.pos, this.target).mul(0.5);
+        //     this.hand.addForce(dir);
+        //     // this.hand.moveTo(this.target, 0.01);
+        //     // this.hand.setPosition(this.target);
         // }
 
-        strokeWeight(1);
+        // else
+        // {
+        //     this.grab_timer = 0;
+        // }
     }
 
 
-    reachFor( position: vec2 ): boolean
+    reachFor( pos: vec2 ): boolean
     {
-        if (position.distSq(this.root.pos) > this.rope.tdist*this.rope.tdist)
-        {
-            return;
-        }
+        const dir = vec2.copy(this.root.curr);
+    
+        // if (position.distSq(this.root.pos) > this.rope.tdist*this.rope.tdist)
+        // {
+        //     return;
+        // }
 
-        this.target.copy(position);
-        this.grabbing = true;
-        return;
+        // this.target.copy(position);
+        // this.grabbing = true;
+        // return;
 
-        const world = __engine.getSystem(sys_World);
-        const dir   = vec2.temp.normalizedDirection(this.hand.pos, position);
+        // const world = __engine.getSystem(sys_World);
+        // const dir   = vec2.tmp().normalizedDirection(this.hand.pos, position);
 
-        if (world.raycast(this.hand.x, this.hand.y, dir.x, dir.y))
-        {
-            const res = HitInfo.res;
+        // if (world.raycast(this.hand.x, this.hand.y, dir.x, dir.y))
+        // {
+        //     const res = HitInfo.res;
 
-            if (this.hand.pos.dist(res) < this.rope.tdist)
-            {
-                this.target.copy(res);
-                return true;
-            }
-        }
+        //     if (this.hand.pos.dist(res) < this.rope.tdist)
+        //     {
+        //         this.target.copy(res);
+        //         return true;
+        //     }
+        // }
 
         return false;
     }
 
+
     reach( dir: vec2 ): boolean
     {
-        const world = __engine.getSystem(sys_World);
+        // const world = __engine.getSystem(sys_World);
 
-        if (world.raycast(this.root.x, this.root.y, dir.x, dir.y))
-        {
-            const res = HitInfo.res;
+        // if (world.raycast(this.root.x, this.root.y, dir.x, dir.y))
+        // {
+        //     const res = HitInfo.res;
 
-            if (this.root.pos.dist(res) < this.rope.tdist && this.hand.lerp_pos.dist(res) > 32.0)
-            {
-                circle(res.x, res.y, 20);
-                this.target.copy(res);
-                return true;
-            }
-        }
+        //     if (this.root.pos.dist(res) < this.rope.tdist && this.hand.lerp_pos.dist(res) > 32.0)
+        //     {
+        //         circle(res.x, res.y, 20);
+        //         this.target.copy(res);
+        //         return true;
+        //     }
+        // }
 
         return false;
     }
@@ -149,6 +231,7 @@ export default class BodyPartTentacle extends BodyPart
     {
         return this.grabbing;
     }
+
 
 }
 

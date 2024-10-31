@@ -97,10 +97,10 @@ export class vec2_Spring
         const B = this.tmp;
 
         A.displacement(this.curr, this.target);
-        A.mul(1.0 - this.stiffness);
+        A.mulXY(1.0 - this.stiffness);
 
         B.copy(this.vel);
-        B.mul(this.damping);
+        B.mulXY(this.damping);
 
         A.sub(B);
 
