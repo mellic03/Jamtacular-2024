@@ -7,9 +7,15 @@ import ui_Button from "../engine/ui/button.js";
 import ui_Grid from "../engine/ui/grid.js";
 import ui_List from "../engine/ui/list.js";
 import ui_Title from "../engine/ui/title.js";
-import { RootScene, SceneGameplay } from "./game.js";
+import { SceneGameplay } from "./game.js";
 import { StateRegion1 } from "./state-game/state-region1.js";
-import { UI_Character } from "./state-ui/ui-character.js";
+
+
+// const gameplay = getScene(SceneGameplay);
+
+const callback2 = () => { SceneManager.getScene(SceneGameplay).stateTransition(StateRegion1); };
+const callback3 = () => { SceneManager.getScene(SceneGameplay).stateTransition(StateRegion1); };
+
 
 
 export class SceneMainMenu extends GameScene
@@ -21,26 +27,21 @@ export class SceneMainMenu extends GameScene
     constructor()
     {
         super();
-        this.makeActive();
 
-        {
-            const L = new ui_List(
-                new ui_Title("Main"),
-                new ui_Button("Continue", () => { this.makeInactive(); }),
-                new ui_Button("StateRegion1", () => { SceneManager.getScene(SceneGameplay).stateTransition(StateRegion1); }),
-                new ui_Button("Settings"),
-                new ui_Button("Exit")
-            );
+        const L = new ui_List(
+            new ui_Title("Main"),
+            new ui_Button("Continue", () => { this.makeInactive(); }),
+            new ui_Button("StateRegion1", callback2),
+            new ui_Button("Settings"),
+            new ui_Button("Exit")
+        );
 
-            L.style.maxHeight = 9999;
-            L.updateStyle();
+        L.style.maxHeight = 9999;
+        L.updateStyle();
 
-            this.ui_mainmenu = new ui_Grid(1, 4, L);
-        }
+        this.ui_mainmenu = new ui_Grid(1, 4, L);
 
-        {
-            this.ui_ingame = new ui_Grid(5, 8);
-        }
+        this.ui_ingame = new ui_Grid(5, 8);
 
         this.ui_stack.push(this.ui_mainmenu);
     }
@@ -48,29 +49,15 @@ export class SceneMainMenu extends GameScene
 
     update(): void
     {
-        // const C = Game.getSelectedCharacter();
-        // this.ui.C = Game.getSelectedCharacter();
-
         this.ui_stack.top().update(new ui_Bounds(0, Render.width, 0, Render.height))
     }
 
 
     draw(): void
     {
-        push();
-
-        translate(+Render.view.x, +Render.view.y, 0);
-        scale(1.0 / Render.scale);
-
-        if (Render.webgl == false)
-        {
-            translate(-Render.width/2, -Render.height/2, 0);
-        }
-
-
+        Render.pushInverseViewTransform();
         this.ui_stack.top().draw();
-
-        pop();
+        Render.popInverseViewTransform();
     }
 
 }
