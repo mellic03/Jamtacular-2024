@@ -48,7 +48,7 @@ export class Game
 
     preload(): void
     {
-        Game.config = loadJSON("./assets/config.json");
+        Game.config = loadJSON("./assets/GlobalConfig.json");
     }
 
     setup(): void

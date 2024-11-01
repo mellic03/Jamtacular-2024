@@ -11,13 +11,15 @@
             "count": 8,
             "factors": {
                 "comment": "[ base,  growth,  rand ]",
-                "count":    [  6.0,     1.0,   2.0 ],
+                "count":    [  8.0,     1.0,   2.0 ],
                 "length":   [ 35.0,     1.0,   5.0 ],
-                "mass":     [ 64.0,     1.05,   0.0 ],
-                "drag":     [  0.2,     1.1,   0.0 ],
+                "mass":     [ 64.0,    1.05,   0.0 ],
+                "drag":     [  0.2,    1.15,   0.0 ],
                 "width":    [ 24.0,     0.98,  0.0 ],
                 "grav":     [  1.0,     1,     0.0 ]
-            }
+            },
+            "branchRate":   1,
+            "branchDegree": 2
         }
     },
 
