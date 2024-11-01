@@ -3,7 +3,7 @@
 
 export class idk_Stack<T>
 {
-    private data = new Array<T>();
+    public data = new Array<T>();
 
     push( data: T ): void
     {
@@ -25,20 +25,24 @@ export class idk_Stack<T>
 
     pop(): T
     {
-        if (this.data.length == 0)
+        if (this.empty())
         {
             return null;
         }
 
-        else
-        {
-            return this.data.pop();
-        }
+        const data = this.top();
+        this.data.length -= 1;
+        return data;
+    }
+
+    size(): number
+    {
+        return this.data.length;
     }
 
     empty(): boolean
     {
-        return this.data.length == 0;
+        return this.size() <= 0;
     }
 
 }

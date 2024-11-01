@@ -5,8 +5,6 @@ import ui_Style from "./style.js";
 
 export default class ui_Title extends ui_Label
 {
-    label: string;
-
     constructor( label: string )
     {
         let style = new ui_Style([50, 50, 50, 150], [255, 255, 255, 255]);

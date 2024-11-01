@@ -131,23 +131,23 @@ export default class BasedCollisionGroup
 
     private _tunneled( pos: vec2, vel: vec2 ): boolean
     {
-        if (vel.magSq() <= 0.001)
-        {
-            return false;
-        }
+        // if (vel.magSq() <= 0.001)
+        // {
+        //     return false;
+        // }
 
-        const dir   = vec2.copy(vel).normalize();
-        const world = __engine.getSystem(sys_World);
+        // const dir   = vec2.copy(vel).normalize();
+        // const world = __engine.getSystem(sys_World);
 
-        if (world.raycast(pos.x, pos.y, dir.x, dir.y))
-        {
-            const res = WorldQueryResult.hit;
+        // if (world.raycast(pos.x, pos.y, dir.x, dir.y))
+        // {
+        //     const res = WorldQueryResult.hit;
 
-            if (pos.distSq(res) < vel.magSq())
-            {
-                return true;
-            }
-        }
+        //     if (pos.distSq(res) < vel.magSq())
+        //     {
+        //         return true;
+        //     }
+        // }
 
         return false;
     }

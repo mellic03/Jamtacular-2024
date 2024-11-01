@@ -1,3 +1,4 @@
+import Render from "../sys-render.js";
 
 
 export default class ui_Style
@@ -24,6 +25,7 @@ export default class ui_Style
     minHeight = 64;
     maxHeight = 512;
 
+
     constructor( bg  = [75, 75, 75, 220], fg  = [150, 150, 150, 220],
                  pad = [8, 8, 8, 8], mar = [4, 4, 4, 4], rad = [16] )
     {
@@ -33,5 +35,27 @@ export default class ui_Style
         this.bg = bg;
         this.fg = fg;
     }
+}
+
+
+
+export function setSyleSpanLimitAsRatio( style: ui_Style, minWidth, maxWidth, minHeight, maxHeight )
+{
+    const vw = Render.width;
+    const vh = Render.height;
+
+    style.minHeight = minWidth  * vw;
+    style.maxWidth  = maxWidth  * vw;
+    style.minHeight = minHeight * vh;
+    style.maxHeight = maxHeight * vh;
+}
+
+
+export function setSyleSpanLimitAsPixels( style: ui_Style, minWidth, maxWidth, minHeight, maxHeight )
+{
+    style.minHeight = minWidth;
+    style.maxWidth  = maxWidth;
+    style.minHeight = minHeight;
+    style.maxHeight = maxHeight;
 }
 

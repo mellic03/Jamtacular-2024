@@ -1,9 +1,7 @@
-import { Engine, __engine } from "../../engine/engine.js";
+import { __engine } from "../../engine/engine.js";
 import { IO, KEYCODE } from "../../engine/IO.js";
 import vec2 from "../../engine/math/vec2.js";
-import sys_Physics from "../../engine/sys-physics.js";
 import Render from "../../engine/sys-render.js";
-import { RigidBodyCharacter } from "./character.js";
 import { iCharacterController, iControllable } from "./controller.js";
 
 
@@ -12,12 +10,6 @@ export default class PlayerController implements iCharacterController
     constructor()
     {
 
-    }
-
-    init( C: RigidBodyCharacter ): void
-    {
-        sys_Physics.GROUP_PLAYER.add(C.sprite);
-        // sys_Physics.GROUP_BASED_WORLD.addBody(C);
     }
 
     private key_rotation( C: iControllable )
@@ -37,6 +29,7 @@ export default class PlayerController implements iCharacterController
 
         C.rotate(speed*theta);
     }
+
 
     private key_movement( C: iControllable )
     {
@@ -71,6 +64,7 @@ export default class PlayerController implements iCharacterController
         C.move(speed*delta.x, speed*delta.y);
     }
 
+
     update( C: iControllable )
     {
         this.key_rotation(C);
@@ -83,7 +77,7 @@ export default class PlayerController implements iCharacterController
             C.interact(wmouse.x, wmouse.y, "hello");
         }
 
-        Render.view.mixXY(C.local.x, C.local.y, 0.05);
+        Render.view.mixXY(C.local.x, C.local.y, 0.5);
     }
 
 }

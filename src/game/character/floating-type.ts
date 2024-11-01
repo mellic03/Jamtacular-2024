@@ -1,12 +1,8 @@
-import BasedAnimation from "../../engine/animation.js";
 import { __engine } from "../../engine/engine.js";
 import vec2 from "../../engine/math/vec2.js";
-import Rope from "../../engine/physics/rope.js";
-import sys_Physics from "../../engine/sys-physics.js";
-import ProjectileManager from "../../engine/sys-projectile.js";
 import BodyPartTentacle from "../bodypart/tentacle.js";
+import { iCharacterController } from "../controller/controller.js";
 import { RigidBodyCharacter } from "./character.js";
-import { iCharacterController } from "./controller.js";
 
 
 
@@ -19,7 +15,7 @@ export class FloatRageTrigger
         this.sprite = new Sprite(x, y, 64, 64);
         this.sprite.collider = "static";
         this.sprite.shape    = "box";
-        sys_Physics.GROUP_ANGRY.add(this.sprite);
+        // sys_Physics.GROUP_ANGRY.add(this.sprite);
     }
 
     draw()
@@ -40,7 +36,7 @@ export class FloatCalmTrigger
         this.sprite = new Sprite(x, y, 64, 64);
         this.sprite.collider = "static";
         this.sprite.shape    = "box";
-        sys_Physics.GROUP_CALM.add(this.sprite);
+        // sys_Physics.GROUP_CALM.add(this.sprite);
     }
 
     draw()
@@ -59,12 +55,9 @@ export default class CharacterFloatingType extends RigidBodyCharacter
     tentacles  = new Array<BodyPartTentacle>()
     ray_dir    = new vec2(1, 0.001).normalize();
     grabbiness = 0;
-    aggression = 0.0;
+    aggression = 1.0;
 
-    testA = new FloatRageTrigger(-300, -300);
-    testB = new FloatCalmTrigger(+300, -300);
-
-    constructor( x: number, y: number, controller?: iCharacterController )
+    constructor( x: number, y: number, ropegroup: Group, controller?: iCharacterController )
     {
         super(x, y, controller);
 
@@ -72,30 +65,30 @@ export default class CharacterFloatingType extends RigidBodyCharacter
         // this.fire.size.setXY(128);
         // this.fire.duration = 0.35;
 
-        const worldgroup = sys_Physics.GROUP_WORLD;
-        sys_Physics.GROUP_PLAYER.add(this.sprite);
+        // const wgroup = sys_Physics.GROUP_WORLD;
+        // sys_Physics.GROUP_PLAYER.add(this.sprite);
 
-        this.sprite.collides(sys_Physics.GROUP_ANGRY, (A, B) => {
-            this.aggression = 1.0;
-        });
+        // this.sprite.collides(sys_Physics.GROUP_ANGRY, (A, B) => {
+        //     this.aggression = 1.0;
+        // });
 
-        this.sprite.collides(sys_Physics.GROUP_CALM, (A, B) => {
-            this.aggression = 0.0;
-        });
+        // this.sprite.collides(sys_Physics.GROUP_CALM, (A, B) => {
+        //     this.aggression = 0.0;
+        // });
 
         this.sprite.shape = "circle";
-        this.sprite.mass  = 8;
+        this.sprite.mass  = 0.025;
         this.sprite.gravityScale = 0;
         this.sprite.autoDraw = false;
         this.drag = 0.5;
-        worldgroup.add(this.sprite);
+        this.sprite.overlaps(ropegroup);
 
         const dir   = vec2.tmp().setXY(0, 1);
         const count = 8;
 
         for (let i=0; i<count; i++)
         {
-            const T = new BodyPartTentacle(16*dir.x, 16*dir.y, 8, random(32, 45), 0.25, 16);
+            const T = new BodyPartTentacle(16*dir.x, 16*dir.y, ropegroup, 8, random(32, 45), 0.25, 16);
             T.hand.sprite.mass = 16;
 
             this.tentacles.push(T);
@@ -105,9 +98,9 @@ export default class CharacterFloatingType extends RigidBodyCharacter
         }
     
 
-        this.tentacles[this.tentacles.length-1].hand.sprite.collider = "dynamic";
-        this.tentacles[this.tentacles.length-1].hand.sprite.radius *= 2;
-        sys_Physics.GROUP_PLAYER.add(this.tentacles[this.tentacles.length-1].hand.sprite);
+        // this.tentacles[this.tentacles.length-1].hand.sprite.collider = "dynamic";
+        // this.tentacles[this.tentacles.length-1].hand.sprite.radius *= 2;
+        // wgroup.add(this.tentacles[this.tentacles.length-1].hand.sprite);
     }
 
 
@@ -147,9 +140,6 @@ export default class CharacterFloatingType extends RigidBodyCharacter
     {
         super.draw();
 
-        this.testA.draw();
-        this.testB.draw();
-    
         for (let T of this.tentacles)
         {
             T.drawSegments(0, 0.25);
@@ -167,11 +157,11 @@ export default class CharacterFloatingType extends RigidBodyCharacter
 
     move( x: number, y: number ): void
     {
-        // x = Math.sign(x);
-        // y = Math.sign(y);
+        x = Math.sign(x);
+        y = Math.sign(y);
 
         const alpha = this.aggression;
-        const scale = 4*2048;
+        const scale = 4;
 
         for (let T of this.tentacles)
         {

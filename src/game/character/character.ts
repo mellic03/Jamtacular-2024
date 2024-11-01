@@ -2,19 +2,33 @@ import {} from "p5/global";
 import { __engine } from "../../engine/engine.js";
 import { HierarchicalTransform, Transform } from "../../engine/transform.js";
 import BodyPart from "../bodypart/bodypart.js";
-import { iCharacterController, iControllable } from "./controller.js";
 import RigidBody from "../../engine/physics/rigidbody.js";
 import vec2 from "../../engine/math/vec2.js";
 import { iTransformable } from "../../engine/interface.js";
+import { iCharacterController, iControllable } from "../controller/controller.js"
+
+
+
+
+
+export class CharacterConfig
+{
+    speed1 = 1.0;
+    speed2 = 1.75;
+
+    jump_duration = 1.0;
+
+}
 
 
 
 
 export class RigidBodyCharacter extends RigidBody implements iControllable, iTransformable
 {
-    local: Transform;
-    world: Transform;
-    children = new Array<iTransformable>();
+    local:    Transform;
+    world:    Transform;
+    children: Array<iTransformable>;
+    config:   CharacterConfig;
 
     private timer = 0.0;
     private try_jump = false;
@@ -28,9 +42,11 @@ export class RigidBodyCharacter extends RigidBody implements iControllable, iTra
     {
         super(new Sprite(x, y), 1);
 
-        this.local = new Transform(x, y, 0);
-        this.world = new Transform(0, 0, 0);
-    
+        this.local    = new Transform(x, y, 0);
+        this.world    = new Transform(0, 0, 0);
+        this.children = new Array<iTransformable>();
+        this.config   = new CharacterConfig();
+
         this.pushController(controller);
     }
 
@@ -125,6 +141,7 @@ export class RigidBodyCharacter extends RigidBody implements iControllable, iTra
         }
     }
 
+
     rotate( theta: number ): void
     {
         this.local.rot += theta;
@@ -132,8 +149,17 @@ export class RigidBodyCharacter extends RigidBody implements iControllable, iTra
 
     move( x: number, y: number ): void
     {
-        const dt = deltaTime / 1000.0;
-        this.applyForceXY(dt*x, dt*y);
+        const dir   = vec2.tmp(x, y);
+        const magSq = dir.magSq();
+
+        if (Math.abs(dir.x) == 0 && Math.abs(dir.y) == 0)
+        {
+            return;
+        }
+
+        dir.divXY(Math.sqrt(magSq));
+
+        this.applyForceXY(dir.x, dir.y);
     }
 
     moveTo( x: number, y: number ): void

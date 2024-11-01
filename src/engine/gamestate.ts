@@ -1,84 +1,104 @@
-import { iRenderable, iTransformable, iUpdatable } from "./interface";
+import { RigidBodyCharacter } from "../game/character/character.js";
+import { idk_Stack } from "./ds/idk_stack.js";
+import { iRenderable, iTransformable, iUpdatable } from "./interface.js";
+import { EventEmitter } from "./sys-event.js";
 
 
-export class SceneManager
+export enum GameStateFlag
 {
-    private static scenes = new Array<GameScene>();
-    private static lookup = new Map<string, number>();
-    private static active = new Set<GameScene>();
+    NONE    = (0 << 0),
+    UPDATE  = (1 << 0),
+    DRAW    = (1 << 1),
+    OTHER   = (1 << 2)
+};
 
-    public static addScene( scene: GameScene ): GameScene
+
+export class StateManager
+{
+    protected static states = new Array<GameState<any>>();
+    protected static lookup = new Map<string, number>();
+
+    public static addState<T>( state: GameState<T> ): GameState<T>
     {
-        SceneManager.scenes.push(scene);
-        SceneManager.lookup.set(scene.constructor.name, this.scenes.length-1);
-        return scene;
+        StateManager.states.push(state);
+        StateManager.lookup.set(state.constructor.name, this.states.length-1);
+        return state;
     }
 
-    public static getScene<T extends GameScene>( scene: { new(): T } ): GameScene
+    public static getState<T extends GameState>( state: { new(): T } ): GameState
     {
-        return SceneManager.scenes[this.lookup.get(scene.name)];
+        return StateManager.states[this.lookup.get(state.name)];
     }
-
-    public static isActive( scene: GameScene ): boolean
-    {
-        return SceneManager.active.has(scene);
-    }
-
-    public static makeActive( scene: GameScene ): void
-    {
-        SceneManager.active.add(scene);
-    }
-
-    public static makeInactive( scene: GameScene ): void
-    {
-        SceneManager.active.delete(scene);
-    }
-
 
     public static preload(): void
     {
-        for (let scenes of SceneManager.scenes)
+        for (let state of StateManager.states)
         {
-            scenes.preload();
+            state.preload();
         }
     }
 
     public static setup(): void
     {
-        for (let scenes of SceneManager.scenes)
+        for (let state of StateManager.states)
         {
-            scenes.setup();
+            state.setup();
         }
     }
+
 
     public static update(): void
     {
-        for (let scene of SceneManager.active)
+        for (let state of StateManager.states)
         {
-            scene.update();
+            if (state.isActive(GameStateFlag.UPDATE))
+            {
+                state.update();
+            }
         }
     }
 
+
     public static draw(): void
     {
-        for (let scene of SceneManager.active)
+        for (let state of StateManager.states)
         {
-            scene.draw();
+            if (state.isActive(GameStateFlag.DRAW))
+            {
+                state.draw();
+            }
         }
     }
 }
 
 
-export abstract class GameScene implements iUpdatable, iRenderable
+
+
+
+export abstract class GameState<T=string> extends EventEmitter<T> implements iUpdatable, iRenderable
 {
-    private states   = new Array<GameState>();
-    private lookup   = new Map<string, number>();
-    private state: GameState = null;
+    public  name:   string;
+    public  active: GameStateFlag;
+    public  parent: GameState<any>;
 
-    public children = new Array<GameScene>();
+    public  substates     = new Array<GameState<any>>();
+    public  stack         = new idk_Stack<GameState<any>>();
+    private lookup        = new Map<string, number>();
 
-    public updatables  = new Array<iUpdatable>();
-    public renderables = new Array<iRenderable & iTransformable>();
+    private updatables     = new Array<iUpdatable>();
+    private ransformables  = new Array<iRenderable & iTransformable>();
+    private renderables    = new Array<iRenderable & iTransformable>();
+
+
+    constructor()
+    {
+        super();
+
+        this.name   = this.constructor.name;
+        this.active = GameStateFlag.NONE;
+        this.parent = null;
+    }
+
 
     public addObject( obj: any ): void
     {
@@ -90,93 +110,149 @@ export abstract class GameScene implements iUpdatable, iRenderable
     }
 
 
-    public isActive(): boolean
+    public setFlag( flag: GameStateFlag, bit: boolean ): void
     {
-        return SceneManager.isActive(this);
+        if (bit) this.active |=  flag;
+        else     this.active &= ~flag;
     }
 
-
-    public makeActive(): GameScene
+    public isActive( flags: GameStateFlag = (GameStateFlag.UPDATE | GameStateFlag.DRAW) ): boolean
     {
-        SceneManager.makeActive(this);
+        return (this.active & flags) == flags;
+    }
+
+    public makeActive( flags: GameStateFlag = (GameStateFlag.UPDATE | GameStateFlag.DRAW) ): GameState<T>
+    {
+        this.active |= flags;
+        return this;
+    }
+
+    public makeInactive( flags: GameStateFlag = (GameStateFlag.UPDATE | GameStateFlag.DRAW) ): GameState<T>
+    {
+        this.active &= ~flags;
         return this;
     }
 
 
-    public makeInactive(): GameScene
+    public addSubstate( state: GameState ): GameState
     {
-        SceneManager.makeInactive(this);
-        return this;
-    }
-
-
-    public addState( state: GameState ): GameState
-    {
-        state.scene = this;
-        this.states.push(state);
-        this.lookup.set(state.constructor.name, this.states.length-1);
+        state.parent = this;
+        this.substates.push(state);
+        this.lookup.set(state.constructor.name, this.substates.length-1);
         return state;
     }
 
-
-    public currentState(): GameState
+    public getState<T extends GameState>( state: { new(): T } ): GameState
     {
-        return this.state;
+        return this.substates[this.lookup.get(state.name)];
+    }
+
+    private print_transition( fn_name: string, fromstate: GameState | null, tostate: GameState | null ): void
+    {
+        const left = `[${this.constructor.name}.${fn_name}]`;
+
+        if ( fromstate &&  tostate)  console.log(left + ` ${fromstate.name} --> ${tostate.name}`);
+        if ( fromstate && !tostate)  console.log(left + ` ${fromstate.name} --> None`);
+        if (!fromstate &&  tostate)  console.log(left + ` None --> ${tostate.name}`);
     }
 
 
-    public stateTransition<T extends GameState>( to: { new(): T } ): GameState
-    {
-        console.assert(
-            this.lookup.has(to.name) == true,
-            `[${this.constructor.name}.stateTransition] ${this.constructor.name} does not have state ${to.name}`
-        );
 
+    public pushState<T extends GameState>( to: { new(): T } ): void
+    {
         if (this.lookup.has(to.name) == false)
         {
-            return null;
+            console.assert(false, "Fuck");
+            return;
         }
 
-        const fromstate = this.currentState();
-        const tostate   = this.states[this.lookup.get(to.name)];
+        const fromstate = this.stack.top();
+        const tostate   = this.substates[this.lookup.get(to.name)];
 
-        if (fromstate) { fromstate.exit(tostate);  }
-        if (tostate)   { tostate.enter(fromstate); }
+        tostate.enter();
+        this.stack.push(tostate);
+    }
 
-        if (fromstate)
-            console.log(`[${this.constructor.name}.stateTransition] ${fromstate.name} --> ${tostate.name}`);
-        else
-            console.log(`[${this.constructor.name}.stateTransition] None --> ${tostate.name}`);
 
-        this.state = tostate;
+    public popState(): GameState | null
+    {
+        const fromstate = this.stack.pop();
+        const tostate   = this.stack.top();
 
-        return this.state;
+        if (fromstate) { fromstate.exit(); }
+
+        // this.print_transition("popState", fromstate, tostate);
+
+        return fromstate;
+    }
+
+
+    public stackEmpty(): boolean
+    {
+        return this.stack.empty();
+    }
+
+
+    public topState(): GameState | null
+    {
+        return this.stack.top();
+    }
+
+
+    public transition<T extends GameState>( to: { new(): T } ): void
+    {
+        this.popState();
+        this.pushState(to);
     }
 
 
     public preload(): void {  };
     public setup():   void {  };
+    public enter():   void {  };
+    public exit():    void {  };
 
-    abstract update(): void;
-    abstract draw():   void;
-}
-
-
-
-export abstract class GameState
-{
-    name:  string;
-    scene: GameScene;
-
-    constructor()
+    public update(): void
     {
-        this.name  = this.constructor.name;
-        this.scene = null;
-    }
+        if (this.topState())
+        {
+            this.topState().update();
+        }
 
-    abstract enter( fromstate?: GameState ): void
-    abstract exit( tostate?: GameState ): void
-    abstract update(): void;
-    abstract draw():   void;
+        for (let obj of this.updatables)
+        {
+            obj.update();
+        }
+
+        for (let state of this.substates)
+        {
+            if (state.isActive(GameStateFlag.UPDATE))
+            {
+                state.update();
+            }
+        }
+    };
+
+    public draw(): void
+    {
+        if (this.topState())
+        {
+            this.topState().draw();
+        }
+    
+        for (let obj of this.renderables)
+        {
+            obj.draw();
+        }
+
+        for (let state of this.substates)
+        {
+            if (state.isActive(GameStateFlag.DRAW))
+            {
+                state.draw();
+            }
+        }
+    };
+
 }
+
 

@@ -6,7 +6,7 @@ import sys_Image from "../../engine/sys-image.js";
 import Render from "../../engine/sys-render.js";
 import sys_Render from "../../engine/sys-render.js";
 import { WorldQueryResult } from "../../engine/sys-world/query.js";
-import sys_World from "../../engine/sys-world/sys-world.js";
+import { GS_World } from "../state/world/world.js";
 import BodyPart from "./bodypart.js";
 
 
@@ -20,7 +20,7 @@ export class LegParams
     step_height:    number;
     rest_height:    number;
 
-    constructor( foot_xoffset=0, foot_maxdist=256, step_overshoot=200,
+    constructor( foot_xoffset=0, foot_maxdist=256, step_overshoot=300,
                  step_duration=0.25, step_height=32, rest_height=0.95 )
     {
         this.foot_xoffset   = foot_xoffset;
@@ -87,10 +87,14 @@ export default class BodyPartLeg2 extends BodyPart
 
     private step()
     {
-        const world  = __engine.getSystem(sys_World);
+        // if (GS_Gameplay.world == null)
+        // {
+        //     return;
+        // }
+
         const offset = this.direction * this.params.step_overshoot;
 
-        if (world.raycast(this.world.x+offset, this.world.y, 0.0001, 1.0))
+        if (GS_World.raycast(this.world.x+offset, this.world.y, 0.0001, 1.0))
         {
             const res = WorldQueryResult.hit;
 

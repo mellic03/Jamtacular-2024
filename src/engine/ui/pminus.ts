@@ -51,7 +51,6 @@ function default_inc( vref: ui_ValueRef<any> ) { vref.value += 1; }
 export default class ui_PMinus extends ui_Grid
 {
     private vref: ui_ValueRef<any>;
-    public label: string;
 
     /**
      * 

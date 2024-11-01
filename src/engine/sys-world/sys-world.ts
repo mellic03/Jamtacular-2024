@@ -1,7 +1,6 @@
 import System from "../system.js";
 import vec2 from "../math/vec2.js";
 import { Engine, __engine } from "../engine.js";
-import sys_Physics from "../sys-physics.js";
 import WorldOptimiser, { DrawItem } from "./optimiser.js";
 import WorldGenerator from "./generator.js";
 import WorldQuery, { WorldQueryResult } from "./query.js";
@@ -28,7 +27,7 @@ export default class sys_World extends System
         this.scale  = scale;
     }
 
-    private generate_colliders( cringe: Group )
+    private generate_colliders( cringe: any )
     {
         for (let block of this.drawlist)
         {
@@ -94,7 +93,8 @@ export default class sys_World extends System
     {
         this.data     = WorldGenerator.generateWorld(this.width, this.height, this.scale);
         this.drawlist = WorldOptimiser.generateDrawlist(this.data);
-        this.generate_colliders(sys_Physics.GROUP_WORLD);
+        // this.generate_colliders(sys_Physics.GROUP_WORLD);
+        // this.generate_colliders(null);
     }
 
     update( engine: Engine ): void

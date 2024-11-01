@@ -1,29 +1,26 @@
-import BasedAnimation from "../../engine/animation.js";
 import { __engine } from "../../engine/engine.js";
 import vec2 from "../../engine/math/vec2.js";
-import Rope from "../../engine/physics/rope.js";
-import sys_Physics from "../../engine/sys-physics.js";
-import ProjectileManager from "../../engine/sys-projectile.js";
+// import sys_Physics from "../../engine/sys-physics.js";
 import BodyPartTentacle from "../bodypart/tentacle.js";
+import { iCharacterController } from "../controller/controller.js";
 import { RigidBodyCharacter } from "./character.js";
-import { iCharacterController } from "./controller.js";
 
 
 
 
-class TentacleDDL extends BodyPartTentacle
-{
-    constructor( x: number, y: number, count=8, length=32, mass=0.25, thickness=8 )
-    {
-        super(x, y, count, length, mass, thickness);
-    }
+// class TentacleDDL extends BodyPartTentacle
+// {
+//     constructor( x: number, y: number, count=8, length=32, mass=0.25, thickness=8 )
+//     {
+//         super(x, y, ropegroup, count, length, mass, thickness);
+//     }
 
-    grab( x: number, y: number )
-    {
-        this.hand.moveTowardsXY(x, y);
-    }
+//     grab( x: number, y: number )
+//     {
+//         this.hand.moveTowardsXY(x, y);
+//     }
     
-}
+// }
 
 
 
@@ -33,26 +30,26 @@ export default class CharacterDDL extends RigidBodyCharacter
     grabbiness = 0;
     aggression = 0.0;
 
-    constructor( x: number, y: number, controller?: iCharacterController )
+    constructor( x: number, y: number, ropegroup: Group, controller?: iCharacterController )
     {
         super(x, y, controller);
 
-        const worldgroup = sys_Physics.GROUP_WORLD;
-        sys_Physics.GROUP_PLAYER.add(this.sprite);
+        // const worldgroup = sys_Physics.GROUP_WORLD;
+        // sys_Physics.GROUP_PLAYER.add(this.sprite);
 
         this.sprite.shape = "circle";
         this.sprite.mass  = 8;
         this.sprite.gravityScale = 0;
         this.sprite.autoDraw = false;
         this.drag = 0.5;
-        worldgroup.add(this.sprite);
+        // worldgroup.add(this.sprite);
 
         const dir   = vec2.tmp().setXY(0, 1);
         const count = 8;
 
         for (let i=0; i<count; i++)
         {
-            const T = new BodyPartTentacle(16*dir.x, 16*dir.y, 8, random(32, 45), 0.25, 16);
+            const T = new BodyPartTentacle(16*dir.x, 16*dir.y, ropegroup, 8, random(32, 45), 0.25, 16);
             T.hand.sprite.mass = 16;
 
             this.tentacles.push(T);
@@ -63,7 +60,7 @@ export default class CharacterDDL extends RigidBodyCharacter
 
         this.tentacles[this.tentacles.length-1].hand.sprite.collider = "dynamic";
         this.tentacles[this.tentacles.length-1].hand.sprite.radius *= 2;
-        sys_Physics.GROUP_PLAYER.add(this.tentacles[this.tentacles.length-1].hand.sprite);
+        // sys_Physics.GROUP_PLAYER.add(this.tentacles[this.tentacles.length-1].hand.sprite);
     }
 
 

@@ -1,3 +1,4 @@
+import { EventEmitter } from "./sys-event.js";
 
 const KEY_UP     = 0;
 const KEY_DOWN   = 1;
@@ -8,6 +9,17 @@ const MOUSE_DOWN     = 1;
 const MOUSE_CLICKED  = 2;
 const MOUSE_DRAGGED  = 3;
 const CLICK_MS = 200;
+
+
+
+const KeyPressEvents     = new EventEmitter<number>();
+const KeyReleaseEvents   = new EventEmitter<number>();
+const KeyTypeEvents      = new EventEmitter<number>();
+
+const MousePressEvents   = new EventEmitter<number>();
+const MouseReleaseEvents = new EventEmitter<number>();
+const MouseClickEvents   = new EventEmitter<number>();
+
 
 
 export const KEYCODE = {
@@ -37,8 +49,10 @@ export class IO
     private static mouse_curr: Array<boolean>;
     private static mouse_prev: Array<boolean>;
     private static mouse_time: number = 0.0;
-
     public  static mousewheel_delta: number = 0.0;
+
+    // private static key_events   = new EventEmitter<number>();
+    // private static mouse_events = new EventEmitter<number>();
 
     public static preload() {  }
     public static draw() {  }
@@ -159,13 +173,26 @@ export class IO
     {
         return IO.mousewheel_delta;
     }
+
+
+    static onKeyPress   (k: number, callback: Function) { KeyPressEvents  .on(k, callback) }
+    static onKeyRelease (k: number, callback: Function) { KeyReleaseEvents.on(k, callback) }
+    static onKeyType    (k: number, callback: Function) { KeyTypeEvents   .on(k, callback) }
+
+    static onMousePress   (callback: Function) { MousePressEvents  .on(0, callback) }
+    static onMouseRelease (callback: Function) { MouseReleaseEvents.on(0, callback) }
+    static onMouseClick   (callback: Function) { MouseClickEvents  .on(0, callback) }
 }
 
 
-function mouseWheel( event )
-{
-    IO.mousewheel_delta = event.delta;
-}
 
-window.mouseWheel = mouseWheel;
+window.keyPressed    = (e?: KeyboardEvent) => { KeyPressEvents  .emit(e.keyCode, e) }
+window.keyReleased   = (e?: KeyboardEvent) => { KeyReleaseEvents.emit(e.keyCode, e) }
+window.keyTyped      = (e?: KeyboardEvent) => { KeyTypeEvents   .emit(e.keyCode, e) }
+
+
+window.mousePressed  = (e?: MouseEvent) => { MousePressEvents  .emit(0, e)  }
+window.mouseReleased = (e?: MouseEvent) => { MouseReleaseEvents.emit(0, e)  }
+window.mouseClicked  = (e?: MouseEvent) => { MouseClickEvents  .emit(0, e)  }
+window.mouseWheel    = (e?: WheelEvent) => { IO.mousewheel_delta = e.deltaY }
 

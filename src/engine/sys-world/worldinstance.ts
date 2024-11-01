@@ -1,7 +1,6 @@
 import System from "../system.js";
 import vec2 from "../math/vec2.js";
 import { Engine, __engine } from "../engine.js";
-import sys_Physics from "../sys-physics.js";
 import WorldOptimiser, { DrawItem } from "./optimiser.js";
 import WorldGenerator from "./generator.js";
 import WorldQuery, { WorldQueryResult } from "./query.js";
@@ -14,7 +13,6 @@ export default class WorldInstance
     private img: any;
     private img_mode    = false;
     private img_loaded  = false;
-    private ready       = false;
 
     corner:   vec2;
     width:    number;
@@ -32,14 +30,11 @@ export default class WorldInstance
     }
 
 
-    public generateWorld( x=0, y=0, w=128, h=128, scale=32 ): WorldInstance
+    public generateWorld( x=0, y=0, w=128, h=128, scale=32, xoff=2048, yoff=1024 ): WorldInstance
     {
         this.init(x, y, w, h, scale);
-        this.data     = WorldGenerator.generateWorld(this.width, this.height, this.scale);
+        this.data     = WorldGenerator.generateWorld(this.width, this.height, this.scale, xoff, yoff);
         this.drawlist = WorldOptimiser.generateDrawlist(this.data);
-        this.generate_colliders(sys_Physics.GROUP_WORLD);
-        this.ready = true;
-
         return this;
     }
 
@@ -50,7 +45,6 @@ export default class WorldInstance
 
         this.img_mode    = true;
         this.img_loaded  = false;
-        this.ready       = false;
 
         this.img = loadImage(filepath, () => {
             this.img_loaded  = true;
@@ -60,7 +54,7 @@ export default class WorldInstance
     }
 
 
-    private generate_colliders( cringe: Group )
+    public generateColliders( cringe: Group )
     {
         for (let block of this.drawlist)
         {
@@ -117,9 +111,7 @@ export default class WorldInstance
         if (this.img_loaded == true)
         {
             this.data     = WorldGenerator.loadWorld(this.width, this.height, this.img);
-            this.drawlist = WorldOptimiser.generateDrawlist(this.data);
-            this.generate_colliders(sys_Physics.GROUP_WORLD);
-    
+            this.drawlist = WorldOptimiser.generateDrawlist(this.data);    
             return true;
         }
 
@@ -127,19 +119,19 @@ export default class WorldInstance
     }
 
 
-    preload( engine: Engine ): void
+    preload(): void
     {
 
     }
 
 
-    setup( engine: Engine ): void
+    setup(): void
     {
 
     }
 
 
-    update( engine: Engine ): void
+    draw(): void
     {
         rectMode(CORNER);
         noStroke();

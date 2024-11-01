@@ -3,12 +3,12 @@ import * as p5 from "p5";
 
 export default class WorldGenerator
 {
-    static generateWorld( w: number, h: number, scale: number ): Array<Array<number>>
+    static generateWorld( w: number, h: number, scale: number, xoff=2048, yoff=1024 ): Array<Array<number>>
     {
         const data = new Array<Array<number>>();
 
         WorldGenerator.clear(w, h, data);
-        WorldGenerator.gen_world(w, h, scale, data);
+        WorldGenerator.gen_world(w, h, scale, xoff, yoff, data);
 
         return data;
     }
@@ -39,7 +39,8 @@ export default class WorldGenerator
     }
 
 
-    private static gen_world( w: number, h: number, scale: number, output: Array<Array<number>> ): void
+    private static gen_world( w: number, h: number, scale: number, xoff: number, yoff: number,
+                              output: Array<Array<number>> ): void
     {
         for (let i=0; i<h; i++)
         {
@@ -62,7 +63,7 @@ export default class WorldGenerator
                     output[i][j] = 0;
                 }
 
-                else if (noise((j/32)+4096, (i/32)+1096) < 0.45)
+                else if (noise((j/32)+xoff, (i/32)+yoff) < 0.45)
                 {
                     output[i][j] = 0;
                 }

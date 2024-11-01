@@ -1,15 +1,13 @@
-import ui_Button from "../../engine/ui/button.js";
-import ui_List from "../../engine/ui/list.js";
-import ui_Title from "../../engine/ui/title.js";
-import { RootScene } from "../game.js";
-import { UI_State } from "../../engine/ui/ui-state.js";
-import Render from "../../engine/sys-render.js";
-import ui_Bounds from "../../engine/ui/bounds.js";
-import ui_Style from "../../engine/ui/style.js";
-import { RigidBodyCharacter } from "../character/character.js";
-import ui_ElementBase from "../../engine/ui/base.js";
-import ui_PMinus, { ui_ValueRef } from "../../engine/ui/pminus.js";
-import ui_Grid from "../../engine/ui/grid.js";
+import ui_Button from "../../../engine/ui/button.js";
+import ui_List from "../../../engine/ui/list.js";
+import Render from "../../../engine/sys-render.js";
+import ui_Bounds from "../../../engine/ui/bounds.js";
+import ui_Style from "../../../engine/ui/style.js";
+import { RigidBodyCharacter } from "../../character/character.js";
+import ui_ElementBase from "../../../engine/ui/base.js";
+import ui_PMinus, { ui_ValueRef } from "../../../engine/ui/pminus.js";
+import ui_Grid from "../../../engine/ui/grid.js";
+import { GameState } from "../../../engine/gamestate.js";
 
 
 
@@ -62,7 +60,7 @@ class TestButton extends ui_Button
 
 
 
-export class UI_Character extends UI_State
+export class UI_Character extends GameState
 {
     private ui: ui_Grid;
     private valueA = new ui_ValueRef(0);
@@ -70,8 +68,6 @@ export class UI_Character extends UI_State
     constructor()
     {
         super();
-
-        this.makeActive();
 
         this.ui = new ui_Grid(1, 1,
             new ui_PMinus("ui_PMinus Test", this.valueA)
@@ -81,6 +77,18 @@ export class UI_Character extends UI_State
         this.ui.updateStyle(this.ui.style);
         
     }
+
+    public enter(): void
+    {
+        
+    }
+
+
+    public exit(): void
+    {
+
+    }
+
 
     update(): void
     {

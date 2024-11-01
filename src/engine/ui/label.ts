@@ -5,8 +5,6 @@ import ui_Bounds from "./bounds.js";
 
 export default class ui_Label extends ui_ElementBase
 {
-    label: string;
-
     constructor( label: string )
     {
         super();

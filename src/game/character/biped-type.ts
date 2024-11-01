@@ -1,13 +1,8 @@
 import { __engine } from "../../engine/engine.js";
 import { math } from "../../engine/math/math.js";
-import sys_Physics from "../../engine/sys-physics.js";
-import { WorldQueryResult } from "../../engine/sys-world/query.js";
-import sys_World from "../../engine/sys-world/sys-world.js";
-import { HierarchicalTransform, Transform } from "../../engine/transform.js";
-import LegTwoJoint from "../bodypart/leg-twojoint.js";
 import BodyPartLeg2 from "../bodypart/leg2.js";
+import { iCharacterController } from "../controller/controller.js";
 import { RigidBodyCharacter } from "./character.js";
-import { iCharacterController } from "./controller.js";
 
 
 export default class CharacterBipedType extends RigidBodyCharacter
@@ -18,7 +13,7 @@ export default class CharacterBipedType extends RigidBodyCharacter
 
     legs = new Array<BodyPartLeg2>();
 
-    constructor( x: number, y: number, controller?: iCharacterController )
+    constructor( x: number, y: number, group: Group, controller?: iCharacterController )
     {
         super(x, y, controller);
 
@@ -49,7 +44,8 @@ export default class CharacterBipedType extends RigidBodyCharacter
             this.addPart(L);
         }
 
-        sys_Physics.GROUP_PLAYER.add(this.sprite);
+        group.add(this.sprite);
+        // sys_Physics.GROUP_PLAYER.add(this.sprite);
 
     }
 

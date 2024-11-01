@@ -106,11 +106,11 @@ export default class BodyPartTentacle extends BodyPart
     grabbing   = false;
     aggression = 0.0;
 
-    constructor( x: number, y: number, count=8, length=32, mass=0.25, thickness=8 )
+    constructor( x: number, y: number, ropegroup: Group, count=8, length=32, mass=0.25, thickness=8 )
     {
         super(x, y);
 
-        this.rope = new FloatRopes1(x, y, count, length, mass, thickness);
+        this.rope = new FloatRopes1(x, y, ropegroup, count, length, mass, thickness);
         this.children.push(this.rope);
 
         this.root = this.rope.bodies[0];

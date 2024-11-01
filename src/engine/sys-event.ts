@@ -9,9 +9,9 @@ export interface EventEmitting<T>
 
 export class EventEmitter<T>
 {
-    callbacks = new Map<T, Array<Function>>();
+    private callbacks = new Map<T, Array<Function>>();
 
-    on( msg: T, callback: Function ): void
+    public on( msg: T, callback: Function ): void
     {
         if (this.callbacks.has(msg) == false)
         {
@@ -21,7 +21,7 @@ export class EventEmitter<T>
         this.callbacks.get(msg).push(callback);
     }
 
-    emit( msg: T, data: any ): void
+    public emit( msg: T, data?: any ): void
     {
         if (this.callbacks.has(msg) == false)
         {

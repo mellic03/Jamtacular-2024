@@ -2,7 +2,7 @@ import { __engine } from "../engine.js";
 import { iTransformable } from "../interface.js";
 import vec2 from "../math/vec2.js";
 import sys_Image from "../sys-image.js";
-import sys_Physics from "../sys-physics.js";
+// import sys_Physics from "../sys-physics.js";
 import sys_Render from "../sys-render.js";
 import { Transform } from "../transform.js";
 import RigidBody from "./rigidbody.js";
@@ -14,18 +14,16 @@ export default class Rope implements iTransformable
     world: Transform;
     children = new Array<iTransformable>();
 
-    group:     Group;
     bodies:    Array<RigidBody>;
     dist:      number;
     tdist:     number;
     thickness: number;
 
-    constructor( x: number, y: number, count=8, length=32, mass=1.0, thickness=8 )
+    constructor( x: number, y: number, ropegroup: Group, count=8, length=32, mass=1.0, thickness=8 )
     {
         this.local = new Transform(0, 0, 0);
         this.world = new Transform(x, y, 0);
 
-        this.group     = sys_Physics.GROUP_ROPES;
         this.bodies    = [];
         this.dist      = length;
         this.tdist     = count*length;
@@ -48,7 +46,7 @@ export default class Rope implements iTransformable
 
             if (i != count-1)
             {
-                this.group.add(B.sprite);
+                ropegroup.add(B.sprite);
             }
             this.bodies.push(B);
         }
