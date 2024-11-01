@@ -18,7 +18,9 @@ export default class Rope implements iTransformable
     tdist:     number;
     thickness: number;
 
-    constructor( x: number, y: number, ropegroup: Group, count=8, length=32, mass=1.0, thickness=8 )
+    constructor( x: number, y: number, ropegroup: Group,
+                 count=8, length=32, mass=1.0, drag=0.1, thickness=8,
+                 lengthFactor=1, massFactor=1, dragFactor=1, thicknessFactor=1 )
     {
         this.local = new Transform(0, 0, 0);
         this.world = new Transform(x, y, 0);
@@ -30,10 +32,11 @@ export default class Rope implements iTransformable
 
         for (let i=0; i<count; i++)
         {
-            const B = new RigidBody(new Sprite(x+i*length/2, y), mass, "dynamic");
+            const B = new RigidBody(new Sprite(x+i*length/2, y), 0.5, "dynamic");
 
-            B.sprite.radius       = thickness/2;
-            B.sprite.drag         = 0.7;
+            B.sprite.radius       = (thickness/2);  thickness *= thicknessFactor;
+            B.sprite.mass         = mass;           mass *= massFactor;
+            B.sprite.drag         = drag;           drag *= dragFactor;
             B.sprite.friction     = 0.25;
             B.sprite.gravityScale = 0.01;
             B.sprite.bounciness   = 0.0;
@@ -53,7 +56,7 @@ export default class Rope implements iTransformable
             const B = this.bodies[i+1].sprite;
 
             const J = new RopeJoint(A, B);
-            J.maxLength = length;
+            J.maxLength = length; length*=lengthFactor;
         }
     }
 

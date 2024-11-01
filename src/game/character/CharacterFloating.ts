@@ -1,4 +1,5 @@
 import { __engine } from "../../engine/engine.js";
+import { math } from "../../engine/math/math.js";
 import vec2 from "../../engine/math/vec2.js";
 import BodyPartTentacle from "../bodypart/tentacle.js";
 import { iCharacterController } from "../controller/controller.js";
@@ -67,6 +68,8 @@ export default class CharacterFloating extends RigidBodyCharacter
         const cname = this.constructor.name;
 
         this.speed          = Game.config[cname]["speed"];
+        this.aggression     = Game.config[cname]["aggression"];
+
         this.drag           = Game.config[cname]["drag"];
         this.sprite.mass    = Game.config[cname]["mass"];
         this.sprite.shape   = "circle";
@@ -74,16 +77,31 @@ export default class CharacterFloating extends RigidBodyCharacter
         this.sprite.autoDraw = false;
         this.sprite.overlaps(ropegroup);
 
-    
+        
+        const dir      = vec2.tmp().setXY(0, 1);
+        const count    = Game.config[cname]["tentacles"]["count"];
+        const segCount = Game.config[cname]["tentacles"]["segCount"];
+        const segLen   = Game.config[cname]["tentacles"]["segLength"];
+        const segMass  = Game.config[cname]["tentacles"]["segMass"];
+        const segDrag  = Game.config[cname]["tentacles"]["segDrag"];
+        const segWidth = Game.config[cname]["tentacles"]["segWidth"];
 
-
-        const dir   = vec2.tmp().setXY(0, 1);
-        const count = 8;
 
         for (let i=0; i<count; i++)
         {
-            const T = new BodyPartTentacle(16*dir.x, 16*dir.y, ropegroup, 8, random(32, 45), 0.25, 16);
-            T.hand.sprite.mass = 16;
+            const segments = segCount[0] + random(-segCount[2], +segCount[2]);
+            const sLength  = segLen[0]   + random(-segLen[2],   +segLen[2]);
+            const sMass    = segMass[0]  + random(-segMass[2],  +segMass[2]);
+            const sDrag    = segDrag[0]  + random(-segDrag[2],  +segDrag[2]);
+            const sWidth   = segWidth[0] + random(-segWidth[2], +segWidth[2]);
+
+            const T = new BodyPartTentacle(
+                16*dir.x, 16*dir.y, ropegroup, segments,
+                  sLength,      sMass,      sDrag,     sWidth,
+                segLen[1], segMass[1], segDrag[1], segWidth[1]
+            );
+
+            // T.hand.sprite.mass = math.mix(rtMass[0], rtMass[1], i/count);
 
             this.tentacles.push(T);
             this.addPart(T);

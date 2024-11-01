@@ -47,19 +47,19 @@ export default class CharacterDDL extends RigidBodyCharacter
         const dir   = vec2.tmp().setXY(0, 1);
         const count = 8;
 
-        for (let i=0; i<count; i++)
-        {
-            const T = new BodyPartTentacle(16*dir.x, 16*dir.y, ropegroup, 8, random(32, 45), 0.25, 16);
-            T.hand.sprite.mass = 16;
+        // for (let i=0; i<count; i++)
+        // {
+        //     const T = new BodyPartTentacle(16*dir.x, 16*dir.y, ropegroup, 8, random(32, 45), 0.25, 16);
+        //     T.hand.sprite.mass = 16;
 
-            this.tentacles.push(T);
-            this.addPart(T);
+        //     this.tentacles.push(T);
+        //     this.addPart(T);
 
-            dir.rotate(2*Math.PI / count);
-        }
+        //     dir.rotate(2*Math.PI / count);
+        // }
 
-        this.tentacles[this.tentacles.length-1].hand.sprite.collider = "dynamic";
-        this.tentacles[this.tentacles.length-1].hand.sprite.radius *= 2;
+        // this.tentacles[this.tentacles.length-1].hand.sprite.collider = "dynamic";
+        // this.tentacles[this.tentacles.length-1].hand.sprite.radius *= 2;
         // sys_Physics.GROUP_PLAYER.add(this.tentacles[this.tentacles.length-1].hand.sprite);
     }
 

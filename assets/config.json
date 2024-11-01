@@ -1,13 +1,20 @@
 {
     "CharacterFloating": {
         "mass":  0.01,
-        "drag":  0.25,
-        "speed": [ 32, 32 ],
+        "drag":  0.87,
+        "speed": [ 64, 64 ],
         "jump":  [ 0, 0 ],
+
+        "aggression": 1.0,
+
         "tentacles": {
-            "count":         [  6, 14 ],
-            "segmentCount":  [  7,  9 ],
-            "segmentLength": [ 32, 45 ]
+            "count":     8,
+            "comment":  "[ base,  growth,  rand ]",
+            "segCount":  [ 8.0,      1.0,   2.0 ],
+            "segLength": [ 38.0,     1.0,   8.0 ],
+            "segMass":   [ 4.0,      1.0,   0.0 ],
+            "segDrag":   [ 0.8,      1.0,   0.0 ],
+            "segWidth":  [ 64.0,     1.1,   0.0 ]
         }
     },
 
