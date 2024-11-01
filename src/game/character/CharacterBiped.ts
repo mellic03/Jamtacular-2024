@@ -2,10 +2,10 @@ import { __engine } from "../../engine/engine.js";
 import { math } from "../../engine/math/math.js";
 import BodyPartLeg2 from "../bodypart/leg2.js";
 import { iCharacterController } from "../controller/controller.js";
-import { RigidBodyCharacter } from "./character.js";
+import { RigidBodyCharacter } from "./Character.js";
 
 
-export default class CharacterBipedType extends RigidBodyCharacter
+export default class CharacterBiped extends RigidBodyCharacter
 {
     private dick_height = 160;
     private dick_offset = 32;

@@ -3,7 +3,7 @@ import vec2 from "../../engine/math/vec2.js";
 // import sys_Physics from "../../engine/sys-physics.js";
 import BodyPartTentacle from "../bodypart/tentacle.js";
 import { iCharacterController } from "../controller/controller.js";
-import { RigidBodyCharacter } from "./character.js";
+import { RigidBodyCharacter } from "./Character.js";
 
 
 

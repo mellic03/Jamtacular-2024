@@ -15,12 +15,45 @@ export const GameStateGameGUI   = new GS_GameUI();
 
 export class Game
 {
+    public static config: Object;
+    
     constructor()
     {
         StateManager.addState(GameStateUserInput).makeActive();
         StateManager.addState(GameStateGameplay).makeActive();
         StateManager.addState(GameStateWorld).makeActive();
         StateManager.addState(GameStateGameGUI).makeActive();
+    }
+
+    public static getConfig( ...args: string[] )
+    {
+        let result = Game.config;
+
+        for (let arg of args)
+        {
+            if (result.hasOwnProperty(arg))
+            {
+                result = result[arg];
+            }
+
+            else
+            {
+                break;
+            }
+        }
+
+        return result;
+    }
+
+
+    preload(): void
+    {
+        Game.config = loadJSON("./assets/config.json");
+    }
+
+    setup(): void
+    {
+        // console.log("WOOP: ", this.config["CharacterBiped"]);
     }
 }
 

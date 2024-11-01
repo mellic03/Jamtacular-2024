@@ -1,5 +1,5 @@
-import { GS_Region } from "./state-region.js";
 // import { Actor } from "../../../engine/actor.js";
+import { GS_Region } from "../world/state-region.js";
 
 
 export class GS_Region1 extends GS_Region
@@ -8,10 +8,6 @@ export class GS_Region1 extends GS_Region
     {
         noiseDetail(8, 0.6);
         super.enter();
-
-        // const A = new Actor(0, 0, 64, 64);
-        // console.log(A);
-        // this.addActor(A);
 
         // this.renderables.push(new FloatRageTrigger(-300, -300));
         // this.renderables.push(new FloatCalmTrigger(+300, -300));
@@ -28,6 +24,7 @@ export class GS_Region1 extends GS_Region
     public draw(): void
     {
         super.draw();
+        console.log(`!![GS_Region1]11`);
     }
 
 }

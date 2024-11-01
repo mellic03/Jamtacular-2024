@@ -2,7 +2,7 @@ import { __engine } from "../../engine/engine.js";
 import vec2 from "../../engine/math/vec2.js";
 import { GS_Gameplay } from "../state/gameplay/gameplay.js";
 import { iCharacterController } from "./controller.js";
-import CharacterFloatingType from "../character/floating-type.js";
+import CharacterFloating from "../character/CharacterFloating.js";
 
 enum State {
     Idle,
@@ -16,7 +16,7 @@ export default class FloatingController implements iCharacterController
     private timer = 0.0;
 
 
-    idle( C: CharacterFloatingType )
+    idle( C: CharacterFloating )
     {
         // const dt     = deltaTime / 1000.0;
         // const player = GS_Gameplay.player;
@@ -32,7 +32,7 @@ export default class FloatingController implements iCharacterController
     }
 
 
-    backingUp( C: CharacterFloatingType )
+    backingUp( C: CharacterFloating )
     {
         // const dt     = deltaTime / 1000.0;
         // const player = GS_Gameplay.player;
@@ -53,7 +53,7 @@ export default class FloatingController implements iCharacterController
     }
 
 
-    charging( C: CharacterFloatingType )
+    charging( C: CharacterFloating )
     {
         // const dt     = deltaTime / 1000.0;
         // const player = GS_Gameplay.player;
@@ -77,7 +77,7 @@ export default class FloatingController implements iCharacterController
 
 
 
-    update( C: CharacterFloatingType )
+    update( C: CharacterFloating )
     {
         // switch (this.state)
         // {

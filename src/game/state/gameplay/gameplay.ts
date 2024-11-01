@@ -2,8 +2,8 @@
 import Render from "../../../engine/sys-render.js";
 import { GameState, GameStateFlag } from "../../../engine/gamestate.js";
 import { GS_Paused, } from "./state-paused.js";
-import CharacterFloatingType from "../../character/floating-type.js";
-import CharacterBipedType from "../../character/biped-type.js";
+import CharacterFloating from "../../character/CharacterFloating.js";
+import CharacterBiped from "../../character/CharacterBiped.js";
 import { GameStateUserInput } from "../../game.js";
 import { UserInputMsg } from "../userinput.js";
 import { GS_Playing } from "./state-playing.js";
@@ -19,7 +19,7 @@ export class GS_Gameplay extends GameState
 
     static ctl1:   iCharacterController;
     static ctl2:   iCharacterController;
-    // static player: CharacterBipedType;
+    // static player: CharacterBiped;
 
     static groups = {
         WORLD:  null,
@@ -35,6 +35,9 @@ export class GS_Gameplay extends GameState
         GS_Gameplay.groups.ROPES  = new Group();
         GS_Gameplay.groups.NPC    = new Group();
         GS_Gameplay.groups.PLAYER = new Group();
+
+        GS_Gameplay.groups.ROPES.overlaps(GS_Gameplay.groups.ROPES);
+        GS_Gameplay.groups.ROPES.overlaps(GS_Gameplay.groups.ROPES);
     }
 
 
@@ -45,15 +48,9 @@ export class GS_Gameplay extends GameState
         GS_Gameplay.ctl1   = new PlayerController();
         GS_Gameplay.ctl2   = new FloatingController();
 
-        // GS_Gameplay.player = new CharacterBipedType(
-        //     0,  9.81, GS_Gameplay.groups.PLAYER, null
-        // );
+        // this.addObject(new CharacterBiped(0, 9.81, GS_Gameplay.groups.PLAYER, null));
+        this.addObject(new CharacterFloating(0, 127, GS_Gameplay.groups.ROPES, GS_Gameplay.ctl1));
 
-        this.addObject(new CharacterFloatingType(
-            0, 127, GS_Gameplay.groups.ROPES, GS_Gameplay.ctl1
-        ));
-
-        GS_Gameplay.groups.ROPES.overlaps(GS_Gameplay.groups.ROPES);
 
         GameStateUserInput.on(UserInputMsg.PAUSE, () => {
             this.setFlag(GameStateFlag.UPDATE, false);

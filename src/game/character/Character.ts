@@ -6,6 +6,7 @@ import RigidBody from "../../engine/physics/rigidbody.js";
 import vec2 from "../../engine/math/vec2.js";
 import { iTransformable } from "../../engine/interface.js";
 import { iCharacterController, iControllable } from "../controller/controller.js"
+import { Game } from "../game.js";
 
 
 
@@ -13,11 +14,8 @@ import { iCharacterController, iControllable } from "../controller/controller.js
 
 export class CharacterConfig
 {
-    speed1 = 1.0;
-    speed2 = 1.75;
-
-    jump_duration = 1.0;
-
+    speed = [ 1 ];
+    jump  = [ 1 ];
 }
 
 
@@ -46,6 +44,15 @@ export class RigidBodyCharacter extends RigidBody implements iControllable, iTra
         this.world    = new Transform(0, 0, 0);
         this.children = new Array<iTransformable>();
         this.config   = new CharacterConfig();
+
+
+        const ctor_name = this.constructor.name;
+
+        if (Game.config.hasOwnProperty(ctor_name))
+        {
+            // console.log(`BITCH: ${Game.config[ctor_name]["speed"]}`);
+            this.config = Game.config[ctor_name];
+        }
 
         this.pushController(controller);
     }
@@ -149,15 +156,14 @@ export class RigidBodyCharacter extends RigidBody implements iControllable, iTra
 
     move( x: number, y: number ): void
     {
-        const dir   = vec2.tmp(x, y);
-        const magSq = dir.magSq();
+        const dir = vec2.tmp(x, y);
 
         if (Math.abs(dir.x) == 0 && Math.abs(dir.y) == 0)
         {
             return;
         }
 
-        dir.divXY(Math.sqrt(magSq));
+        dir.normalize().mulXY(this.config.speed[0]);
 
         this.applyForceXY(dir.x, dir.y);
     }

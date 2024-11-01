@@ -2,7 +2,6 @@ import { __engine } from "../engine.js";
 import { iTransformable } from "../interface.js";
 import vec2 from "../math/vec2.js";
 import sys_Image from "../sys-image.js";
-// import sys_Physics from "../sys-physics.js";
 import sys_Render from "../sys-render.js";
 import { Transform } from "../transform.js";
 import RigidBody from "./rigidbody.js";
@@ -44,10 +43,7 @@ export default class Rope implements iTransformable
             B.curr.x   = x + i*length;
             B.prev.x   = x + i*length;
 
-            if (i != count-1)
-            {
-                ropegroup.add(B.sprite);
-            }
+            ropegroup.add(B.sprite);
             this.bodies.push(B);
         }
 

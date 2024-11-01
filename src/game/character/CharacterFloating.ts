@@ -2,7 +2,9 @@ import { __engine } from "../../engine/engine.js";
 import vec2 from "../../engine/math/vec2.js";
 import BodyPartTentacle from "../bodypart/tentacle.js";
 import { iCharacterController } from "../controller/controller.js";
-import { RigidBodyCharacter } from "./character.js";
+import { Game } from "../game.js";
+import { GS_Gameplay } from "../state/gameplay/gameplay.js";
+import { RigidBodyCharacter } from "./Character.js";
 
 
 
@@ -48,9 +50,10 @@ export class FloatCalmTrigger
 }
 
 
-export default class CharacterFloatingType extends RigidBodyCharacter
+export default class CharacterFloating extends RigidBodyCharacter
 {
     // fire: BasedAnimation;
+    speed      = [0, 0, 0, 0];
 
     tentacles  = new Array<BodyPartTentacle>()
     ray_dir    = new vec2(1, 0.001).normalize();
@@ -61,27 +64,18 @@ export default class CharacterFloatingType extends RigidBodyCharacter
     {
         super(x, y, controller);
 
-        // this.fire = BasedAnimation.loadTiled("assets/anim/particle/Flamethrower-Sheet.png", 3, 4, 10);
-        // this.fire.size.setXY(128);
-        // this.fire.duration = 0.35;
+        const cname = this.constructor.name;
 
-        // const wgroup = sys_Physics.GROUP_WORLD;
-        // sys_Physics.GROUP_PLAYER.add(this.sprite);
-
-        // this.sprite.collides(sys_Physics.GROUP_ANGRY, (A, B) => {
-        //     this.aggression = 1.0;
-        // });
-
-        // this.sprite.collides(sys_Physics.GROUP_CALM, (A, B) => {
-        //     this.aggression = 0.0;
-        // });
-
-        this.sprite.shape = "circle";
-        this.sprite.mass  = 0.025;
+        this.speed          = Game.config[cname]["speed"];
+        this.drag           = Game.config[cname]["drag"];
+        this.sprite.mass    = Game.config[cname]["mass"];
+        this.sprite.shape   = "circle";
         this.sprite.gravityScale = 0;
         this.sprite.autoDraw = false;
-        this.drag = 0.5;
         this.sprite.overlaps(ropegroup);
+
+    
+
 
         const dir   = vec2.tmp().setXY(0, 1);
         const count = 8;
@@ -96,11 +90,7 @@ export default class CharacterFloatingType extends RigidBodyCharacter
 
             dir.rotate(2*Math.PI / count);
         }
-    
 
-        // this.tentacles[this.tentacles.length-1].hand.sprite.collider = "dynamic";
-        // this.tentacles[this.tentacles.length-1].hand.sprite.radius *= 2;
-        // wgroup.add(this.tentacles[this.tentacles.length-1].hand.sprite);
     }
 
 
@@ -113,7 +103,6 @@ export default class CharacterFloatingType extends RigidBodyCharacter
             T.aggression = this.aggression;
         }
     }
-
 
 
     private draw_face()

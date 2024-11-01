@@ -2,15 +2,12 @@ import System from "./system.js";
 import sys_Event from "./sys-event.js";
 import sys_Audio from "./sys-audio.js";
 import sys_Image from "./sys-image.js";
-// import sys_Noise from "./sys-noise.js";
 import sys_Particle from "./sys-particle.js";
 import { math } from "./math/math.js";
-// import sys_Physics from "./sys-physics.js";
 import BasedAnimation from "./animation.js";
 import Render from "./sys-render.js";
 import { IO } from "./IO.js";
 import { StateManager } from "./gamestate.js";
-import sys_World from "./sys-world/sys-world.js";
 
 
 export interface iSystem

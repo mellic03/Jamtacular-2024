@@ -3,7 +3,7 @@ import ui_List from "../../../engine/ui/list.js";
 import Render from "../../../engine/sys-render.js";
 import ui_Bounds from "../../../engine/ui/bounds.js";
 import ui_Style from "../../../engine/ui/style.js";
-import { RigidBodyCharacter } from "../../character/character.js";
+import { RigidBodyCharacter } from "../../character/Character.js";
 import ui_ElementBase from "../../../engine/ui/base.js";
 import ui_PMinus, { ui_ValueRef } from "../../../engine/ui/pminus.js";
 import ui_Grid from "../../../engine/ui/grid.js";

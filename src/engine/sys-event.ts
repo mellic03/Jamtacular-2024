@@ -25,7 +25,7 @@ export class EventEmitter<T>
     {
         if (this.callbacks.has(msg) == false)
         {
-            console.log(`%c No such msg "${msg}"`, "background: grey; color: red;");
+            // console.log(`%c No such msg "${msg}"`, "background: grey; color: red;");
             return;
         }
 

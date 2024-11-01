@@ -1,7 +1,9 @@
-import { RigidBodyCharacter } from "../game/character/character.js";
+import { RigidBodyCharacter } from "../game/character/Character.js";
 import { idk_Stack } from "./ds/idk_stack.js";
 import { iRenderable, iTransformable, iUpdatable } from "./interface.js";
 import { EventEmitter } from "./sys-event.js";
+
+// import { Actor } from "./actor.js";
 
 
 export enum GameStateFlag
@@ -85,8 +87,8 @@ export abstract class GameState<T=string> extends EventEmitter<T> implements iUp
     public  stack         = new idk_Stack<GameState<any>>();
     private lookup        = new Map<string, number>();
 
+    // private actors         = new Array<typeof Actor>();
     private updatables     = new Array<iUpdatable>();
-    private ransformables  = new Array<iRenderable & iTransformable>();
     private renderables    = new Array<iRenderable & iTransformable>();
 
 
@@ -100,13 +102,16 @@ export abstract class GameState<T=string> extends EventEmitter<T> implements iUp
     }
 
 
+    public addActor( A: any )
+    {
+        // this.actors.push(A);
+    }
+
+
     public addObject( obj: any ): void
     {
-        if ((obj as iUpdatable).update != undefined)
-            this.updatables.push(obj);
-
-        if ((obj as iRenderable).draw != undefined && (obj as iTransformable).local != undefined)
-            this.renderables.push(obj);
+        if ((obj as iUpdatable).update != undefined) { this.updatables.push(obj);  }
+        if ((obj as iRenderable).draw  != undefined) { this.renderables.push(obj); }
     }
 
 
@@ -213,14 +218,19 @@ export abstract class GameState<T=string> extends EventEmitter<T> implements iUp
 
     public update(): void
     {
-        if (this.topState())
-        {
-            this.topState().update();
-        }
-
         for (let obj of this.updatables)
         {
             obj.update();
+        }
+
+        // for (let A of this.actors)
+        // {
+        //     A.updateSelf();
+        // }
+
+        if (this.topState())
+        {
+            this.topState().update();
         }
 
         for (let state of this.substates)
@@ -234,14 +244,19 @@ export abstract class GameState<T=string> extends EventEmitter<T> implements iUp
 
     public draw(): void
     {
-        if (this.topState())
-        {
-            this.topState().draw();
-        }
-    
         for (let obj of this.renderables)
         {
             obj.draw();
+        }
+
+        // for (let A of this.actors)
+        // {
+        //     A.drawSelf();
+        // }
+    
+        if (this.topState())
+        {
+            this.topState().draw();
         }
 
         for (let state of this.substates)
