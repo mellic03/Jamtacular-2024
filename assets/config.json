@@ -1,8 +1,8 @@
 {
     "CharacterFloating": {
-        "mass":  0.005,
+        "mass":  0.01,
         "drag":  0.25,
-        "speed": [ 4, 2 ],
+        "speed": [ 32, 32 ],
         "jump":  [ 0, 0 ],
         "tentacles": {
             "count":         [  6, 14 ],
