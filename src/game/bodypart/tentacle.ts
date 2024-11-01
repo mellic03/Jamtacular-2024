@@ -29,7 +29,8 @@ class FloatRopes1 extends Rope
             const a2 = a0*a1 * this.aggression;
 
             // strokeWeight(2*this.bodies.length - 8*a0);
-            strokeWeight(16 - 8*a0);
+            // strokeWeight(16 - 8*a0);
+            strokeWeight(this.bodies[i].radius);
             // this.bodies[i+1].sprite.radius = 0.5 * (16 - 8*a0);
 
             const r = (50 + 100*a2)         * (1.0 + this.r_offset);
@@ -106,16 +107,16 @@ export default class BodyPartTentacle extends BodyPart
     grabbing   = false;
     aggression = 0.0;
 
-    constructor( x: number, y: number, ropegroup: Group,
-                 count, length, mass, drag, thickness,
-                 lengthFactor, massFactor, dragFactor, thicknessFactor )
+    constructor( x: number, y: number, ropegroup: Group, count,
+                 length, mass, drag, thickness, grav,
+                 lengthFactor, massFactor, dragFactor, thicknessFactor, gravFactor )
     {
         super(x, y);
 
         this.rope = new FloatRopes1(
-            x, y, ropegroup,
-            count, length, mass, drag, thickness,
-            lengthFactor, massFactor, dragFactor, thicknessFactor
+            x, y, ropegroup, count,
+            length, mass, drag, thickness, grav,
+            lengthFactor, massFactor, dragFactor, thicknessFactor, gravFactor
         );
 
 

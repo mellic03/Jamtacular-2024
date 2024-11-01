@@ -79,14 +79,16 @@ export default class CharacterFloating extends RigidBodyCharacter
 
         
         const dir      = vec2.tmp().setXY(0, 1);
+        const data     = Game.config[cname]["tentacles"]["factors"];
         const count    = Game.config[cname]["tentacles"]["count"];
-        const segCount = Game.config[cname]["tentacles"]["segCount"];
-        const segLen   = Game.config[cname]["tentacles"]["segLength"];
-        const segMass  = Game.config[cname]["tentacles"]["segMass"];
-        const segDrag  = Game.config[cname]["tentacles"]["segDrag"];
-        const segWidth = Game.config[cname]["tentacles"]["segWidth"];
+        const segCount = data["count"];
+        const segLen   = data["length"];
+        const segMass  = data["mass"];
+        const segDrag  = data["drag"];
+        const segWidth = data["width"];
+        const segGrav  = data["grav"];
 
-
+        console.log(this)
         for (let i=0; i<count; i++)
         {
             const segments = segCount[0] + random(-segCount[2], +segCount[2]);
@@ -94,11 +96,12 @@ export default class CharacterFloating extends RigidBodyCharacter
             const sMass    = segMass[0]  + random(-segMass[2],  +segMass[2]);
             const sDrag    = segDrag[0]  + random(-segDrag[2],  +segDrag[2]);
             const sWidth   = segWidth[0] + random(-segWidth[2], +segWidth[2]);
+            const sGrav    = segGrav[0]  + random(-segGrav[2],  +segGrav[2]);
 
             const T = new BodyPartTentacle(
                 16*dir.x, 16*dir.y, ropegroup, segments,
-                  sLength,      sMass,      sDrag,     sWidth,
-                segLen[1], segMass[1], segDrag[1], segWidth[1]
+                  sLength,      sMass,      sDrag,     sWidth,  sGrav,
+                segLen[1], segMass[1], segDrag[1], segWidth[1], segGrav[1]
             );
 
             // T.hand.sprite.mass = math.mix(rtMass[0], rtMass[1], i/count);
@@ -172,7 +175,7 @@ export default class CharacterFloating extends RigidBodyCharacter
 
         for (let T of this.tentacles)
         {
-            for (let B of T.rope.bodies)
+            for (let i=0; i<T.rope.bodies.length; i++)
             {
                 T.hand.applyForceXY(3*x*alpha, 3*y*alpha);
             }
@@ -184,7 +187,6 @@ export default class CharacterFloating extends RigidBodyCharacter
 
     moveTo( x: number, y: number ): void
     {
-        const dt   = deltaTime;
         const disp = vec2.tmp().displacement(this.world.pos, vec2.tmp(x, y));
 
         if (disp.magSq() > 0.0005)

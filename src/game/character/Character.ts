@@ -170,13 +170,13 @@ export class RigidBodyCharacter extends RigidBody implements iControllable, iTra
 
     moveTo( x: number, y: number ): void
     {
-        const dt   = deltaTime;
+        const dt   = 0.01 * 16.0; // deltaTime;
         const disp = vec2.tmp().displacement(this.world.pos, vec2.tmp(x, y));
 
         if (disp.magSq() > 0.0005)
         {
             const dir = disp.normalize();
-            this.applyForce(dir.mulXY(0.01*dt));
+            this.applyForce(dir.mulXY(dt));
         }
     }
 

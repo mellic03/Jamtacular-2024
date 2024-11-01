@@ -7,9 +7,17 @@ import { iCharacterController, iControllable } from "./controller.js";
 
 export default class PlayerController implements iCharacterController
 {
+    body: iControllable = null;
+
     constructor()
     {
-
+        IO.onMouseClick(() => {
+            if (!this.body) { return; }
+            const wmouse = Render.worldMouse();
+            console.log(wmouse.x, wmouse.y);
+            this.body.interact(wmouse.x, wmouse.y, "hello");
+        });
+    
     }
 
     private key_rotation( C: iControllable )
@@ -61,7 +69,7 @@ export default class PlayerController implements iCharacterController
             C.jump();
         }
 
-        C.move(speed*delta.x, speed*delta.y);
+        C.move(delta.x, delta.y);
     }
 
 
@@ -70,12 +78,7 @@ export default class PlayerController implements iCharacterController
         this.key_rotation(C);
         this.key_movement(C);
 
-        if (IO.mouseClicked())
-        {
-            const wmouse = Render.worldMouse();
-            console.log(wmouse.x, wmouse.y);
-            C.interact(wmouse.x, wmouse.y, "hello");
-        }
+        this.body = C;
 
         Render.view.mixXY(C.local.x, C.local.y, 0.5);
     }

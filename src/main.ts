@@ -4,12 +4,10 @@ import {} from "../lib/p5/addons/p5play";
 
 import { __engine } from "./engine/engine.js";
 import { Game } from "./game/game.js";
-// import { SomeObject } from "./engine/actor-SomeObject.js";
-// import { Actor } from "./engine/actor";
 
 
 const engine = __engine;
-engine.init(1920, 1080);
+engine.init(1000, 700);
 
 const game = new Game();
 
@@ -26,6 +24,8 @@ function setup()
     engine.setup();
     game.setup();
 
+    frameRate(60)
+
     world.gravity.y = 9.8;
     allSprites.autoDraw = false;
 
@@ -37,17 +37,9 @@ function setup()
 
 
 
-let first = true;
-
 
 function draw()
 {
-    if (first)
-    {
-        saveStrings(["A test", "B test"], "./test.json");
-        first = false;
-    }
-
     engine.draw();
 }
 
