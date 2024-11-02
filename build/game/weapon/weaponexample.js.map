@@ -1,0 +1,1 @@
+{"version":3,"file":"weaponexample.js","sourceRoot":"","sources":["../../../src/game/weapon/weaponexample.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,aAAa,CAAC;AAGrC,MAAM,CAAC,OAAO,OAAO,aAAc,SAAQ,MAAM;IAE7C,YAAa,CAAS,EAAE,CAAS;QAE7B,KAAK,CAAC,CAAC,EAAE,CAAC,CAAC,CAAC;IAChB,CAAC;IAED,MAAM;IAGN,CAAC;IAED,IAAI;IAGJ,CAAC;IAED,MAAM;IAGN,CAAC;CAEJ"}
