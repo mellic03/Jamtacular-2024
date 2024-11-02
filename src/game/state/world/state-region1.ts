@@ -7,6 +7,7 @@ export class GS_Region1 extends GS_Region
     public enter(): void
     {
         noiseDetail(8, 0.6);
+        noiseDetail(4, 0.5);
         super.enter();
 
         // const A = new Actor(0, 0, 64, 64);

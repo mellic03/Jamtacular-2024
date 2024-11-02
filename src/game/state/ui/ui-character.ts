@@ -16,7 +16,6 @@ class TestList extends ui_List
     public C: RigidBodyCharacter;
     private tmp = new ui_Bounds(0, 0, 1, 1);
     private btn = new Array<ui_Button>();
-    // private btn = [, new ui_Button("Test Button"), new ui_Button("Test Button"), new ui_Button("Test Button"), new ui_Button("Test Button")];
 
 
     constructor( ...children: ui_ElementBase[] )
@@ -60,7 +59,7 @@ class TestButton extends ui_Button
 
 
 
-export class UI_Character extends GameState
+export class UI_InspectCharacter extends GameState
 {
     private ui: ui_Grid;
     private valueA = new ui_ValueRef(0);

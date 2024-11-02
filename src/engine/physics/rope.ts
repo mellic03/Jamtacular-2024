@@ -18,9 +18,9 @@ export default class Rope implements iTransformable
     tdist:     number;
     thickness: number;
 
-    constructor( x: number, y: number, ropegroup: Group,
-                 count=8, length=32, mass=1.0, drag=0.1, thickness=8, grav=0.02,
-                 lengthFactor=1, massFactor=1, dragFactor=1, thicknessFactor=1, gravFactor=1 )
+    constructor( x: number, y: number, ropegroup: Group, count,
+        length=32, mass=1.0, drag=0.1, friction=0.02, thickness=8, grav=0.02,
+        lengthFactor=1, massFactor=1, dragFactor=1, frictionFactor=1, thicknessFactor=1, gravFactor=1 )
     {
         this.local = new Transform(0, 0, 0);
         this.world = new Transform(x, y, 0);
@@ -38,7 +38,7 @@ export default class Rope implements iTransformable
             B.sprite.mass         = mass;           mass *= massFactor;
             B.sprite.drag         = drag;           drag *= dragFactor;
             B.sprite.gravityScale = grav;           grav *= gravFactor
-            B.sprite.friction     = 0.1;
+            B.sprite.friction     = friction;       friction *= frictionFactor;
             B.sprite.bounciness   = 0.1;
             B.sprite.autoDraw     = false;
 
@@ -63,13 +63,9 @@ export default class Rope implements iTransformable
 
     update()
     {
-        // this.transform.mult(this.transform.parent);
-    
-        circle(this.world.x, this.world.y, 25);
-        this.bodies[0].moveTowards(this.world.pos, 1.0);
-
         for (let B of this.bodies)
         {
+            B.moveTowards(this.world.pos, 0.1);
             B.update();
         }
     }

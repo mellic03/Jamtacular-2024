@@ -8,6 +8,7 @@ import { iCharacterController, iControllable } from "./controller.js";
 export default class PlayerController implements iCharacterController
 {
     body: iControllable = null;
+    cam_offset = new vec2(0, 0);
 
     constructor()
     {
@@ -72,6 +73,15 @@ export default class PlayerController implements iCharacterController
         C.move(delta.x, delta.y);
     }
 
+    private mouse_movement( C: iControllable ) 
+    {
+        // const dx = 
+
+        // const temp = vec2.tmp(un_texture, vec2.xy(), 0).rgb;
+
+        // this.cam_offset.addXy()
+    }
+
 
     update( C: iControllable )
     {
@@ -80,7 +90,7 @@ export default class PlayerController implements iCharacterController
 
         this.body = C;
 
-        Render.view.mixXY(C.local.x, C.local.y, 0.5);
+        Render.view.mixXY(C.local.x, C.local.y, 0.02);
     }
 
 }

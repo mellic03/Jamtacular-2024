@@ -7,6 +7,24 @@ import BodyPart from "./bodypart.js";
 
 
 
+class TentacleDescription
+{
+    count: number  = 8;
+    // "factors": {
+    //     "comment": "[ base,  growth,  rand ]",
+    //     "count":    [  8.0,     1.0,   2.0 ],
+    //     "length":   [ 35.0,     1.0,   5.0 ],
+    //     "mass":     [ 64.0,    1.05,   0.0 ],
+    //     "drag":     [  0.2,    1.15,   0.0 ],
+    //     "width":    [ 24.0,    0.98,   0.0 ],
+    //     "grav":     [  1.0,     1.0,   0.0 ]
+    // },
+}
+
+
+
+
+
 class FloatRopes1 extends Rope
 {
     aggression = 1.0;
@@ -21,8 +39,8 @@ class FloatRopes1 extends Rope
             const A = vec2.copy(this.bodies[i+0].pos);
             const B = vec2.copy(this.bodies[i+1].pos);
 
-            this.bodies[i].sprite.gravityScale   = 0.75 * (1.0 - this.aggression) + 0.01;
-            this.bodies[i+1].sprite.gravityScale = 0.75 * (1.0 - this.aggression) + 0.01;
+            // this.bodies[i].sprite.gravityScale   = 0.75 * (1.0 - this.aggression) + 0.01;
+            // this.bodies[i+1].sprite.gravityScale = 0.75 * (1.0 - this.aggression) + 0.01;
 
             const a0 = i / this.bodies.length;
             const a1 = 0.002*this.bodies[i+1].vel.magSq();
@@ -108,15 +126,15 @@ export default class BodyPartTentacle extends BodyPart
     aggression = 0.0;
 
     constructor( x: number, y: number, ropegroup: Group, count,
-                 length, mass, drag, thickness, grav,
-                 lengthFactor, massFactor, dragFactor, thicknessFactor, gravFactor )
+                 length, mass, drag, friction, thickness, grav,
+                 lengthFactor, massFactor, dragFactor, frictionFactor, thicknessFactor, gravFactor )
     {
         super(x, y);
 
         this.rope = new FloatRopes1(
             x, y, ropegroup, count,
-            length, mass, drag, thickness, grav,
-            lengthFactor, massFactor, dragFactor, thicknessFactor, gravFactor
+            length, mass, drag, friction, thickness, grav,
+            lengthFactor, massFactor, dragFactor, frictionFactor, thicknessFactor, gravFactor
         );
 
 
@@ -132,8 +150,6 @@ export default class BodyPartTentacle extends BodyPart
         super.update();
         circle(this.world.x, this.world.y, 12);
 
-        this.update_grab();
-
         this.rope.aggression = this.aggression;
         this.rope.update();
     }
@@ -142,6 +158,7 @@ export default class BodyPartTentacle extends BodyPart
     draw()
     {
         super.draw();
+        this.rope.draw();
     }
 
 
@@ -152,90 +169,6 @@ export default class BodyPartTentacle extends BodyPart
         const end   = Math.floor(b * len);
     
         this.rope.drawSegments(start, end);
-    }
-
-
-
-    private update_grab()
-    {
-        // if (this.grabbing == true)
-        // {
-        //     if (this.hand.pos.distSq(this.target) > 32*32)
-        //     {
-        //         this.grab_timer += deltaTime;
-        //     }
-
-        //     else
-        //     {
-        //         this.grab_timer = 0;
-        //     }
-
-        //     if (this.grab_timer > 1500)
-        //     {
-        //         this.grabbing = false;
-        //     }
-
-        //     const dir = vec2.tmp().displacement(this.hand.pos, this.target).mul(0.5);
-        //     this.hand.addForce(dir);
-        //     // this.hand.moveTo(this.target, 0.01);
-        //     // this.hand.setPosition(this.target);
-        // }
-
-        // else
-        // {
-        //     this.grab_timer = 0;
-        // }
-    }
-
-
-    reachFor( pos: vec2 ): boolean
-    {
-        const dir = vec2.copy(this.root.curr);
-    
-        // if (position.distSq(this.root.pos) > this.rope.tdist*this.rope.tdist)
-        // {
-        //     return;
-        // }
-
-        // this.target.copy(position);
-        // this.grabbing = true;
-        // return;
-
-        // const world = __engine.getSystem(sys_World);
-        // const dir   = vec2.tmp().normalizedDirection(this.hand.pos, position);
-
-        // if (world.raycast(this.hand.x, this.hand.y, dir.x, dir.y))
-        // {
-        //     const res = HitInfo.res;
-
-        //     if (this.hand.pos.dist(res) < this.rope.tdist)
-        //     {
-        //         this.target.copy(res);
-        //         return true;
-        //     }
-        // }
-
-        return false;
-    }
-
-
-    reach( dir: vec2 ): boolean
-    {
-        // const world = __engine.getSystem(sys_World);
-
-        // if (world.raycast(this.root.x, this.root.y, dir.x, dir.y))
-        // {
-        //     const res = HitInfo.res;
-
-        //     if (this.root.pos.dist(res) < this.rope.tdist && this.hand.lerp_pos.dist(res) > 32.0)
-        //     {
-        //         circle(res.x, res.y, 20);
-        //         this.target.copy(res);
-        //         return true;
-        //     }
-        // }
-
-        return false;
     }
 
 

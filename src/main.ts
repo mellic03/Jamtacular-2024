@@ -7,7 +7,7 @@ import { Game } from "./game/game.js";
 
 
 const engine = __engine;
-engine.init(1000, 700);
+engine.init(1920, 1080);
 
 const game = new Game();
 
@@ -24,8 +24,6 @@ function setup()
     engine.setup();
     game.setup();
 
-    frameRate(60)
-
     world.gravity.y = 9.8;
     allSprites.autoDraw = false;
 
@@ -41,6 +39,7 @@ function setup()
 function draw()
 {
     engine.draw();
+
 }
 
 

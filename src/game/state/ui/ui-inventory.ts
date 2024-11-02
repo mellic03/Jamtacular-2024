@@ -31,9 +31,8 @@ function closeMainMenu()
 
 
 
-export class GS_MainMenuGUI extends GameState
+export class GS_InventoryGUI extends GameState
 {
-    // private ui = new idk_Stack<ui_ElementBase>();
     private ui: ui_ElementBase;
     private renbounds = new ui_Bounds(0, 0, 1, 1);
 
@@ -44,7 +43,6 @@ export class GS_MainMenuGUI extends GameState
         GameStateUserInput.on(UserInputMsg.UNPAUSE, () => {
             
         });
-
 
 
         this.ui = new ui_List(
@@ -69,8 +67,8 @@ export class GS_MainMenuGUI extends GameState
     {
         super.update();
 
-        this.renbounds.fromMinMax(0, Render.width, 0, Render.height);
-        this.ui.update(this.renbounds);
+        // this.renbounds.fromMinMax(0, Render.width, 0, Render.height);
+        // this.ui.update(this.renbounds);
     }
 
 
@@ -78,9 +76,9 @@ export class GS_MainMenuGUI extends GameState
     {
         super.draw();
 
-        Render.pushInverseViewTransform();
-        this.ui.draw();
-        Render.popInverseViewTransform();
+        // Render.pushInverseViewTransform();
+        // this.ui.draw();
+        // Render.popInverseViewTransform();
     }
 
 }

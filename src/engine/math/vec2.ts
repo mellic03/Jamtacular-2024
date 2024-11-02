@@ -34,6 +34,12 @@ export default class vec2
         return vec2.tmp(u.x, u.y).mix(v, a);
     }
 
+    static rand( min: number, max: number ): vec2
+    {
+        return vec2.tmp(random(min, max), random(min, max));
+    }
+
+
     setXY( x: number, y=x ): vec2
     {
         this.x = x;

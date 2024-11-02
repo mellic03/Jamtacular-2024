@@ -1,5 +1,5 @@
 import {} from "p5/global";
-import { __engine } from "../../engine/engine.js";
+import { __engine, Engine } from "../../engine/engine.js";
 import { HierarchicalTransform, Transform } from "../../engine/transform.js";
 import BodyPart from "../bodypart/bodypart.js";
 import RigidBody from "../../engine/physics/rigidbody.js";
@@ -12,10 +12,17 @@ import { Game } from "../game.js";
 
 
 
-export class CharacterConfig
+export class CharacterConfigJSON
 {
-    speed = [ 1 ];
-    jump  = [ 1 ];
+    aggression: number = 0;
+
+    constructor( config: object )
+    {
+        if (config.hasOwnProperty("aggression"))
+        {
+            this.aggression = config["aggression"];
+        }
+    }
 }
 
 
@@ -26,7 +33,7 @@ export class RigidBodyCharacter extends RigidBody implements iControllable, iTra
     local:    Transform;
     world:    Transform;
     children: Array<iTransformable>;
-    config:   CharacterConfig;
+    config:   CharacterConfigJSON;
 
     private timer = 0.0;
     private try_jump = false;
@@ -39,19 +46,18 @@ export class RigidBodyCharacter extends RigidBody implements iControllable, iTra
     constructor( x: number, y: number, controller?: iCharacterController )
     {
         super(new Sprite(x, y), 1);
+        const ctor_name = this.constructor.name;
+        this.sprite["AyyLmao"] = this;
 
         this.local    = new Transform(x, y, 0);
         this.world    = new Transform(0, 0, 0);
         this.children = new Array<iTransformable>();
-        this.config   = new CharacterConfig();
+        this.config   = new CharacterConfigJSON(Game.CharacterConfig[ctor_name]);
+        // this.config.load(Game.config[ctor_name]);
 
-
-        const ctor_name = this.constructor.name;
-
-        if (Game.config.hasOwnProperty(ctor_name))
+        if (Game.CharacterConfig.hasOwnProperty(ctor_name))
         {
-            // console.log(`BITCH: ${Game.config[ctor_name]["speed"]}`);
-            this.config = Game.config[ctor_name];
+            this.config = Game.CharacterConfig[ctor_name];
         }
 
         this.pushController(controller);
@@ -163,14 +169,14 @@ export class RigidBodyCharacter extends RigidBody implements iControllable, iTra
             return;
         }
 
-        dir.normalize().mulXY(this.config.speed[0]);
+        dir.normalize().mulXY(256);
 
         this.applyForceXY(dir.x, dir.y);
     }
 
     moveTo( x: number, y: number ): void
     {
-        const dt   = 0.01 * 16.0; // deltaTime;
+        const dt   = 16.0; // deltaTime;
         const disp = vec2.tmp().displacement(this.world.pos, vec2.tmp(x, y));
 
         if (disp.magSq() > 0.0005)

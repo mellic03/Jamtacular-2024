@@ -8,3 +8,14 @@
 //         return SomeObject.Actor;  // Return the Actor class once ready
 //     }
 // }
+
+
+
+export class Cringe
+{
+    constructor()
+    {
+
+    }
+}
+

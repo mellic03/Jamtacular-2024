@@ -1,13 +1,15 @@
 import { idk_Stack } from "../../../engine/ds/idk_stack.js";
-import { GameState } from "../../../engine/gamestate.js";
+import { GameState, GameStateFlag } from "../../../engine/gamestate.js";
 import Render from "../../../engine/sys-render.js";
 import ui_ElementBase from "../../../engine/ui/base.js";
 import ui_Bounds from "../../../engine/ui/bounds.js";
 import ui_Button from "../../../engine/ui/button.js";
 import ui_Grid from "../../../engine/ui/grid.js";
 import ui_List from "../../../engine/ui/list.js";
+// import ui_Slider from "../../../engine/ui/slider.js";
 import ui_Style, { setSyleSpanLimitAsPixels, setSyleSpanLimitAsRatio } from "../../../engine/ui/style.js";
-import { GameStateGameplay, GameStateWorld } from "../../game.js";
+import { GameStateGameGUI, GameStateGameplay, GameStateUserInput, GameStateWorld } from "../../game.js";
+import { UserInputMsg } from "../userinput.js";
 
 
 
@@ -25,24 +27,26 @@ class ui_HUDdummy extends ui_Button
 
 class ui_HUD extends ui_Grid
 {
-    constructor( rows: number, cols: number )
-    {
-        const children = [];
+//     constructor( rows: number, cols: number )
+//     {
+//         const children = [];
 
-        for (let i=0; i<rows*cols; i++)
-        {
-            children.push(new ui_HUDdummy());
-        }
+//         for (let i=0; i<rows*cols; i++)
+//         {
+//             children.push(new ui_HUDdummy());
+//         }
 
-        super(rows, cols, ...children);
+//         children[cols*1+2] = new ui_Slider();
+
+//         super(rows, cols, ...children);
 
 
-        // this.style.maxHeight = 128;
-        setSyleSpanLimitAsRatio(this.style, 64/1080, 9999/1080, 64/1920, 128/1920);
+//         // this.style.maxHeight = 128;
+//         setSyleSpanLimitAsRatio(this.style, 64/1080, 9999/1080, 64/1920, 128/1920);
 
-        this.style.align = [ui_Style.CENTER, ui_Style.TOP];
-        this.updateStyle();
-    }
+//         this.style.align = [ui_Style.CENTER, ui_Style.TOP];
+//         this.updateStyle();
+//     }
 }
 
 
@@ -62,7 +66,18 @@ export class GS_InGameGUI extends GameState
         //     new ui_Button("1"), new ui_Button("2"), new ui_Button("3")
         // );
 
-        this.ui = new ui_HUD(1, 6);
+        this.ui = new ui_HUD(4, 6);
+
+        GameStateUserInput.on(UserInputMsg.PAUSE, () => {
+            this.setFlag(GameStateFlag.UPDATE, false);
+            this.setFlag(GameStateFlag.DRAW,   true);
+        });
+    
+        GameStateUserInput.on(UserInputMsg.UNPAUSE, () => {
+            this.setFlag(GameStateFlag.UPDATE, true);
+            this.setFlag(GameStateFlag.DRAW,   true);
+        });
+
     }
 
 
@@ -85,10 +100,10 @@ export class GS_InGameGUI extends GameState
 
         Render.screenText(`fps: ${Render.avgFPS().toPrecision(4)}`, Render.width-25, 25);
 
-
         textAlign(LEFT, CENTER);
         const S0 = GameStateGameplay.stack.data;
         const S1 = GameStateWorld.stack.data;
+        const S2 = GameStateGameGUI.stack.data;
 
 
         Render.screenText(`GS_Gameplay.stack`, 0.85*Render.width, 3*Render.height/4 - 64*S0.length);
@@ -98,6 +113,10 @@ export class GS_InGameGUI extends GameState
         Render.screenText(`GS_World.stack`, 0.7*Render.width, 3*Render.height/4 - 64*S1.length);
         for (let i=S1.length-1; i>=0; i--)
             Render.screenText(`${i}\t\t\t${S1[i].name}`, 0.7*Render.width, 3*Render.height/4 - 64*i);
+
+        Render.screenText(`GS_World.stack`, 0.55*Render.width, 3*Render.height/4 - 64*S2.length);
+        for (let i=S2.length-1; i>=0; i--)
+            Render.screenText(`${i}\t\t\t${S2[i].name}`, 0.55*Render.width, 3*Render.height/4 - 64*i);
 
 
         textAlign(CENTER, TOP);

@@ -1,0 +1,60 @@
+{
+    "Tentacle0": {
+        "values": {
+            "segments":   8.0,
+            "length":    54.0,
+            "mass":       0.5,
+            "drag":      0.65,
+            "friction":  0.25,
+            "speed":      16.2,
+            "width":     32.0,
+            "grav":       0.0,
+            "brownian":   9.0
+        },
+
+        "multipliers": {
+            "comment": "[ aggro,  invAggro,  growth,   invGrowth,   rng ]",
+            "segments": [   1.0,       0.0,     1.0,         0.0,   1.0 ],
+            "length":   [   1.0,       0.0,     1.0,         0.0,  0.15 ],
+            "mass":     [   0.8,       0.0,     1.15,        0.0,   0.0 ],
+            "drag":     [   1.4,       0.0,     1.0,         0.0,   0.0 ],
+            "friction": [   1.0,       0.0,     1.0,         0.0,   0.0 ],
+            "speed":    [   16.0,      0.0,     0.8,         0.0,   0.0 ],
+            "width":    [   1.0,       0.0,     0.89,        0.0,   0.0 ],
+            "grav":     [   1.2,       0.0,    0.95,         0.0,   0.0 ],
+            "brownian": [   0.4,       0.0,     1.5,         0.0,   0.0 ]
+        }
+    },
+
+
+
+    "Leg0": {
+        "values": {
+            "segments":   8.0,
+            "length":    38.0,
+            "mass":       0.1,
+            "drag":      0.65,
+            "friction":  0.25,
+            "speed":     0.2,
+            "width":     28.0,
+            "grav":       2.0,
+            "brownian":   1.0
+        },
+
+        "multipliers": {
+            "comment": "[ aggro,  invAggro,  growth,   invGrowth,   rng ]",
+            "segments": [   1.0,       0.0,     1.0,         0.0,   1.0 ],
+            "length":   [   1.0,       0.0,     1.0,         0.0,  0.15 ],
+            "mass":     [   0.8,       0.0,     1.2,         0.0,   0.0 ],
+            "drag":     [   1.5,       0.0,     1.0,         0.0,   0.0 ],
+            "friction": [   1.0,       0.0,     1.0,         0.0,   0.0 ],
+            "speed":    [   16.0,      0.0,     1.0,         0.0,   0.0 ],
+            "width":    [   1.0,       0.0,     0.92,        0.0,   0.0 ],
+            "grav":     [   0.0,       0.0,     1.0,         0.0,   0.0 ],
+            "brownian": [   0.25,       0.0,     1.2,         0.0,   0.0 ]
+        }
+    }
+
+
+}
+

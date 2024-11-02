@@ -92,17 +92,18 @@ export default class Render
         if (Render.webgl == false)
         {
             Render.canvas = createCanvas(Render.width, Render.height);
+            Render.offline_ctx = createGraphics(Render.width, Render.height);
         }
 
         else
         {
             Render.canvas = createCanvas(Render.width, Render.height, WEBGL);
+            Render.offline_ctx = createGraphics(Render.width, Render.height, WEBGL);
             textFont(Render.font);
         }
 
         frameRate(165);
         
-        // Render.offline_ctx = createGraphics(Render.width, Render.height, WEBGL);
     }
 
     static beginFrame(): void
@@ -138,6 +139,10 @@ export default class Render
 
 
 
+    static getOfflineContext(): Graphics
+    {
+        return this.offline_ctx;
+    }
 
     static avgFPS(): number
     {

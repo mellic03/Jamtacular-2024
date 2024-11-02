@@ -4,6 +4,8 @@ import { IO, KEYCODE } from "../../../engine/IO.js";
 import WorldInstance from "../../../engine/sys-world/worldinstance.js";
 import { GameState, GameStateFlag } from "../../../engine/gamestate.js";
 import WorldOptimiser from "../../../engine/sys-world/optimiser.js";
+import { GS_World } from "./world.js";
+import { GS_Gameplay } from "../gameplay/gameplay.js";
 
 
 export class GS_Region extends GameState
@@ -11,12 +13,12 @@ export class GS_Region extends GameState
     worldData: WorldInstance = null;
 
     private first_entry = true;
-    protected GROUP_WORLD:      Group;
-    protected GROUP_ROPES:      Group;
-    protected GROUP_CHARACTER:  Group;
-    protected GROUP_PLAYER:     Group;
-    protected GROUP_RAGE:       Group;
-    protected GROUP_CALM:       Group;
+    // protected GROUP_WORLD:      Group;
+    // protected GROUP_ROPES:      Group;
+    // protected GROUP_CHARACTER:  Group;
+    // protected GROUP_PLAYER:     Group;
+    // protected GROUP_RAGE:       Group;
+    // protected GROUP_CALM:       Group;
 
 
     constructor()
@@ -29,43 +31,24 @@ export class GS_Region extends GameState
     {
         if (this.first_entry == true)
         {
-            this.worldData = new WorldInstance().generateWorld(0, 0, 128, 128, 32, 55, 341);
+            this.worldData = new WorldInstance().generateWorld(0, 0, 128, 128, 64, -1212, 341);
             console.log(`[${this.name}] Loaded world data`);
-
-            this.GROUP_WORLD     = new Group();
-            this.GROUP_ROPES     = new Group();
-            this.GROUP_CHARACTER = new Group();
-            this.GROUP_PLAYER    = new Group();
-            this.GROUP_RAGE      = new Group();
-            this.GROUP_CALM      = new Group();
-
             this.first_entry = false;
         }
 
-        this.worldData.generateColliders(this.GROUP_WORLD);
-        console.log(`[${this.name}] No. colliders: ${this.GROUP_WORLD.length}`);
+        this.worldData.generateColliders(GS_Gameplay.groups.WORLD);
+        console.log(`[${this.name}] No. colliders: ${GS_Gameplay.groups.WORLD}`);
     }
 
 
     public exit(): void
     {
-        // this.setFlag(GameStateFlag.UPDATE, false);
-        // this.setFlag(GameStateFlag.DRAW,   true);
-
-        // this.updatables.length = 0;
-        // this.renderables.length = 0;
-
-        for (let B of this.GROUP_WORLD)
+        for (let B of GS_Gameplay.groups.WORLD)
         {
             B.remove();
         }
 
-        this.GROUP_WORLD.removeAll();
-        this.GROUP_ROPES.removeAll();
-        this.GROUP_CHARACTER.removeAll();
-        this.GROUP_PLAYER.removeAll();
-        this.GROUP_RAGE.removeAll();
-        this.GROUP_CALM.removeAll();
+        GS_Gameplay.groups.WORLD.removeAll();
     }
 
 
@@ -78,10 +61,6 @@ export class GS_Region extends GameState
 
         super.update();
 
-        // for (let obj of this.updatables)
-        // {
-        //     obj.update();
-        // }
 
         if (IO.mouseWheel() != 0.0)
         {

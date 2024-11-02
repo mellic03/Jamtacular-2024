@@ -1,9 +1,10 @@
 import { __engine } from "../engine/engine.js";
 import { StateManager } from "../engine/gamestate.js";
-import { GS_UserInput } from "./state/userinput.js";
+import { GS_UserInput, UserInputMsg } from "./state/userinput.js";
 import { GS_Gameplay } from "./state/gameplay/gameplay.js";
 import { GS_GameUI } from "./state/ui/ui.js";
 import { GS_World } from "./state/world/world.js";
+import sys_Audio from "../engine/sys-audio.js";
 
 
 
@@ -15,7 +16,8 @@ export const GameStateGameGUI   = new GS_GameUI();
 
 export class Game
 {
-    public static config: Object;
+    public static LimbConfig: Object;
+    public static CharacterConfig: Object;
     
     constructor()
     {
@@ -25,34 +27,21 @@ export class Game
         StateManager.addState(GameStateGameGUI).makeActive();
     }
 
-    public static getConfig( ...args: string[] )
-    {
-        let result = Game.config;
-
-        for (let arg of args)
-        {
-            if (result.hasOwnProperty(arg))
-            {
-                result = result[arg];
-            }
-
-            else
-            {
-                break;
-            }
-        }
-
-        return result;
-    }
-
 
     preload(): void
     {
-        Game.config = loadJSON("./assets/GlobalConfig.json");
+        Game.LimbConfig = loadJSON("./assets/LimbConfig.json");
+        Game.CharacterConfig = loadJSON("./assets/CharacterConfig.json");
+
+        const audiosys = __engine.getSystem(sys_Audio);
+        audiosys.load("assets/audio/click.wav");
     }
 
     setup(): void
     {
+        GameStateUserInput.emit(UserInputMsg.UNPAUSE);
+        GameStateUserInput.emit(UserInputMsg.PAUSE);
+
         // console.log("WOOP: ", this.config["CharacterBiped"]);
     }
 }

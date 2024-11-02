@@ -1,0 +1,29 @@
+{
+    "CharacterFloating": {
+
+        "aggression": 0.0,
+
+        "body": {
+            "mass":     8.0,
+            "drag":     2.0,
+            "friction": 4.0,
+            "speed":    1.0,
+            "grav":     0.0
+        },
+
+        "limbs": {
+            "Tentacle0": 6
+        }
+    },
+
+    "CharacterBiped": {
+        "speed": [ 0.25, 0.5 ],
+        "jump":  [ 0, 0 ],
+
+        "limbs": {
+            "Leg0": 8
+        }
+    }
+
+}
+

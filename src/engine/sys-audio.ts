@@ -1,3 +1,4 @@
+import { SoundFile } from "p5";
 import System from "./system.js";
 
 
@@ -26,7 +27,7 @@ export default class sys_Audio extends System
         }
     }
 
-    get( name: string )
+    get( name: string ): SoundFile
     {
         return this.cache.get(name);
     }
