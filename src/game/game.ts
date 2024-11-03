@@ -6,6 +6,7 @@ import { GS_GameUI } from "./state/ui.js";
 import { GS_World } from "./state/world.js";
 import sys_Audio from "../engine/sys-audio.js";
 import { CharacterController } from "./controller/controller.js";
+import { WorkManager } from "./state/DefferredWork.js";
 
 
 
@@ -51,6 +52,8 @@ export class Game
 
     update(): void
     {
+        WorkManager.update();
+
     }
 
 }

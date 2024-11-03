@@ -2,7 +2,7 @@ import { Engine } from "./engine/engine.js";
 import { Game } from "./game/game.js";
 import { Render, RenderEvent } from "./engine/render.js";
 import { CharacterController } from "./game/controller/controller.js";
-Engine.init(612, 612, 60);
+Engine.init(1920, 1080, 144);
 const game = new Game();
 function preload() {
     Engine.preload();
@@ -20,7 +20,7 @@ function setup() {
 }
 function draw() {
     Engine.draw();
-    // game.update();
+    game.update();
     CharacterController.updateAll();
 }
 window.preload = preload;

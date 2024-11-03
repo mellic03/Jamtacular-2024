@@ -1,10 +1,10 @@
 import vec2 from "../math/vec2.js";
-import WorldOptimiser from "./optimiser.js";
+import WorldOptimiser, { LOOKUP_SUBDIV } from "./optimiser.js";
 import WorldGenerator from "./generator.js";
 import WorldQuery, { WorldQueryResult } from "./query.js";
 import { Render } from "../render.js";
 import StaticBody from "../physics/staticbody.js";
-export default class WorldInstance {
+class WorldInstance {
     constructor() {
         this.img_mode = false;
         this.img_loaded = false;
@@ -36,6 +36,7 @@ export default class WorldInstance {
         this.init(x, y, w, h, scale);
         this.data = WorldGenerator.generateWorld(this.width, this.height, this.scale, xoff, yoff);
         this.drawlist = WorldOptimiser.generateDrawlist(this.data);
+        this.lookup = WorldOptimiser.generateLookup(this.tl, this.br, this.scale, this.drawlist);
         this.img = WorldGenerator.generateImage(this.width, this.height, this.data);
         return this;
     }
@@ -48,28 +49,43 @@ export default class WorldInstance {
         });
         return this;
     }
-    generateColliders(cringe, view) {
-        const tl = this.tl;
-        const br = this.br;
-        for (let block of this.drawlist) {
-            const x = this.scale * block.col + this.corner.x;
-            const y = this.scale * block.row + this.corner.y;
-            const w = this.scale * block.w;
-            // if (x < tlx || x > brx || y < tly || y > bry)
-            // {
-            //     continue;
-            // }
-            if (view) {
-                // if (view.dis)
+    generateColliders(cringe, tl, br, visited) {
+        const SUBDIV = LOOKUP_SUBDIV;
+        const grid_w = Math.floor(this.br.x - this.tl.x) / SUBDIV;
+        const tl1 = vec2.copy(tl).sub(this.tl);
+        const br1 = vec2.copy(br).sub(this.tl);
+        for (let i = tl1.y; i < br1.y; i += SUBDIV) {
+            for (let j = tl1.x; j < br1.x; j += SUBDIV) {
+                const row = Math.floor(i / SUBDIV);
+                const col = Math.floor(j / SUBDIV);
+                // console.log(`[${col}/${grid_w}][${row}/${grid_w}]`);
+                for (let block of this.lookup[row][col]) {
+                    if (visited.has(block)) {
+                        continue;
+                    }
+                    visited.add(block);
+                    // if (r<0 || r>=this.lookup.length || c<0 || c>=this.lookup.length)
+                    // {
+                    //     console.assert(false, "Ruh roh");
+                    // }
+                    const x = this.scale * block.col + this.corner.x;
+                    const y = this.scale * block.row + this.corner.y;
+                    const w = this.scale * block.w;
+                    // if (x+w<tl.x || x>br.x)
+                    // {
+                    //     continue;
+                    // }
+                    // if (y+w<tl.y || y>br.y)
+                    // {
+                    //     continue;
+                    // }
+                    cringe.add((new StaticBody(x, y, w)).sprite);
+                }
             }
-            if (dist(x, y, 0, 0) > 2048) {
-                continue;
-            }
-            cringe.add((new StaticBody(x, y, w)).sprite);
         }
     }
     worldToCell(world) {
-        return vec2.copy(world).sub(this.corner).divXY(this.scale);
+        return vec2.copy(world).sub(this.corner).divXY(this.scale).floor();
     }
     cellToWorld(cell) {
         return vec2.copy(cell).mulXY(this.scale).add(this.corner);
@@ -108,4 +124,6 @@ export default class WorldInstance {
         Render.imageCornerXY(this.img, this.corner.x, this.corner.y, this.scale * this.width, this.scale * this.height);
     }
 }
+WorldInstance.tmpset = new Set();
+export default WorldInstance;
 //# sourceMappingURL=worldinstance.js.map

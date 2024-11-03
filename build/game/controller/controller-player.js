@@ -12,7 +12,6 @@ export default class PlayerController extends CharacterController {
                 return;
             }
             const wmouse = Render.worldMouse();
-            console.log(wmouse.x, wmouse.y);
             this.body.interact(wmouse.x, wmouse.y, "hello");
         });
     }

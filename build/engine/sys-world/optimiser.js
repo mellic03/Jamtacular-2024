@@ -1,4 +1,5 @@
 const MIN_BLOCK_WIDTH = 1;
+export const LOOKUP_SUBDIV = 256;
 export class DrawItem {
     constructor(row, col, w) {
         this.row = row;
@@ -30,6 +31,36 @@ export default class WorldOptimiser {
             width /= 2;
         }
         return A;
+    }
+    static generateLookup(tl, br, scale, drawlist) {
+        const lookup = new Array();
+        const SUBDIV = LOOKUP_SUBDIV;
+        const grid_w = Math.floor(br.x - tl.x) / SUBDIV;
+        // console.log("grid_w: ", grid_w);
+        for (let i = 0; i < grid_w; i++) {
+            lookup.push([]);
+            for (let j = 0; j < grid_w; j++) {
+                lookup[i].push([]);
+            }
+        }
+        for (let block of drawlist) {
+            const x = scale * block.col;
+            const y = scale * block.row;
+            const w = scale * block.w;
+            for (let i = y; i < y + w; i += SUBDIV) {
+                for (let j = x; j < x + w; j += SUBDIV) {
+                    const r = Math.floor(i / SUBDIV);
+                    const c = Math.floor(j / SUBDIV);
+                    if (r < 0 || r >= grid_w || c < 0 || c >= grid_w) {
+                        console.log(`[${c}/${grid_w}][${r}/${grid_w}]`);
+                        console.assert(false, "Ruh roh");
+                        return;
+                    }
+                    lookup[r][c].push(block);
+                }
+            }
+        }
+        return lookup;
     }
     static count_blocks(row, col, w, data) {
         let count = 0;

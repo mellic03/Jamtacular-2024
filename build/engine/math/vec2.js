@@ -123,6 +123,11 @@ class vec2 {
         this.y = Math.ceil(this.y);
         return this;
     }
+    round() {
+        this.x = Math.round(this.x);
+        this.y = Math.round(this.y);
+        return this;
+    }
     displacement(start, end) {
         this.copy(end);
         this.sub(start);

@@ -191,6 +191,13 @@ export default class vec2
         return this;
     }
 
+    round(): vec2
+    {
+        this.x = Math.round(this.x);
+        this.y = Math.round(this.y);
+        return this;
+    }
+
     displacement( start: vec2, end: vec2 ): vec2
     {
         this.copy(end);

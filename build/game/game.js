@@ -5,6 +5,7 @@ import { GS_Gameplay } from "./state/gameplay.js";
 import { GS_GameUI } from "./state/ui.js";
 import { GS_World } from "./state/world.js";
 import sys_Audio from "../engine/sys-audio.js";
+import { WorkManager } from "./state/DefferredWork.js";
 export const GameStateUserInput = new GS_UserInput();
 export const GameStateGameplay = new GS_Gameplay();
 export const GameStateWorld = new GS_World();
@@ -27,6 +28,7 @@ export class Game {
         GameStateUserInput.emit(UserInputMsg.PAUSE);
     }
     update() {
+        WorkManager.update();
     }
 }
 //# sourceMappingURL=game.js.map

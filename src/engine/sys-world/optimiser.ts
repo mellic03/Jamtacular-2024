@@ -1,4 +1,7 @@
+import vec2 from "../math/vec2";
+
 const MIN_BLOCK_WIDTH = 1;
+export const LOOKUP_SUBDIV = 256;
 
 
 export class DrawItem
@@ -53,6 +56,53 @@ export default class WorldOptimiser
         }
 
         return A;
+    }
+
+
+    static generateLookup( tl: vec2, br: vec2, scale: number, drawlist: Array<DrawItem> ): Array<Array<Array<DrawItem>>>
+    {
+        const lookup = new Array<Array<Array<DrawItem>>>();
+        const SUBDIV = LOOKUP_SUBDIV;
+        const grid_w = Math.floor(br.x - tl.x) / SUBDIV;
+
+        // console.log("grid_w: ", grid_w);
+
+        for (let i=0; i<grid_w; i++)
+        {
+            lookup.push([]);
+
+            for (let j=0; j<grid_w; j++)
+            {
+                lookup[i].push([]);
+            }
+        }
+
+        for (let block of drawlist)
+        {
+            const x = scale*block.col;
+            const y = scale*block.row;
+            const w = scale*block.w;
+
+            for (let i=y; i<y+w; i+=SUBDIV)
+            {
+                for (let j=x; j<x+w; j+=SUBDIV)
+                {
+                    const r = Math.floor(i / SUBDIV);
+                    const c = Math.floor(j / SUBDIV);
+
+                    if (r<0 || r>=grid_w || c<0 || c>=grid_w)
+                    {
+                        console.log(`[${c}/${grid_w}][${r}/${grid_w}]`);
+                        console.assert(false, "Ruh roh");
+                        return;
+                    }
+
+                    lookup[r][c].push(block);
+                }
+            }
+        }
+
+        return lookup;
     }
 
 

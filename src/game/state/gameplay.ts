@@ -21,6 +21,7 @@ export class GS_Gameplay extends GameState
 
     static groups = {
         WORLD:  null,
+        WORLD2: null,
         ROPES:  null,
         NPC:    null,
         PLAYER: null,
@@ -43,6 +44,7 @@ export class GS_Gameplay extends GameState
         });
 
         GS_Gameplay.groups.WORLD  = new Group();
+        GS_Gameplay.groups.WORLD2 = new Group();
         GS_Gameplay.groups.ROPES  = new Group();
         GS_Gameplay.groups.NPC    = new Group();
         GS_Gameplay.groups.PLAYER = new Group();

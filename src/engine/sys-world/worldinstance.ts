@@ -1,11 +1,12 @@
 import System from "../system.js";
 import vec2 from "../math/vec2.js";
-import WorldOptimiser, { DrawItem } from "./optimiser.js";
+import WorldOptimiser, { DrawItem, LOOKUP_SUBDIV } from "./optimiser.js";
 import WorldGenerator from "./generator.js";
 import WorldQuery, { WorldQueryResult } from "./query.js";
 import { Render } from "../render.js";
 import StaticBody from "../physics/staticbody.js";
 import { Graphics, Image } from "p5";
+import GeometryTest from "../math/geometry.js";
 
 
 export default class WorldInstance
@@ -14,6 +15,7 @@ export default class WorldInstance
     private img_mode    = false;
     private img_loaded  = false;
     private callback: Function;
+    private static tmpset = new Set<DrawItem>();
 
     corner:   vec2;
     tl:       vec2;
@@ -22,7 +24,10 @@ export default class WorldInstance
     height:   number;
     scale:    number;
     data:     Array<Array<number>>;
+    course:   Array<Array<number>>;
     drawlist: Array<DrawItem>;
+    lookup:   Array<Array<Array<DrawItem>>>;
+
 
     private init( x=0, y=0, width=128, height=128, scale=32 )
     {
@@ -41,6 +46,7 @@ export default class WorldInstance
         this.init(x, y, w, h, scale);
         this.data     = WorldGenerator.generateWorld(this.width, this.height, this.scale, xoff, yoff);
         this.drawlist = WorldOptimiser.generateDrawlist(this.data);
+        this.lookup   = WorldOptimiser.generateLookup(this.tl, this.br, this.scale, this.drawlist);
         this.img      = WorldGenerator.generateImage(this.width, this.height, this.data);
 
         return this;
@@ -62,40 +68,63 @@ export default class WorldInstance
     }
 
 
-    public generateColliders( cringe: Group, view?: vec2 )
+    public generateColliders( cringe: Group, tl: vec2, br: vec2, visited: Set<DrawItem> )
     {
-        const tl = this.tl;
-        const br = this.br;
+        const SUBDIV = LOOKUP_SUBDIV;
+        const grid_w = Math.floor(this.br.x - this.tl.x) / SUBDIV;
 
-        for (let block of this.drawlist)
+        const tl1 = vec2.copy(tl).sub(this.tl);
+        const br1 = vec2.copy(br).sub(this.tl);
+
+
+        for (let i=tl1.y; i<br1.y; i+=SUBDIV)
         {
-            const x = this.scale*block.col + this.corner.x;
-            const y = this.scale*block.row + this.corner.y;
-            const w = this.scale*block.w;
+            for (let j=tl1.x; j<br1.x; j+=SUBDIV)
+            {
+                const row = Math.floor(i/SUBDIV);
+                const col = Math.floor(j/SUBDIV);
+                // console.log(`[${col}/${grid_w}][${row}/${grid_w}]`);
+
+                for (let block of this.lookup[row][col])
+                {
+                    if (visited.has(block))
+                    {
+                        continue;
+                    }
+
+                    visited.add(block);
+
+                    // if (r<0 || r>=this.lookup.length || c<0 || c>=this.lookup.length)
+                    // {
+                    //     console.assert(false, "Ruh roh");
+                    // }
+
+                    const x = this.scale*block.col + this.corner.x;
+                    const y = this.scale*block.row + this.corner.y;
+                    const w = this.scale*block.w;
         
-            // if (x < tlx || x > brx || y < tly || y > bry)
-            // {
-            //     continue;
-            // }
-
-            if (view)
-            {
-                // if (view.dis)
+                    // if (x+w<tl.x || x>br.x)
+                    // {
+                    //     continue;
+                    // }
+                
+                    // if (y+w<tl.y || y>br.y)
+                    // {
+                    //     continue;
+                    // }
+        
+                    cringe.add((new StaticBody(x, y, w)).sprite);
+                }
             }
-
-            if (dist(x, y, 0, 0) > 2048)
-            {
-                continue;
-            }
-
-            cringe.add((new StaticBody(x, y, w)).sprite);
         }
+
+
     }
 
 
     worldToCell( world: vec2 ): vec2
     {
-        return vec2.copy(world).sub(this.corner).divXY(this.scale);
+        return vec2.copy(world).sub(this.corner).divXY(this.scale).floor();
     }
 
     cellToWorld( cell: vec2 ): vec2
