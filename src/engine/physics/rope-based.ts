@@ -1,4 +1,4 @@
-// import { Engine, __engine } from "../engine.js";
+// import { Engine } from "../engine.js";
 // import vec2 from "../math/vec2.js";
 // import sys_Image from "../sys-image.js";
 // import sys_Physics from "../sys-physics.js";
@@ -88,7 +88,7 @@
 //         this.transform.mult(this.transform.parent);
 //         this.bodies[0].setPosition(this.transform.x, this.transform.y);
 
-//         this.timer += __engine.dtime();
+//         this.timer += Engine.dtime();
 
 //         while (this.timer >= PHYS_TIMESTEP)
 //         {
@@ -106,7 +106,7 @@
 
 //     draw()
 //     {
-//         const imgsys = __engine.getSystem(sys_Image);
+//         const imgsys = Engine.getSystem(sys_Image);
 //         const img = imgsys.get("assets/img/rope.png");
 
 //         // fill(50);

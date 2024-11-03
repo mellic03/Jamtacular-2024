@@ -20,11 +20,6 @@ export class GS_InGameGUI extends GameState {
     constructor() {
         super();
         this.renbounds = new ui_Bounds(0, 0, 1, 1);
-        // this.ui = new ui_Grid(3, 3,
-        //     new ui_Button("A"), new ui_Button("B"), new ui_Button("C"),
-        //     new ui_Button("X"), new ui_Button("Y"), new ui_Button("Z"),
-        //     new ui_Button("1"), new ui_Button("2"), new ui_Button("3")
-        // );
         this.ui = new ui_HUD(4, 6);
         GameStateUserInput.on(UserInputMsg.PAUSE, () => {
             this.setFlag(GameStateFlag.UPDATE, false);

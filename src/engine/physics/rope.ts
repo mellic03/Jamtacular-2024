@@ -1,4 +1,4 @@
-import { __engine } from "../engine.js";
+import { Engine } from "../engine.js";
 import { iTransformable } from "../interface.js";
 import vec2 from "../math/vec2.js";
 import sys_Image from "../sys-image.js";
@@ -73,7 +73,7 @@ export default class Rope implements iTransformable
 
     draw()
     {
-        const imgsys = __engine.getSystem(sys_Image);
+        const imgsys = Engine.getSystem(sys_Image);
         const img = imgsys.get("assets/img/rope.png");
         imageMode(CORNER);
 

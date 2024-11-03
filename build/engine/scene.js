@@ -13,20 +13,20 @@ export default class Scene extends System {
     // {
     //     this.actors.push(A);
     // }
-    preload(engine) {
+    preload() {
     }
-    setup(engine) {
+    setup() {
     }
     // private update_actor( engine: Engine, A: Actor )
     // {
-    //     A.update(engine);
-    //     A.draw(engine);
+    //     A.update();
+    //     A.draw();
     //     for (let child of A.children)
     //     {
     //         this.update_actor(engine, child);
     //     }
     // }
-    update(engine) {
+    update() {
         // for (let A of this.actors)
         // {
         //     A.transform.ForwardKinematics();

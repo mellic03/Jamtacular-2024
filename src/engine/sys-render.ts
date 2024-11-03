@@ -1,8 +1,9 @@
 import vec2 from "./math/vec2.js";
-import { __engine } from "./engine.js";
+import { Engine } from "./engine.js";
 import { Graphics, Image } from "p5";
 import { math } from "./math/math.js";
 import GeometryTest from "./math/geometry.js";
+import { EventEmitter } from "./sys-event.js";
 
 
 export class RenderBuffer
@@ -52,14 +53,21 @@ const GTest = GeometryTest;
 let   Ren;
 
 
+export enum RenderEvent
+{
+    RESIZE = 1
+};
+
+
 export default class Render
 {
-    static width:  number;
-    static height: number;
+    private static _events = new EventEmitter<RenderEvent>();
 
     private static bg_color = [200, 200, 200, 255];
 
     public  static view  = new vec2(0, 0);
+    public  static width:  number;
+    public  static height: number;
     public  static span  = new vec2(0, 0);
     public  static tl    = new vec2(0, 0);
     public  static br    = new vec2(0, 0);
@@ -75,7 +83,7 @@ export default class Render
     private static offline_ctx: Graphics;
     private static font: any;
 
-    static init( width=1024, height=1024 )
+    static init( width, height )
     {
         Render.width  = width;
         Render.height = height;
@@ -101,10 +109,28 @@ export default class Render
             Render.offline_ctx = createGraphics(Render.width, Render.height, WEBGL);
             textFont(Render.font);
         }
-
-        frameRate(165);
-        
     }
+
+
+    static on( msg: RenderEvent, callback: Function ): void
+    {
+        Render._events.on(msg, callback);
+    }
+
+    static emit( msg: RenderEvent, data?: any ): void
+    {
+        Render._events.emit(msg, data);
+    }
+
+
+    static resize( w: number, h: number ): void
+    {
+        this.width  = w;
+        this.height = h;
+        Render.span.setXY(w, h);
+        resizeCanvas(w, h);
+    }
+
 
     static beginFrame(): void
     {

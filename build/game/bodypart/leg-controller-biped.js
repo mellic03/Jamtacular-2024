@@ -1,4 +1,4 @@
-// import { Engine, __engine } from "../../engine/engine.js";
+// import { Engine }
 // import BodyPartLeg from "./leg.js";
 // import LegController from "./leg-controller.js";
 // import Actor from "../../engine/actor.js";
@@ -40,9 +40,9 @@
 //         this.params.step_height    = 32;
 //         this.setParams(this.params);
 //     }
-//     update( engine: Engine )
+//     update()
 //     {
-//         super.update(engine);
+//         super.update();
 //         const L = vec2.tmp();
 //         const R = vec2.tmp();
 //         const world = engine.getSystem(sys_World);
@@ -61,9 +61,9 @@
 //         this.yoffset  = -this.heightfactor * this.legs[0].tdist;
 //         // this.parent.sprite.y = math.mix(this.parent.y, h+this.yoffset, a);
 //     }
-//     draw( engine: Engine )
+//     draw()
 //     {
-//         super.draw(engine);
+//         super.draw();
 //     }
 // }
 //# sourceMappingURL=leg-controller-biped.js.map

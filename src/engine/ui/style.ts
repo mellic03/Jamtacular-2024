@@ -9,6 +9,9 @@ export default class ui_Style
     static BOTTOM = 2;
     static RIGHT  = 2;
 
+    static PIXELS = 10;
+    static RATIO  = 11;
+
     padding = [8, 8, 8, 8];
     margin  = [0, 0, 0, 0];
     radius  = [2, 2, 2, 2];
@@ -19,11 +22,17 @@ export default class ui_Style
 
     align = [ui_Style.LEFT, ui_Style.LEFT]; // 0 -> left,  1 -> mid,  2 -> right
 
-    minWidth = 64;
-    maxWidth = 512;
 
-    minHeight = 64;
-    maxHeight = 512;
+
+    boundLimitTypes = [ ui_Style.PIXELS, ui_Style.PIXELS, ui_Style.PIXELS, ui_Style.PIXELS ];
+
+    widthType = ui_Style.PIXELS;
+    minWidth  = 64;
+    maxWidth  = 512;
+
+    heightType = ui_Style.PIXELS;
+    minHeight  = 64;
+    maxHeight  = 512;
 
 
     constructor( bg  = [75, 75, 75, 220], fg  = [150, 150, 150, 220],
@@ -35,6 +44,24 @@ export default class ui_Style
         this.bg = bg;
         this.fg = fg;
     }
+}
+
+
+export function setSyleWidthLimit( style: ui_Style, minPixels, maxPixels, minRatio, maxRatio,
+                                   minType=ui_Style.PIXELS, maxType=ui_Style.PIXELS )
+{
+    const vw = Render.width;
+    style.minWidth  = Math.max(minPixels, vw*minRatio);
+    style.maxWidth  = Math.min(maxPixels, vw*maxRatio);
+}
+
+
+export function setSyleHeightLimit( style: ui_Style, minPixels, maxPixels, minRatio, maxRatio,
+                                    minType=ui_Style.PIXELS, maxType=ui_Style.PIXELS )
+{
+    const vh = Render.height;
+    style.minHeight  = Math.max(minPixels, vh*minRatio);
+    style.maxHeight  = Math.min(maxPixels, vh*maxRatio);
 }
 
 

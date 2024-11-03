@@ -1,5 +1,6 @@
 // import Actor from "./actor.js";
-import { Engine, __engine } from "./engine.js";
+import { Engine }
+ from "./engine.js";
 import System from "./system.js";
 
 
@@ -24,20 +25,20 @@ export default class Scene extends System
     //     this.actors.push(A);
     // }
 
-    preload( engine: Engine ): void
+    preload(): void
     {
         
     }
 
-    setup( engine: Engine ): void
+    setup(): void
     {
 
     }
 
     // private update_actor( engine: Engine, A: Actor )
     // {
-    //     A.update(engine);
-    //     A.draw(engine);
+    //     A.update();
+    //     A.draw();
 
     //     for (let child of A.children)
     //     {
@@ -45,7 +46,7 @@ export default class Scene extends System
     //     }
     // }
 
-    update( engine: Engine ): void
+    update(): void
     {
         // for (let A of this.actors)
         // {

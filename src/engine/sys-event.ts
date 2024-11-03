@@ -37,7 +37,6 @@ export class EventEmitter<T>
 }
 
 
-
 export default class sys_Event extends System
 {
     callbacks = new Map<string, Array<Function>>();

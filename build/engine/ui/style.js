@@ -7,8 +7,11 @@ class ui_Style {
         this.bg = [75, 75, 75, 220];
         this.fg = [150, 150, 150, 220];
         this.align = [ui_Style.LEFT, ui_Style.LEFT]; // 0 -> left,  1 -> mid,  2 -> right
+        this.boundLimitTypes = [ui_Style.PIXELS, ui_Style.PIXELS, ui_Style.PIXELS, ui_Style.PIXELS];
+        this.widthType = ui_Style.PIXELS;
         this.minWidth = 64;
         this.maxWidth = 512;
+        this.heightType = ui_Style.PIXELS;
         this.minHeight = 64;
         this.maxHeight = 512;
         this.padding = pad;
@@ -23,7 +26,19 @@ ui_Style.TOP = 0;
 ui_Style.CENTER = 1;
 ui_Style.BOTTOM = 2;
 ui_Style.RIGHT = 2;
+ui_Style.PIXELS = 10;
+ui_Style.RATIO = 11;
 export default ui_Style;
+export function setSyleWidthLimit(style, minPixels, maxPixels, minRatio, maxRatio, minType = ui_Style.PIXELS, maxType = ui_Style.PIXELS) {
+    const vw = Render.width;
+    style.minWidth = Math.max(minPixels, vw * minRatio);
+    style.maxWidth = Math.min(maxPixels, vw * maxRatio);
+}
+export function setSyleHeightLimit(style, minPixels, maxPixels, minRatio, maxRatio, minType = ui_Style.PIXELS, maxType = ui_Style.PIXELS) {
+    const vh = Render.height;
+    style.minHeight = Math.max(minPixels, vh * minRatio);
+    style.maxHeight = Math.min(maxPixels, vh * maxRatio);
+}
 export function setSyleSpanLimitAsRatio(style, minWidth, maxWidth, minHeight, maxHeight) {
     const vw = Render.width;
     const vh = Render.height;

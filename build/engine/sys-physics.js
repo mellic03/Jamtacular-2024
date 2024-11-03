@@ -1,4 +1,3 @@
-// import { Engine, __engine } from "./engine.js";
 // import BasedCollisionGroup from "./physics/group.js";
 // import System from "./system.js";
 // export default class sys_Physics extends System
@@ -39,7 +38,7 @@
 //     {
 //         return this.basedgroups.get(name);
 //     }
-//     preload( engine: Engine ): void
+//     preload(): void
 //     {
 //         sys_Physics.GROUP_WORLD      = new Group();
 //         sys_Physics.GROUP_ROPES      = new Group();
@@ -62,14 +61,14 @@
 //         // this.addBasedGroup("ropes",  sys_Physics.GROUP_BASED_ROPES);
 //         // this.addBasedGroup("player", sys_Physics.GROUP_BASED_PLAYER);
 //     }
-//     setup( engine: Engine ): void
+//     setup(): void
 //     {
 //     }
-//     update( engine: Engine ): void
+//     update(): void
 //     {
 //         for (let [name, group] of this.basedgroups)
 //         {
-//             group.update(engine);
+//             group.update();
 //         }
 //     }
 // }

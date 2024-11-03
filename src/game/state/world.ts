@@ -1,11 +1,11 @@
 
-import { GameState, GameStateFlag } from "../../../engine/gamestate.js";
-import { GS_Region } from "./state-region.js";
-import { GS_Region1 } from "./state-region1.js";
-import { GS_Region2 } from "./state-region2.js";
-import { GS_Region3 } from "./state-region3.js";
-import { GameStateUserInput } from "../../game.js";
-import { UserInputMsg } from "../userinput.js";
+import { GameState, GameStateFlag } from "../../engine/gamestate.js";
+import { GS_Region } from "./world/state-region.js";
+import { GS_Region1 } from "./world/state-region1.js";
+import { GS_Region2 } from "./world/state-region2.js";
+import { GS_Region3 } from "./world/state-region3.js";
+import { UserInputMsg } from "./userinput.js";
+import { Game, GameStateUserInput } from "../game.js";
 
 
 

@@ -1,5 +1,6 @@
 import {} from "p5/global";
-import { __engine, Engine } from "../../engine/engine.js";
+import { Engine }
+ from "../../engine/engine.js";
 import { HierarchicalTransform, Transform } from "../../engine/transform.js";
 import BodyPart from "../bodypart/bodypart.js";
 import RigidBody from "../../engine/physics/rigidbody.js";
@@ -11,54 +12,93 @@ import { Game } from "../game.js";
 
 
 
-
-export class CharacterConfigJSON
+class CharacterConfigJSON
 {
-    aggression: number = 0;
+    behaviour: BehaviourConfigJSON;
+    body:      BodyConfigJSON;
+
+    constructor( C: RigidBodyCharacter, json: object )
+    {
+        console.log(json);
+
+        console.assert(json.hasOwnProperty("behaviour"), `[${C.typename}] No behaviour`);
+        console.assert(json.hasOwnProperty("body"),      `[${C.typename}] No body`);
+        console.assert(json.hasOwnProperty("limbs"),     `[${C.typename}] No limbs`);
+    
+        this.behaviour = new BehaviourConfigJSON(json["behaviour"]);
+        this.body      = new BodyConfigJSON(json["body"]);
+    }
+}
+
+
+class BehaviourConfigJSON
+{
+    moveForce: number = 1;
+    jumpForce: number = 1;
 
     constructor( config: object )
     {
-        if (config.hasOwnProperty("aggression"))
-        {
-            this.aggression = config["aggression"];
-        }
+        this.moveForce = config["moveForce"];
+        this.jumpForce = config["jumpForce"];
+    }
+}
+
+
+class BodyConfigJSON
+{
+    mass:     number = 1.0;
+    drag:     number = 0.5;
+    friction: number = 0.5;
+    grav:     number = 1.0;
+
+    constructor( config: object )
+    {
+        this.mass     = config["mass"];
+        this.drag     = config["drag"];
+        this.friction = config["friction"];
+        this.grav     = config["grav"];
     }
 }
 
 
 
 
+
+
 export class RigidBodyCharacter extends RigidBody implements iControllable, iTransformable
 {
+    // protected _name: string;
+    public    typename: string;
+
+    config:   CharacterConfigJSON;
+
     local:    Transform;
     world:    Transform;
     children: Array<iTransformable>;
-    config:   CharacterConfigJSON;
 
-    private timer = 0.0;
-    private try_jump = false;
-    private jump_timer = 0.0;
+    aggression: number = 0;
 
     private controllers = new Array<iCharacterController>();
     public  parts       = new Array<BodyPart>;
-    public  state       = "idle";
 
     constructor( x: number, y: number, controller?: iCharacterController )
     {
         super(new Sprite(x, y), 1);
-        const ctor_name = this.constructor.name;
-        this.sprite["AyyLmao"] = this;
 
+        this.typename = this.constructor.name;
         this.local    = new Transform(x, y, 0);
         this.world    = new Transform(0, 0, 0);
         this.children = new Array<iTransformable>();
-        this.config   = new CharacterConfigJSON(Game.CharacterConfig[ctor_name]);
-        // this.config.load(Game.config[ctor_name]);
 
-        if (Game.CharacterConfig.hasOwnProperty(ctor_name))
+        this.sprite["AyyLmao"] = this;
+
         {
-            this.config = Game.CharacterConfig[ctor_name];
+            const json = Game.CharacterConfig;
+            console.assert(json.hasOwnProperty(this.typename), "Ruh roh");
+
+            this.config = new CharacterConfigJSON(this, json[this.typename]);
         }
+
 
         this.pushController(controller);
     }
@@ -103,55 +143,16 @@ export class RigidBodyCharacter extends RigidBody implements iControllable, iTra
     }
 
 
-    private _jumping()
-    {
-        const dt = deltaTime / 1000.0;
-
-        this.jump_timer += (deltaTime / 1000.0);
-
-        if (this.jump_timer < 0.25)
-        {
-            this.sprite.vel.y = -4.0;
-        }
-    
-        else
-        {
-            this.state = "idle";
-            this.jump_timer = -1.0;
-        }
-    }
-
-
     update()
     {
         this.local.pos.setXY(this.sprite.x, this.sprite.y);
         HierarchicalTransform(this, Transform.Identity);
-
+    
         if (this.getController() != null)
         {
             this.getController().update(this);
         }
 
-        if (this.state == "idle")
-        {
-            this.jump_timer += __engine.dtime();
-
-            if (this.try_jump)
-            {
-                this.state = "jumping";
-                this.try_jump = false;
-            }
-        }
-
-        else if (this.state == "jumping")
-        {
-            this._jumping();
-        }
-
-        for (let part of this.parts)
-        {
-            part.update();
-        }
     }
 
 
@@ -160,19 +161,23 @@ export class RigidBodyCharacter extends RigidBody implements iControllable, iTra
         this.local.rot += theta;
     }
 
+
     move( x: number, y: number ): void
     {
-        const dir = vec2.tmp(x, y);
+        const dir   = vec2.tmp(x, y);
+        const speed = this.config.behaviour.moveForce;
 
         if (Math.abs(dir.x) == 0 && Math.abs(dir.y) == 0)
         {
             return;
         }
 
-        dir.normalize().mulXY(256);
+        const scale = deltaTime / 16;
+        dir.normalize().mulXY(speed);
 
         this.applyForceXY(dir.x, dir.y);
     }
+
 
     moveTo( x: number, y: number ): void
     {
@@ -186,15 +191,12 @@ export class RigidBodyCharacter extends RigidBody implements iControllable, iTra
         }
     }
 
+
     jump(): void
     {
-        if (this.state != "jumping" && this.jump_timer > 0.0)
-        {
-            this.try_jump = true;
-            this.jump_timer = 0.0;
-        }
-        // this.applyForceXY(0, -32.0);
+        this.applyForceXY(0, -1.0);
     }
+
 
     interact( x: number, y: number, msg: string = "" ): void
     {

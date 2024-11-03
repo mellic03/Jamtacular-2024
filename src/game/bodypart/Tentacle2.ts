@@ -3,7 +3,7 @@ import vec2 from "../../engine/math/vec2.js";
 import { EventEmitter } from "../../engine/sys-event.js";
 import { Transform } from "../../engine/transform.js";
 import { Game, GameStateGameplay, GameStateWorld } from "../game.js";
-import { GS_Gameplay } from "../state/gameplay/gameplay.js";
+import { GS_Gameplay } from "../state/gameplay.js";
 
 
 
@@ -204,6 +204,9 @@ export class Tentacle extends EventEmitter<TentacleEvent>
             this.bodies.push(B);
         }
 
+        this.root = this.bodies[0];
+        this.hand = this.bodies[segments-1];
+        (new RopeJoint(parent, this.root)).maxLength = this.config.getValue("length", 0, 0);
 
         for (let i=0; i<segments-1; i++)
         {
@@ -211,16 +214,7 @@ export class Tentacle extends EventEmitter<TentacleEvent>
             J.maxLength = this.config.getValue("length", i-1, 0);
         }
 
-        this.root = this.bodies[0];
-        this.hand = this.bodies[segments-1];
 
-        (new RopeJoint(parent, this.root)).maxLength = this.config.getValue("length", 0, 0);
-
-
-        this.update_values();
-
-
-    
         this.hand.collides(GS_Gameplay.groups.WORLD, () => {
             this.emit(TentacleEvent.HIT_GROUND);
         });
@@ -268,8 +262,8 @@ export class Tentacle extends EventEmitter<TentacleEvent>
         start *= segments;
         end   *= segments;
 
-        start = math.clamp(start, 0, segments-1);
-        end   = math.clamp(end, start, segments-1);
+        start = Math.floor(math.clamp(start, 0, segments-1));
+        end   = Math.floor(math.clamp(end, start, segments-1));
 
         if (start == 0)
         {
@@ -318,10 +312,9 @@ export class Tentacle extends EventEmitter<TentacleEvent>
         dy = Math.sign(dy);
 
         const alpha = math.clamp(this.aggression, 0, 1);
-
+        const scale = deltaTime / 16;
         const segments = this.config.segments;
-
-
+    
         for (let i=0; i<segments-1; i++)
         {
             const B     = this.bodies[i];

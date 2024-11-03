@@ -8,7 +8,7 @@ import ui_Grid from "../../../engine/ui/grid.js";
 import ui_List from "../../../engine/ui/list.js";
 // import ui_Slider from "../../../engine/ui/slider.js";
 import ui_Style, { setSyleSpanLimitAsPixels, setSyleSpanLimitAsRatio } from "../../../engine/ui/style.js";
-import { GameStateGameGUI, GameStateGameplay, GameStateUserInput, GameStateWorld } from "../../game.js";
+import { Game, GameStateGameGUI, GameStateGameplay, GameStateUserInput, GameStateWorld } from "../../game.js";
 import { UserInputMsg } from "../userinput.js";
 
 
@@ -59,12 +59,6 @@ export class GS_InGameGUI extends GameState
     constructor()
     {
         super();
-
-        // this.ui = new ui_Grid(3, 3,
-        //     new ui_Button("A"), new ui_Button("B"), new ui_Button("C"),
-        //     new ui_Button("X"), new ui_Button("Y"), new ui_Button("Z"),
-        //     new ui_Button("1"), new ui_Button("2"), new ui_Button("3")
-        // );
 
         this.ui = new ui_HUD(4, 6);
 

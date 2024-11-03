@@ -2,48 +2,50 @@ import {} from "p5/global";
 import {} from "p5/lib/addons/p5.sound";
 import {} from "../lib/p5/addons/p5play";
 
-import { __engine } from "./engine/engine.js";
+import { Engine } from "./engine/engine.js";
 import { Game } from "./game/game.js";
+import Render from "./engine/sys-render.js";
 
 
-const engine = __engine;
-engine.init(1920, 1080);
+Engine.init(1280, 720, 144);
 
 const game = new Game();
 
 
 function preload()
 {
-    engine.preload();
+    Engine.preload();
     game.preload();
 }
 
 
 function setup()
 {
-    engine.setup();
+    Engine.setup();
+    Render.resize(windowWidth, windowHeight);
     game.setup();
 
     world.gravity.y = 9.8;
     allSprites.autoDraw = false;
 
-    // const RE = SomeObject.Actor;
-
-    // const A = new Jank.Actor(0, 0, 64, 64);
-    // console.log("YEET: ", A);
 }
-
-
 
 
 function draw()
 {
-    engine.draw();
+    Engine.draw();
+
+    console.log(windowWidth, windowHeight);
 
 }
 
+function windowResized()
+{
+    Render.resize(windowWidth, windowHeight);
+}
 
 window.preload = preload;
 window.setup   = setup;
 window.draw    = draw;
+window.windowResized    = windowResized;
 

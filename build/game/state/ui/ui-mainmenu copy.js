@@ -6,25 +6,25 @@ import ui_List from "../../../engine/ui/list.js";
 import { setSyleSpanLimitAsRatio } from "../../../engine/ui/style.js";
 import ui_Title from "../../../engine/ui/title.js";
 import { GS_Editor, GS_EditorTest } from "../../editor/editor.js";
-import { GameStateGameGUI, GameStateUserInput } from "../../game.js";
+import { GameStateUserInput } from "../../game.js";
 import { UserInputMsg } from "../userinput.js";
 import { GS_Region1 } from "../world/state-region1.js";
 import { GS_Region2 } from "../world/state-region2.js";
 import { GS_Region3 } from "../world/state-region3.js";
-import { GS_World } from "../world/world.js";
-import { GS_InGameGUI } from "./ui-ingame.js";
+import { GS_World } from "../world.js";
 const transition = (A, B) => { StateManager.getState(A).transition(B); };
-function closeMainMenu() {
-    GameStateGameGUI.transition(GS_InGameGUI);
-}
 export class GS_MainMenuGUI extends GameState {
     constructor() {
         super();
         this.renbounds = new ui_Bounds(0, 0, 1, 1);
-        GameStateUserInput.on(UserInputMsg.UNPAUSE, () => {
-        });
         this.ui = new ui_List(new ui_Title("Main"), new ui_Button("Continue", () => { GameStateUserInput.emit(UserInputMsg.UNPAUSE); }), new ui_Button("Region 1", () => { transition(GS_World, GS_Region1); }), new ui_Button("Region 2", () => { transition(GS_World, GS_Region2); }), new ui_Button("Region 3", () => { transition(GS_World, GS_Region3); }), new ui_Button("Editor", () => { transition(GS_Editor, GS_EditorTest); }), new ui_Button("Settings"), new ui_Button("Exit"));
-        setSyleSpanLimitAsRatio(this.ui.style, 1 / 60, 0.75, 1 / 60, 1.0);
+        const S = this.ui.style;
+        setSyleSpanLimitAsRatio(S, 1 / 60, 0.75, 1 / 60, 1.0);
+        S.minWidth = 512;
+        S.maxWidth = 856;
+        // S.maxWidthPixels  = 812;
+        // S.maxHeightPixels = 512;
+        // setSyleSpanLimitAsRatio(this.ui.style, 1/60, 0.5, 1/60, 0.75);
         this.ui.updateStyle();
     }
     update() {

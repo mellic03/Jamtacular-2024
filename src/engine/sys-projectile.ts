@@ -1,5 +1,4 @@
 // import BasedAnimation from "./animation.js";
-// import { Engine, __engine } from "./engine.js";
 // import vec2 from "./math/vec2.js";
 // import BasedRigidBody from "./physics/rigidbody-based.js";
 // import sys_Physics from "./sys-physics.js";

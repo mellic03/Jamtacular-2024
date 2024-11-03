@@ -1,4 +1,4 @@
-import { __engine } from "../../engine/engine.js";
+import { Engine } from "../../engine/engine.js";
 import BodyPartLeg from "./leg.js";
 
 
@@ -9,7 +9,7 @@ export default class LegOneJoint extends BodyPartLeg
         super(x, y, dists, lerp_offset);
     }
 
-    // step( engine: Engine )
+    // step()
     // {
     //     const a0 = this.getAlpha();
     //     const a1 = this.other.getAlpha();

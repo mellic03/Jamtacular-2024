@@ -1,4 +1,5 @@
-import { Engine, __engine } from "../../engine/engine.js";
+import { Engine }
+ from "../../engine/engine.js";
 import { iRenderable, iTransformable, iUpdatable } from "../../engine/interface.js";
 import { Transform } from "../../engine/transform.js";
 

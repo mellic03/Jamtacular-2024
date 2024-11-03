@@ -1,5 +1,6 @@
 import { GameState } from "../../engine/gamestate.js";
 import { IO, KEYCODE } from "../../engine/IO.js";
+import { EventEmitter } from "../../engine/sys-event.js";
 import { GameStateGameplay, GameStateGameGUI } from "../game.js";
 
 
@@ -11,22 +12,14 @@ export enum UserInputMsg
 };
 
 
+
 export class GS_UserInput extends GameState<UserInputMsg>
 {
-    private paused = false;
+    paused: boolean = true;
 
     constructor()
     {
         super();
-
-        IO.onKeyPress(KEYCODE.ESC, (event: KeyboardEvent) => {
-
-            const P = this.paused;
-            this.paused = !this.paused;
-
-            if (P) this.emit(UserInputMsg.PAUSE);
-            else   this.emit(UserInputMsg.UNPAUSE);
-        });
     }
 
 
@@ -34,6 +27,23 @@ export class GS_UserInput extends GameState<UserInputMsg>
     {
         super.update();
 
+        this.on(UserInputMsg.PAUSE, () => {
+            console.log("PAUSE")
+            this.paused = true;
+        });
+
+        this.on(UserInputMsg.UNPAUSE, () => {
+            console.log("UNPAUSE")
+            this.paused = false;
+        });
+
+        if (IO.keyTapped(KEYCODE.ESC))
+        {
+            const P = this.paused;
+
+            if (P)  this.emit(UserInputMsg.UNPAUSE);
+            else    this.emit(UserInputMsg.PAUSE);
+        }
 
     }
 

@@ -1,4 +1,4 @@
-import { __engine } from "../engine.js";
+import { Engine } from "../engine.js";
 import vec2 from "../math/vec2.js";
 
 

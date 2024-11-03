@@ -1,4 +1,4 @@
-import { __engine } from "../engine.js";
+import { Engine } from "../engine.js";
 import vec2 from "../math/vec2.js";
 import sys_Image from "../sys-image.js";
 import sys_Render from "../sys-render.js";
@@ -48,7 +48,7 @@ export default class Rope {
         }
     }
     draw() {
-        const imgsys = __engine.getSystem(sys_Image);
+        const imgsys = Engine.getSystem(sys_Image);
         const img = imgsys.get("assets/img/rope.png");
         imageMode(CORNER);
         for (let i = 0; i < this.bodies.length - 1; i++) {

@@ -1,4 +1,5 @@
-import { Engine, __engine } from "./engine.js";
+import { Engine }
+ from "./engine.js";
 import * as p5 from "p5";
 import { math } from "./math/math.js";
 import vec2 from "./math/vec2.js";

@@ -1,4 +1,4 @@
-import { __engine } from "../../engine/engine.js";
+import { Engine } from "../../engine/engine.js";
 import FABRIK from "../../engine/math/FABRIK.js";
 import { math } from "../../engine/math/math.js";
 import vec2 from "../../engine/math/vec2.js";
@@ -6,7 +6,7 @@ import sys_Image from "../../engine/sys-image.js";
 import Render from "../../engine/sys-render.js";
 import sys_Render from "../../engine/sys-render.js";
 import { WorldQueryResult } from "../../engine/sys-world/query.js";
-import { GS_World } from "../state/world/world.js";
+import { GS_World } from "../state/world.js";
 import BodyPart from "./bodypart.js";
 
 
@@ -177,7 +177,7 @@ export default class BodyPartLeg2 extends BodyPart
     draw()
     {
         imageMode(CORNER);
-        const imgsys = __engine.getSystem(sys_Image);
+        const imgsys = Engine.getSystem(sys_Image);
         const img = imgsys.load("assets/img/meat.jpg");
 
         // fill(0, 255, 0);

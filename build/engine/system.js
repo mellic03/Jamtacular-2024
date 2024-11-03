@@ -1,11 +1,11 @@
 export default class System {
     constructor() {
     }
-    preload(engine) {
+    preload() {
     }
-    setup(engine) {
+    setup() {
     }
-    update(engine) {
+    update() {
     }
 }
 //# sourceMappingURL=system.js.map

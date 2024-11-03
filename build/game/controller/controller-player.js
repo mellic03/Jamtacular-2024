@@ -3,6 +3,7 @@ import vec2 from "../../engine/math/vec2.js";
 import Render from "../../engine/sys-render.js";
 export default class PlayerController {
     constructor() {
+        this._timer = 0;
         this.body = null;
         this.cam_offset = new vec2(0, 0);
         IO.onMouseClick(() => {
@@ -51,10 +52,15 @@ export default class PlayerController {
         // this.cam_offset.addXy()
     }
     update(C) {
+        Render.view.mixXY(C.local.x, C.local.y, 0.02);
+        this._timer += deltaTime;
+        if (this._timer < 1000 / 30) {
+            return;
+        }
+        this._timer = 0;
         this.key_rotation(C);
         this.key_movement(C);
         this.body = C;
-        Render.view.mixXY(C.local.x, C.local.y, 0.02);
     }
 }
 //# sourceMappingURL=controller-player.js.map

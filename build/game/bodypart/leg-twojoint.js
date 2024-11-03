@@ -3,7 +3,7 @@ export default class LegTwoJoint extends BodyPartLeg {
     constructor(x, y, dists, lerp_offset = 0) {
         super(x, y, dists, lerp_offset);
     }
-    // step( engine: Engine )
+    // step()
     // {
     //     const a0 = this.getAlpha();
     //     const a1 = this.other.getAlpha();

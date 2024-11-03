@@ -1,4 +1,4 @@
-// import { Engine, __engine } from "../../engine/engine.js";
+// import { Engine }
 // import BodyPartLeg from "./leg.js";
 // import LegController from "./leg-controller.js";
 // import Actor from "../../engine/actor.js";
@@ -54,9 +54,9 @@
 //     }
 
 
-//     update( engine: Engine )
+//     update()
 //     {
-//         super.update(engine);
+//         super.update();
 
 //         const L = vec2.tmp();
 //         const R = vec2.tmp();
@@ -84,9 +84,9 @@
 //     }
 
 
-//     draw( engine: Engine )
+//     draw()
 //     {
-//         super.draw(engine);
+//         super.draw();
 
 //     }
 

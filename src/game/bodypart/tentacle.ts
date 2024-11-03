@@ -1,4 +1,4 @@
-import { __engine } from "../../engine/engine.js";
+import { Engine } from "../../engine/engine.js";
 import vec2 from "../../engine/math/vec2.js";
 import RigidBody from "../../engine/physics/rigidbody.js";
 import Rope from "../../engine/physics/rope.js";

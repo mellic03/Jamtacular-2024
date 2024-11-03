@@ -1,6 +1,7 @@
 import vec2 from "./math/vec2.js";
 import { math } from "./math/math.js";
 import GeometryTest from "./math/geometry.js";
+import { EventEmitter } from "./sys-event.js";
 export class RenderBuffer {
     constructor(w, h, offline_ctx) {
         this.buffer = null;
@@ -30,8 +31,13 @@ export class RenderBuffer {
 }
 const GTest = GeometryTest;
 let Ren;
+export var RenderEvent;
+(function (RenderEvent) {
+    RenderEvent[RenderEvent["RESIZE"] = 1] = "RESIZE";
+})(RenderEvent || (RenderEvent = {}));
+;
 class Render {
-    static init(width = 1024, height = 1024) {
+    static init(width, height) {
         Render.width = width;
         Render.height = height;
         Render.span.setXY(width, height);
@@ -49,7 +55,18 @@ class Render {
             Render.offline_ctx = createGraphics(Render.width, Render.height, WEBGL);
             textFont(Render.font);
         }
-        frameRate(165);
+    }
+    static on(msg, callback) {
+        Render._events.on(msg, callback);
+    }
+    static emit(msg, data) {
+        Render._events.emit(msg, data);
+    }
+    static resize(w, h) {
+        this.width = w;
+        this.height = h;
+        Render.span.setXY(w, h);
+        resizeCanvas(w, h);
     }
     static beginFrame() {
         this.mouse_screen.setXY(mouseX, mouseY);
@@ -158,6 +175,7 @@ class Render {
         pop();
     }
 }
+Render._events = new EventEmitter();
 Render.bg_color = [200, 200, 200, 255];
 Render.view = new vec2(0, 0);
 Render.span = new vec2(0, 0);

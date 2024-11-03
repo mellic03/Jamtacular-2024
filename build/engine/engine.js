@@ -7,15 +7,17 @@ import BasedAnimation from "./animation.js";
 import Render from "./sys-render.js";
 import { IO } from "./IO.js";
 import { StateManager } from "./gamestate.js";
-export class Engine {
+class Engine_Internal {
     constructor() {
         this.isystems = new Array;
         this.systems = new Array;
         this.lookup = new Map;
         this.dt = 1.0 / 60.0;
-        this.fps = 60.0;
+        this.current_fps = 60.0;
+        this.target_fps = 60.0;
     }
-    init(res_x, res_y) {
+    init(res_x, res_y, fps) {
+        this.target_fps = fps;
         Render.init(res_x, res_y);
         this.addiSystem(StateManager);
         this.addiSystem(IO);
@@ -31,7 +33,7 @@ export class Engine {
         return this.dt / 1000.0;
     }
     avgFPS() {
-        return this.fps;
+        return this.current_fps;
     }
     addSystem(system) {
         console.log(`[Engine.addSystem] ${system.constructor.name}`);
@@ -53,16 +55,17 @@ export class Engine {
             sys.preload();
         }
         for (let system of this.systems) {
-            system.preload(this);
+            system.preload();
         }
     }
     setup() {
+        frameRate(this.target_fps);
         Render.setup();
         for (let sys of this.isystems) {
             sys.setup();
         }
         for (let system of this.systems) {
-            system.setup(this);
+            system.setup();
         }
     }
     draw() {
@@ -70,11 +73,11 @@ export class Engine {
             sys.update();
         }
         this.dt = deltaTime;
-        this.fps = math.mix(this.fps, frameRate(), 1.0 / 60.0);
+        this.current_fps = math.mix(this.current_fps, frameRate(), 1.0 / 60.0);
         Render.beginFrame();
         BasedAnimation.update();
         for (let system of this.systems) {
-            system.update(this);
+            system.update();
         }
         for (let sys of this.isystems) {
             sys.draw();
@@ -82,5 +85,5 @@ export class Engine {
         Render.endFrame();
     }
 }
-export const __engine = new Engine();
+export const Engine = new Engine_Internal();
 //# sourceMappingURL=engine.js.map

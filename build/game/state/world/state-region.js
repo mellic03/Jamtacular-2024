@@ -3,7 +3,7 @@ import { math } from "../../../engine/math/math.js";
 import { IO } from "../../../engine/IO.js";
 import WorldInstance from "../../../engine/sys-world/worldinstance.js";
 import { GameState } from "../../../engine/gamestate.js";
-import { GS_Gameplay } from "../gameplay/gameplay.js";
+import { GS_Gameplay } from "../gameplay.js";
 export class GS_Region extends GameState {
     // protected GROUP_WORLD:      Group;
     // protected GROUP_ROPES:      Group;

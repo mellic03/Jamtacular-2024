@@ -1,14 +1,10 @@
-import { StateManager, GameState } from "../../../engine/gamestate.js";
-import Render from "../../../engine/sys-render.js";
-import { GS_MainMenuGUI } from "./ui-mainmenu.js";
-import { GameStateGameplay, GameStateUserInput, GameStateWorld } from "../../game.js";
-import { UserInputMsg } from "../userinput.js";
-import { GS_InGameGUI } from "./ui-ingame.js";
-
-
-const pushState  = (A, B) => { StateManager.getState(A).pushState(B);  };
-const popState   = (A   ) => { StateManager.getState(A).popState();    };
-const transition = (A, B) => { StateManager.getState(A).transition(B); };
+import { StateManager, GameState, GameStateFlag } from "../../engine/gamestate.js";
+import Render from "../../engine/sys-render.js";
+import { GS_MainMenuGUI } from "./ui/ui-mainmenu.js";
+import { Game, GameStateGameplay, GameStateUserInput, GameStateWorld } from "../game.js";
+import { UserInputMsg } from "./userinput.js";
+import { GS_InGameGUI } from "./ui/ui-ingame.js";
+import { GS_SettingsGUI } from "./ui/ui-settings.js";
 
 
 export class GS_GameUI extends GameState
@@ -25,6 +21,7 @@ export class GS_GameUI extends GameState
     
         this.addSubstate(new GS_InGameGUI);
         this.addSubstate(new GS_MainMenuGUI);
+        this.addSubstate(new GS_SettingsGUI);
         this.transition(GS_MainMenuGUI);
 
         GameStateUserInput.on(UserInputMsg.PAUSE, () => {
@@ -40,6 +37,7 @@ export class GS_GameUI extends GameState
     update(): void
     {
         super.update();
+    
     }
 
 

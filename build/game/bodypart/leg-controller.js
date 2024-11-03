@@ -1,5 +1,5 @@
 // import Actor from "../../engine/actor.js";
-// import { Engine, __engine } from "../../engine/engine.js";
+// import { Engine }
 // import { EventEmitting } from "../../engine/sys-event.js";
 // import { RigidBodyCharacter } from "../character/character.js";
 // import BodyPartLeg, { LegParams } from "./leg.js";
@@ -14,25 +14,25 @@
 //         this.params = new LegParams();
 //         this.legs   = [];
 //     }
-//     update( engine: Engine )
+//     update()
 //     {
 //         for (let L of this.legs)
 //         {
 //             L.transform.mult(this.parent.transform);
-//             L.update(engine);
+//             L.update();
 //         }
 //     }
-//     draw( engine: Engine )
+//     draw()
 //     {
 //         if (this.legs[0].direction == -1)
 //         {
-//             this.legs[0].draw(engine);
-//             this.legs[1].draw(engine);
+//             this.legs[0].draw();
+//             this.legs[1].draw();
 //         }
 //         else
 //         {
-//             this.legs[1].draw(engine);
-//             this.legs[0].draw(engine);
+//             this.legs[1].draw();
+//             this.legs[0].draw();
 //         }
 //     }
 //     setParams( params: LegParams ): void

@@ -1,4 +1,4 @@
-import { Engine, __engine } from "../engine.js";
+import { Engine } from "../engine.js";
 import vec2 from "../math/vec2.js";
 
 
@@ -34,7 +34,7 @@ export default class StaticBody
         this.sprite.color.setAlpha(color[3]);
     }
 
-    draw( engine: Engine )
+    draw()
     {
         this.sprite.draw();
         // rect(this.center.x, this.center.y, this.span.x, this.span.y);

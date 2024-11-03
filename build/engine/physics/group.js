@@ -1,3 +1,4 @@
+import { Engine } from "../engine.js";
 import { math } from "../math/math.js";
 import vec2 from "../math/vec2.js";
 import Render from "../sys-render.js";
@@ -5,41 +6,6 @@ import { PHYS_TIMESTEP } from "./physics.js";
 const LOWRES_CELL_W = 512;
 const LOWRES_CELL_HW = LOWRES_CELL_W / 2;
 const GRID_DEGREE = 128;
-// class CollisionGrid
-// {
-//     corner: vec2;
-//     span:   vec2;
-//     rigidbodies:  Array<Array<Array<RigidBody>>>;
-//     staticbodies: Array<Array<Array<StaticBody>>>;
-//     constructor( x, y, w, h )
-//     {
-//         this.corner = new vec2(x, y);
-//         this.span   = new vec2(w, h);
-//         this.rigidbodies  = [];
-//         this.staticbodies = [];
-//     }
-//     private worldToCell( world: vec2, cell: vec2 ): void
-//     {
-//         cell.copy(world).sub(this.corner);
-//         cell.x /= this.span.x;
-//         cell.y /= this.span.y;
-//         cell.floor();
-//     }
-//     private gridToWorld( cell: vec2, world: vec2 ): void
-//     {
-//         world.copy(cell);
-//         world.x *= this.span.x;
-//         world.y *= this.span.y;
-//         world.add(this.corner);
-//     }
-//     // update( engine: Engine ): void
-//     // {
-//     //     for (let rbody of this.rigidbodies )
-//     //     {
-//     //         const cell = vec2.tmp().copy(rbody.pos)
-//     //     }
-//     // }
-// }
 export default class BasedCollisionGroup {
     constructor(x, y, centered = true) {
         this.accum = 0;
@@ -77,20 +43,6 @@ export default class BasedCollisionGroup {
         this.staticbodies.push(body);
     }
     _tunneled(pos, vel) {
-        // if (vel.magSq() <= 0.001)
-        // {
-        //     return false;
-        // }
-        // const dir   = vec2.copy(vel).normalize();
-        // const world = __engine.getSystem(sys_World);
-        // if (world.raycast(pos.x, pos.y, dir.x, dir.y))
-        // {
-        //     const res = WorldQueryResult.hit;
-        //     if (pos.distSq(res) < vel.magSq())
-        //     {
-        //         return true;
-        //     }
-        // }
         return false;
     }
     _resolve_tunnel(rbody) {
@@ -125,22 +77,6 @@ export default class BasedCollisionGroup {
             }
             return true;
         }
-        // else if (rbody.vprev.magSq() > 0.01)
-        // {
-        //     const pos = rbody.curr;
-        //     const vel = rbody.vprev;
-        //     const world = __engine.getSystem(sys_World);
-        //     const dir   = vec2.copy(rbody.vprev).normalize();
-        //     if (world.raycast(pos.x, pos.y, dir.x, dir.y))
-        //     {
-        //         const hit = WorldQueryResult.hit;
-        //         if (pos.distSq(hit) + vel.magSq() <= rSQ)
-        //         {
-        //             N.copy(WorldQueryResult.normal);
-        //             return true;
-        //         }
-        //     }
-        // }
         return false;
     }
     _resolve(rbody, sbody, P, N) {
@@ -205,12 +141,12 @@ export default class BasedCollisionGroup {
             this._insert_StaticBody(body);
         }
     }
-    _integrate(engine) {
+    _integrate() {
         for (let rbody of this.rigidbodies) {
-            rbody.integrate(engine);
+            rbody.integrate();
         }
     }
-    _resolve_collisions(engine) {
+    _resolve_collisions() {
         for (let rbody of this.rigidbodies) {
             const cell = this.worldToCell(rbody.curr);
             let row = cell.y - 1;
@@ -254,8 +190,8 @@ export default class BasedCollisionGroup {
         }
         return false;
     }
-    update(engine) {
-        this.accum += engine.dtime();
+    update() {
+        this.accum += Engine.dtime();
         if (this.accum >= PHYS_TIMESTEP) {
             if (this.staticbodies.length != this.prev_count) {
                 this._insert_bodies();
@@ -264,8 +200,8 @@ export default class BasedCollisionGroup {
             }
         }
         while (this.accum >= PHYS_TIMESTEP) {
-            this._integrate(engine);
-            this._resolve_collisions(engine);
+            this._integrate();
+            this._resolve_collisions();
             this.accum -= PHYS_TIMESTEP;
         }
         const alpha = math.clamp(this.accum / PHYS_TIMESTEP, 0, 1);

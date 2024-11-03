@@ -1,4 +1,4 @@
-import { Engine, __engine } from "../engine.js";
+import { Engine } from "../engine.js";
 import { math } from "../math/math.js";
 import vec2 from "../math/vec2.js";
 import { PHYS_GRAVITY, PHYS_MASS_SCALE, PHYS_TIMESTEP } from "./physics.js";
@@ -9,7 +9,7 @@ abstract class RigidBodyConstraint
     A: BasedRigidBody;
     B: BasedRigidBody;
 
-    abstract update( engine: Engine ): void;
+    abstract update(): void;
 }
 
 
@@ -23,7 +23,7 @@ export class BasedRigidBodyDistanceConstraint extends RigidBodyConstraint
         this.dist = dist;
     }
 
-    update( engine: Engine ): void
+    update(): void
     {
         // const disp  = vec2.tmp().displacement(this.A.curr_pos, this.B.curr_pos);
         // const error = this.dist - disp.mag();
@@ -158,7 +158,7 @@ export default class BasedRigidBody
         this.curr_pos.add(dir);
     }
 
-    integrate( engine: Engine )
+    integrate()
     {
         const dt  = PHYS_TIMESTEP;
 
@@ -176,7 +176,7 @@ export default class BasedRigidBody
         this.curr_vel.copy(this.curr_pos).sub(this.prev_pos);
     }
 
-    draw( engine: Engine )
+    draw()
     {
 
     }

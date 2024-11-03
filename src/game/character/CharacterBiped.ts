@@ -1,4 +1,4 @@
-import { __engine } from "../../engine/engine.js";
+import { Engine } from "../../engine/engine.js";
 import { math } from "../../engine/math/math.js";
 import BodyPartLeg2 from "../bodypart/leg2.js";
 import { iCharacterController } from "../controller/controller.js";

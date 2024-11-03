@@ -6,18 +6,18 @@ export default class sys_Noise extends System {
         this.imgVoronoi = new Array(4);
         this.uv = new vec2(0, 0);
     }
-    preload(engine) {
+    preload() {
         for (let i = 0; i < 4; i++) {
             this.imgVoronoi[i] = loadImage(`assets/img/noise/voronoi/${i}.jpg`);
         }
     }
-    setup(engine) {
+    setup() {
         noiseSeed(1831);
         for (let img of this.imgVoronoi) {
             img.loadPixels();
         }
     }
-    update(engine) {
+    update() {
         // console.log(this.imgVoronoi[0]);
     }
     perlin(x, y) {

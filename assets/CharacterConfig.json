@@ -1,28 +1,53 @@
 {
-    "CharacterFloating": {
+    "CharacterBiped": {
 
-        "aggression": 0.0,
+        "behaviour": {
+            "moveForce": 1,
+            "jumpForce": 1
+        },
 
         "body": {
             "mass":     8.0,
             "drag":     2.0,
             "friction": 4.0,
-            "speed":    1.0,
             "grav":     0.0
         },
 
-        "limbs": {
-            "Tentacle0": 6
-        }
+        "limbs": { "Leg0": 2 }
     },
 
-    "CharacterBiped": {
-        "speed": [ 0.25, 0.5 ],
-        "jump":  [ 0, 0 ],
+    "CharacterFloating": {
 
-        "limbs": {
-            "Leg0": 8
-        }
+        "behaviour": {
+            "moveForce": 64,
+            "jumpForce": 1
+        },
+
+        "body": {
+            "mass":     8.0,
+            "drag":     2.0,
+            "friction": 4.0,
+            "grav":     0.0
+        },
+
+        "limbs": { "Tentacle0": 1 }
+    },
+
+    "CharacterDDL": {
+
+        "behaviour": {
+            "moveForce": 1,
+            "jumpForce": 1
+        },
+
+        "body": {
+            "mass":     8.0,
+            "drag":     2.0,
+            "friction": 4.0,
+            "grav":     0.0
+        },
+
+        "limbs": { "Tentacle1": 4 }
     }
 
 }

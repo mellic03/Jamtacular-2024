@@ -1,6 +1,5 @@
 import System from "../system.js";
 import vec2 from "../math/vec2.js";
-import { Engine, __engine } from "../engine.js";
 import WorldOptimiser, { DrawItem } from "./optimiser.js";
 import WorldGenerator from "./generator.js";
 import WorldQuery, { WorldQueryResult } from "./query.js";

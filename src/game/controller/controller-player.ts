@@ -1,4 +1,4 @@
-import { __engine } from "../../engine/engine.js";
+import { Engine } from "../../engine/engine.js";
 import { IO, KEYCODE } from "../../engine/IO.js";
 import vec2 from "../../engine/math/vec2.js";
 import Render from "../../engine/sys-render.js";
@@ -7,6 +7,8 @@ import { iCharacterController, iControllable } from "./controller.js";
 
 export default class PlayerController implements iCharacterController
 {
+    private _timer = 0;
+
     body: iControllable = null;
     cam_offset = new vec2(0, 0);
 
@@ -85,12 +87,22 @@ export default class PlayerController implements iCharacterController
 
     update( C: iControllable )
     {
+        Render.view.mixXY(C.local.x, C.local.y, 0.02);
+
+        this._timer += deltaTime;
+    
+        if (this._timer < 1000/30)
+        {
+            return;
+        }
+
+        this._timer = 0;
+
         this.key_rotation(C);
         this.key_movement(C);
 
         this.body = C;
 
-        Render.view.mixXY(C.local.x, C.local.y, 0.02);
     }
 
 }

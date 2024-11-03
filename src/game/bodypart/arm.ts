@@ -1,5 +1,4 @@
 // import Actor from "../../engine/actor.js";
-// import { Engine, __engine } from "../../engine/engine.js";
 // import FABRIK from "../../engine/math/FABRIK.js";
 // import { math } from "../../engine/math/math.js";
 // import vec2 from "../../engine/math/vec2.js";
@@ -61,12 +60,12 @@
 //         this.foot = this.joints[this.joints.length-1];
 //     }
 
-//     private _step( engine: Engine )
+//     private _step()
 //     {
 
 //     }
 
-//     swing( engine: Engine )
+//     swing()
 //     {
 
 //     }

@@ -1,4 +1,4 @@
-import { Engine, __engine } from "./engine.js";
+import { Engine } from "./engine.js";
 import System from "./system.js";
 
 
@@ -9,17 +9,17 @@ export default class sys_Particle extends System
         super();
     }
 
-    preload( engine: Engine ): void
+    preload(): void
     {
         
     }
     
-    setup( engine: Engine ): void
+    setup(): void
     {
 
     }
     
-    update( engine: Engine ): void
+    update(): void
     {
 
     }

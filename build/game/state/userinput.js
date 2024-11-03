@@ -9,18 +9,25 @@ export var UserInputMsg;
 export class GS_UserInput extends GameState {
     constructor() {
         super();
-        this.paused = false;
-        IO.onKeyPress(KEYCODE.ESC, (event) => {
-            const P = this.paused;
-            this.paused = !this.paused;
-            if (P)
-                this.emit(UserInputMsg.PAUSE);
-            else
-                this.emit(UserInputMsg.UNPAUSE);
-        });
+        this.paused = true;
     }
     update() {
         super.update();
+        this.on(UserInputMsg.PAUSE, () => {
+            console.log("PAUSE");
+            this.paused = true;
+        });
+        this.on(UserInputMsg.UNPAUSE, () => {
+            console.log("UNPAUSE");
+            this.paused = false;
+        });
+        if (IO.keyTapped(KEYCODE.ESC)) {
+            const P = this.paused;
+            if (P)
+                this.emit(UserInputMsg.UNPAUSE);
+            else
+                this.emit(UserInputMsg.PAUSE);
+        }
     }
     draw() {
         super.draw();

@@ -2,8 +2,8 @@ import { GameState, GameStateFlag } from "../../../engine/gamestate.js";
 import { GS_Region1 } from "./state-region1.js";
 import { GS_Region2 } from "./state-region2.js";
 import { GS_Region3 } from "./state-region3.js";
-import { GameStateUserInput } from "../../game.js";
 import { UserInputMsg } from "../userinput.js";
+import { GameStateUserInput } from "../../game.js";
 export class GS_World extends GameState {
     preload() {
     }

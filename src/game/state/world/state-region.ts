@@ -4,8 +4,8 @@ import { IO, KEYCODE } from "../../../engine/IO.js";
 import WorldInstance from "../../../engine/sys-world/worldinstance.js";
 import { GameState, GameStateFlag } from "../../../engine/gamestate.js";
 import WorldOptimiser from "../../../engine/sys-world/optimiser.js";
-import { GS_World } from "./world.js";
-import { GS_Gameplay } from "../gameplay/gameplay.js";
+import { GS_World } from "../world.js";
+import { GS_Gameplay } from "../gameplay.js";
 
 
 export class GS_Region extends GameState

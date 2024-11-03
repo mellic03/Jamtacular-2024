@@ -1,4 +1,4 @@
-import { __engine } from "../../engine/engine.js";
+import { Engine } from "../../engine/engine.js";
 import FABRIK from "../../engine/math/FABRIK.js";
 import { math } from "../../engine/math/math.js";
 import vec2 from "../../engine/math/vec2.js";
@@ -59,7 +59,7 @@ export default class BodyPartLeg extends BodyPart {
         let xoffset = 2 * (this.root.x - this.prev_root.x);
         console.log(xoffset);
         // let xoffset = Math.sign(this.vel.x) * this.params.step_overshoot;
-        const world = __engine.getSystem(sys_World);
+        const world = Engine.getSystem(sys_World);
         if (world.raycast(this.root.x + xoffset, this.world.y, 0.001, 1)) {
             const res = WorldQueryResult.hit;
             const dx = (res.x - this.next_foot.x) * (1.0 + this.params.step_overshoot);
@@ -121,7 +121,7 @@ export default class BodyPartLeg extends BodyPart {
     }
     draw() {
         imageMode(CORNER);
-        const imgsys = __engine.getSystem(sys_Image);
+        const imgsys = Engine.getSystem(sys_Image);
         const img = imgsys.load("assets/img/meat.jpg");
         fill(0, 255, 0);
         circle(this.curr_foot.x, this.curr_foot.y, 5);

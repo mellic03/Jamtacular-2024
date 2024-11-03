@@ -1,9 +1,9 @@
-import { __engine } from "../engine/engine.js";
+import { Engine } from "../engine/engine.js";
 import { StateManager } from "../engine/gamestate.js";
 import { GS_UserInput, UserInputMsg } from "./state/userinput.js";
-import { GS_Gameplay } from "./state/gameplay/gameplay.js";
-import { GS_GameUI } from "./state/ui/ui.js";
-import { GS_World } from "./state/world/world.js";
+import { GS_Gameplay } from "./state/gameplay.js";
+import { GS_GameUI } from "./state/ui.js";
+import { GS_World } from "./state/world.js";
 import sys_Audio from "../engine/sys-audio.js";
 export const GameStateUserInput = new GS_UserInput();
 export const GameStateGameplay = new GS_Gameplay();
@@ -19,11 +19,10 @@ export class Game {
     preload() {
         Game.LimbConfig = loadJSON("./assets/LimbConfig.json");
         Game.CharacterConfig = loadJSON("./assets/CharacterConfig.json");
-        const audiosys = __engine.getSystem(sys_Audio);
+        const audiosys = Engine.getSystem(sys_Audio);
         audiosys.load("assets/audio/click.wav");
     }
     setup() {
-        GameStateUserInput.emit(UserInputMsg.UNPAUSE);
         GameStateUserInput.emit(UserInputMsg.PAUSE);
         // console.log("WOOP: ", this.config["CharacterBiped"]);
     }
@@ -50,7 +49,7 @@ export class Game {
 //     public preload(): void
 //     {
 //         super.preload();
-//         const imgsys = __engine.getSystem(sys_Image);
+//         const imgsys = Engine.getSystem(sys_Image);
 //         imgsys.load("assets/img/meat.jpg");
 //         imgsys.load("assets/img/michael.png");
 //         imgsys.load("assets/img/heart-red.png");

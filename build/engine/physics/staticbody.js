@@ -16,7 +16,7 @@ class StaticBody {
         this.sprite.color.setBlue(color[2]);
         this.sprite.color.setAlpha(color[3]);
     }
-    draw(engine) {
+    draw() {
         this.sprite.draw();
         // rect(this.center.x, this.center.y, this.span.x, this.span.y);
     }

@@ -16,20 +16,22 @@ export interface iSystem
     setup():   void;
     update():  void;
     draw():    void;
+
 }
 
-
-export class Engine
+class Engine_Internal
 {
     private isystems = new Array<iSystem>;
     private systems  = new Array<System>;
 
     private lookup  = new Map<string, number>;
     private dt      = 1.0 / 60.0;
-    private fps     = 60.0;
+    private current_fps = 60.0;
+    private target_fps  = 60.0;
 
-    init( res_x: number, res_y: number )
+    init( res_x: number, res_y: number, fps: number )
     {
+        this.target_fps = fps;
         Render.init(res_x, res_y);
 
         this.addiSystem(StateManager);
@@ -50,7 +52,7 @@ export class Engine
 
     avgFPS(): number
     {
-        return this.fps;
+        return this.current_fps;
     }
 
     addSystem( system: System )
@@ -86,12 +88,13 @@ export class Engine
 
         for (let system of this.systems)
         {
-            system.preload(this);
+            system.preload();
         }
     }
  
     setup()
     {
+        frameRate(this.target_fps);
         Render.setup();
 
         for (let sys of this.isystems)
@@ -101,7 +104,7 @@ export class Engine
 
         for (let system of this.systems)
         {
-            system.setup(this);
+            system.setup();
         }
     }
 
@@ -113,7 +116,7 @@ export class Engine
         }
 
         this.dt  = deltaTime;
-        this.fps = math.mix(this.fps, frameRate(), 1.0/60.0);
+        this.current_fps = math.mix(this.current_fps, frameRate(), 1.0/60.0);
 
         Render.beginFrame();
 
@@ -121,7 +124,7 @@ export class Engine
 
         for (let system of this.systems)
         {
-            system.update(this);
+            system.update();
         }
 
         for (let sys of this.isystems)
@@ -134,6 +137,5 @@ export class Engine
 }
 
 
-
-export const __engine = new Engine();
+export const Engine = new Engine_Internal();
 

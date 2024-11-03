@@ -1,6 +1,6 @@
 import System from "../system.js";
 import vec2 from "../math/vec2.js";
-import { Engine, __engine } from "../engine.js";
+import { Engine } from "../engine.js";
 import WorldOptimiser, { DrawItem } from "./optimiser.js";
 import WorldGenerator from "./generator.js";
 import WorldQuery, { WorldQueryResult } from "./query.js";
@@ -84,12 +84,12 @@ export default class sys_World extends System
     }
 
 
-    preload( engine: Engine ): void
+    preload(): void
     {
 
     }
 
-    setup( engine: Engine ): void
+    setup(): void
     {
         this.data     = WorldGenerator.generateWorld(this.width, this.height, this.scale);
         this.drawlist = WorldOptimiser.generateDrawlist(this.data);
@@ -97,7 +97,7 @@ export default class sys_World extends System
         // this.generate_colliders(null);
     }
 
-    update( engine: Engine ): void
+    update(): void
     {
         rectMode(CORNER);
         noStroke();

@@ -47,15 +47,15 @@ export default class sys_World extends System {
         }
         return false;
     }
-    preload(engine) {
+    preload() {
     }
-    setup(engine) {
+    setup() {
         this.data = WorldGenerator.generateWorld(this.width, this.height, this.scale);
         this.drawlist = WorldOptimiser.generateDrawlist(this.data);
         // this.generate_colliders(sys_Physics.GROUP_WORLD);
         // this.generate_colliders(null);
     }
-    update(engine) {
+    update() {
         rectMode(CORNER);
         noStroke();
         // stroke(255);

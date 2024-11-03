@@ -174,7 +174,6 @@ export class IO
         return IO.mousewheel_delta;
     }
 
-
     static onKeyPress   (k: number, callback: Function) { KeyPressEvents  .on(k, callback) }
     static onKeyRelease (k: number, callback: Function) { KeyReleaseEvents.on(k, callback) }
     static onKeyType    (k: number, callback: Function) { KeyTypeEvents   .on(k, callback) }

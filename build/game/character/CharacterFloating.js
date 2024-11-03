@@ -28,23 +28,13 @@ export class FloatCalmTrigger {
         rect(this.sprite.x, this.sprite.y, 64, 64);
     }
 }
-class BodyConfigJSON {
-    constructor(config) {
-        this.mass = config["mass"];
-        this.drag = config["drag"];
-        this.friction = config["friction"];
-        this.speed = config["speed"];
-        this.grav = config["grav"];
-    }
-}
 export default class CharacterFloating extends RigidBodyCharacter {
     constructor(x, y, ropegroup, controller) {
         super(x, y, controller);
         this.tentacles = new Array();
         this.ray_dir = new vec2(1, 0.001).normalize();
         this.grabbiness = 0;
-        const config = Game.CharacterConfig[this.constructor.name];
-        this.bconfig = new BodyConfigJSON(config["body"]);
+        let config = Game.CharacterConfig[this.typename];
         let tconfig;
         for (let limbName in config["limbs"]) {
             const limbCount = config["limbs"][limbName];
@@ -55,14 +45,14 @@ export default class CharacterFloating extends RigidBodyCharacter {
             this.tentacles.push(new Tentacle(0 + 16 * dir.x, 0 + 16 * dir.y, this.sprite, tconfig, ropegroup));
             tconfig.memberCount += 1;
         }
-        this.sprite.mass = this.bconfig.mass;
-        this.sprite.drag = this.bconfig.drag;
-        this.sprite.friction = this.bconfig.friction;
-        this.sprite.gravityScale = this.bconfig.grav;
+        this.sprite.mass = this.config.body.mass;
+        this.sprite.drag = this.config.body.drag;
+        this.sprite.friction = this.config.body.friction;
+        this.sprite.gravityScale = this.config.body.grav;
         this.sprite.overlaps(ropegroup);
         for (let T of this.tentacles) {
             T.on(TentacleEvent.HIT_GROUND, () => {
-                // const audiosys = __engine.getSystem(sys_Audio);
+                // const audiosys = Engine.getSystem(sys_Audio);
                 // const audio = audiosys.get("assets/audio/click.wav");
                 // audio.play(0);
             });
@@ -72,7 +62,7 @@ export default class CharacterFloating extends RigidBodyCharacter {
         super.update();
         for (let T of this.tentacles) {
             T.world.copy(T.local).mult(this.local);
-            T.update(this.config.aggression);
+            T.update(this.aggression);
         }
     }
     draw_face() {
@@ -83,7 +73,7 @@ export default class CharacterFloating extends RigidBodyCharacter {
             dir.rotate(2 * Math.PI / this.tentacles.length);
             circle(this.world.x + 16 * dir.x, this.world.y + 16 * dir.y, 16);
         }
-        const a1 = this.config.aggression * (0.5 + 0.0015 * this.vel.magSq());
+        const a1 = this.aggression * (0.5 + 0.0015 * this.vel.magSq());
         const a2 = 1.0 - a1;
         fill(50 + 255 * a1, 50 + 100 * a2, 50 + 100 * a2);
         circle(this.world.x, this.world.y, 16);
@@ -99,12 +89,12 @@ export default class CharacterFloating extends RigidBodyCharacter {
         }
     }
     move(x, y) {
-        const alpha = this.config.aggression;
-        const scale = this.bconfig.speed;
+        const alpha = this.aggression;
+        const scale = this.config.behaviour.moveForce;
         for (let T of this.tentacles) {
             T.move(x, y);
         }
-        // super.move(scale*x * (1.0 + alpha), scale*y * (1.0 + alpha));
+        super.move(scale * x * (1.0 + alpha), scale * y * (1.0 + alpha));
     }
     moveTo(x, y) {
         const disp = vec2.tmp().displacement(this.world.pos, vec2.tmp(x, y));

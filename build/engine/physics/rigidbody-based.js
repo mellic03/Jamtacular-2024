@@ -7,7 +7,7 @@ export class BasedRigidBodyDistanceConstraint extends RigidBodyConstraint {
         super();
         this.dist = dist;
     }
-    update(engine) {
+    update() {
         // const disp  = vec2.tmp().displacement(this.A.curr_pos, this.B.curr_pos);
         // const error = this.dist - disp.mag();
         // const dir   = disp.normalize().mul(error);
@@ -80,7 +80,7 @@ class BasedRigidBody {
         const dir = vec2.tmp().displacement(this.curr_pos, position).mulXY(speed);
         this.curr_pos.add(dir);
     }
-    integrate(engine) {
+    integrate() {
         const dt = PHYS_TIMESTEP;
         const G = vec2.tmp(0, PHYS_GRAVITY * this.mass);
         const acc = vec2.copy(this.acc).add(this.forces).add(G).mulXY(dt * dt);
@@ -92,7 +92,7 @@ class BasedRigidBody {
         this.prev_vel.copy(this.curr_vel);
         this.curr_vel.copy(this.curr_pos).sub(this.prev_pos);
     }
-    draw(engine) {
+    draw() {
     }
 }
 BasedRigidBody.id_count = 0;

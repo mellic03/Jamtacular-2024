@@ -1,6 +1,7 @@
 import System from "./system.js";
 import vec2 from "./math/vec2.js";
-import { Engine, __engine } from "./engine.js";
+import { Engine }
+ from "./engine.js";
 
 
 export default class sys_Noise extends System
@@ -13,7 +14,7 @@ export default class sys_Noise extends System
         super();
     }
 
-    preload( engine: Engine ): void
+    preload(): void
     {
         for (let i=0; i<4; i++)
         {
@@ -21,7 +22,7 @@ export default class sys_Noise extends System
         }
     }
     
-    setup( engine: Engine ): void
+    setup(): void
     {
         noiseSeed(1831);
 
@@ -31,7 +32,7 @@ export default class sys_Noise extends System
         }
     }
 
-    update( engine: Engine ): void
+    update(): void
     {
         // console.log(this.imgVoronoi[0]);
     }

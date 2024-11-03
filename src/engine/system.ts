@@ -1,4 +1,4 @@
-import { Engine, __engine } from "./engine";
+import { Engine } from "./engine";
 
 
 export default abstract class System
@@ -8,17 +8,17 @@ export default abstract class System
 
     }
 
-    preload( engine: Engine ): void
+    preload(): void
     {
 
     }
     
-    setup( engine: Engine ): void
+    setup(): void
     {
 
     }
     
-    update( engine: Engine ): void
+    update(): void
     {
 
     }
