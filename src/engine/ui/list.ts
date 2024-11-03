@@ -1,4 +1,4 @@
-import Render from "../sys-render.js";
+import { Render } from "../render.js";
 import ui_ElementBase from "./base.js";
 import ui_Bounds from "./bounds.js";
 import ui_Style from "./style.js";

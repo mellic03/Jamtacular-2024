@@ -1,5 +1,5 @@
 import { GameState } from "../../../engine/gamestate.js";
-import Render from "../../../engine/sys-render.js";
+import { Render } from "../../../engine/render.js";
 import { GS_MainMenuGUI } from "./ui-mainmenu.js";
 import { GameStateGameplay, GameStateUserInput, GameStateWorld } from "../../game.js";
 import { UserInputMsg } from "../userinput.js";

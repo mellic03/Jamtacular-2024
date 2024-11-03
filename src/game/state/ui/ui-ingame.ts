@@ -1,12 +1,11 @@
-import { idk_Stack } from "../../../engine/ds/idk_stack.js";
+import { Engine } from "../../../engine/engine.js";
 import { GameState, GameStateFlag } from "../../../engine/gamestate.js";
-import Render from "../../../engine/sys-render.js";
+import { Render } from "../../../engine/render.js";
 import ui_ElementBase from "../../../engine/ui/base.js";
 import ui_Bounds from "../../../engine/ui/bounds.js";
 import ui_Button from "../../../engine/ui/button.js";
 import ui_Grid from "../../../engine/ui/grid.js";
 import ui_List from "../../../engine/ui/list.js";
-// import ui_Slider from "../../../engine/ui/slider.js";
 import ui_Style, { setSyleSpanLimitAsPixels, setSyleSpanLimitAsRatio } from "../../../engine/ui/style.js";
 import { Game, GameStateGameGUI, GameStateGameplay, GameStateUserInput, GameStateWorld } from "../../game.js";
 import { UserInputMsg } from "../userinput.js";
@@ -92,7 +91,7 @@ export class GS_InGameGUI extends GameState
         strokeWeight(1);
         textAlign(RIGHT, CENTER);
 
-        Render.screenText(`fps: ${Render.avgFPS().toPrecision(4)}`, Render.width-25, 25);
+        Render.screenText(`fps: ${Engine.avgFPS().toPrecision(4)}`, Render.width-25, 25);
 
         textAlign(LEFT, CENTER);
         const S0 = GameStateGameplay.stack.data;
@@ -131,7 +130,7 @@ export class GS_InGameGUI extends GameState
         this.ui.draw();
         Render.popInverseViewTransform();
 
-        this.diagnostics();
+        // this.diagnostics();
     }
 
 }

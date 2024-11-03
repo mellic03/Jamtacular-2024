@@ -1,7 +1,7 @@
 import { Engine } from "../engine.js";
 import vec2 from "../math/vec2.js";
 import sys_Image from "../sys-image.js";
-import sys_Render from "../sys-render.js";
+import { Render } from "../render.js";
 import { Transform } from "../transform.js";
 import RigidBody from "./rigidbody.js";
 export default class Rope {
@@ -54,7 +54,7 @@ export default class Rope {
         for (let i = 0; i < this.bodies.length - 1; i++) {
             const A = vec2.copy(this.bodies[i + 0].pos);
             const B = vec2.copy(this.bodies[i + 1].pos);
-            sys_Render.imageRotated(img, 0, -0.5 * this.thickness, A.dist(B), this.thickness, A, B);
+            Render.imageRotated(img, 0, -0.5 * this.thickness, A.dist(B), this.thickness, A, B);
         }
     }
 }

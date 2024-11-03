@@ -2,7 +2,7 @@
 // import vec2 from "../math/vec2.js";
 // import sys_Image from "../sys-image.js";
 // import sys_Physics from "../sys-physics.js";
-// import sys_Render from "../sys-render.js";
+// import sys_Render from "../render.js";
 // import sys_World from "../sys-world/sys-world.js";
 // import Transform from "../transform.js";
 // import { PHYS_TIMESTEP } from "./physics.js";

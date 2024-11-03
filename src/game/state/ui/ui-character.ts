@@ -1,6 +1,6 @@
 import ui_Button from "../../../engine/ui/button.js";
 import ui_List from "../../../engine/ui/list.js";
-import Render from "../../../engine/sys-render.js";
+import { Render } from "../../../engine/render.js";
 import ui_Bounds from "../../../engine/ui/bounds.js";
 import ui_Style from "../../../engine/ui/style.js";
 import { RigidBodyCharacter } from "../../character/Character.js";

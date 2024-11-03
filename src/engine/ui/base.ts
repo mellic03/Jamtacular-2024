@@ -1,6 +1,6 @@
 import { IO } from "../IO.js";
 import { math } from "../math/math.js";
-import Render from "../sys-render.js";
+import { Render } from "../render.js";
 import ui_Bounds from "./bounds.js";
 import ui_Style from "./style.js";
 

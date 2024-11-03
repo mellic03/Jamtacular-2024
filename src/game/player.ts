@@ -7,7 +7,7 @@
 // import sys_Physics from "../engine/sys-physics.js";
 // import CharacterController from "./character/controller.js";
 // import BodyPart from "./bodypart/bodypart.js";
-// import Render from "../engine/sys-render.js";
+// import { Render } from "../engine/render.js";
 
 
 

@@ -1,12 +1,10 @@
 import {} from "p5/global";
-import { Engine }
- from "../../engine/engine.js";
 import { HierarchicalTransform, Transform } from "../../engine/transform.js";
 import BodyPart from "../bodypart/bodypart.js";
 import RigidBody from "../../engine/physics/rigidbody.js";
 import vec2 from "../../engine/math/vec2.js";
 import { iTransformable } from "../../engine/interface.js";
-import { iCharacterController, iControllable } from "../controller/controller.js"
+import { CharacterController, iControllable } from "../controller/controller.js"
 import { Game } from "../game.js";
 
 
@@ -78,10 +76,10 @@ export class RigidBodyCharacter extends RigidBody implements iControllable, iTra
 
     aggression: number = 0;
 
-    private controllers = new Array<iCharacterController>();
+    private controllers = new Array<CharacterController>();
     public  parts       = new Array<BodyPart>;
 
-    constructor( x: number, y: number, controller?: iCharacterController )
+    constructor( x: number, y: number, controller?: CharacterController )
     {
         super(new Sprite(x, y), 1);
 
@@ -104,7 +102,7 @@ export class RigidBodyCharacter extends RigidBody implements iControllable, iTra
     }
 
 
-    pushController( ctl: iCharacterController )
+    pushController( ctl: CharacterController )
     {
         if (ctl != null)
         {
@@ -112,7 +110,7 @@ export class RigidBodyCharacter extends RigidBody implements iControllable, iTra
         }
     }
 
-    popController(): iCharacterController | null
+    popController(): CharacterController | null
     {
         if (this.controllers.length > 0)
         {
@@ -125,7 +123,7 @@ export class RigidBodyCharacter extends RigidBody implements iControllable, iTra
         }
     }
 
-    getController(): iCharacterController | null
+    getController(): CharacterController | null
     {
         if (this.controllers.length > 0)
         {

@@ -1,6 +1,6 @@
 import { IO, KEYCODE } from "../../engine/IO.js";
 import vec2 from "../../engine/math/vec2.js";
-import Render from "../../engine/sys-render.js";
+import { Render } from "../../engine/render.js";
 export default class TestController {
     key_movement(C) {
         const delta = vec2.tmp().setXY(0, 0);

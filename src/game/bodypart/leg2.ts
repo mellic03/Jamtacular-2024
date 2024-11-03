@@ -3,8 +3,7 @@ import FABRIK from "../../engine/math/FABRIK.js";
 import { math } from "../../engine/math/math.js";
 import vec2 from "../../engine/math/vec2.js";
 import sys_Image from "../../engine/sys-image.js";
-import Render from "../../engine/sys-render.js";
-import sys_Render from "../../engine/sys-render.js";
+import { Render } from "../../engine/render.js";
 import { WorldQueryResult } from "../../engine/sys-world/query.js";
 import { GS_World } from "../state/world.js";
 import BodyPart from "./bodypart.js";
@@ -195,7 +194,7 @@ export default class BodyPartLeg2 extends BodyPart
             const B = this.joints[i+1];
             const dist = vec2.tmp().displacement(A, B).mag();
 
-            sys_Render.imageRotated(
+            Render.imageRotated(
                 img, 0, -8, dist, 16, A, B
             );
         }

@@ -1,4 +1,4 @@
-import Render from "../sys-render.js";
+import { Render } from "../render.js";
 
 
 export default class ui_Style

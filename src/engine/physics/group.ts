@@ -1,7 +1,7 @@
 import { Engine } from "../engine.js";
 import { math } from "../math/math.js";
 import vec2 from "../math/vec2.js";
-import Render from "../sys-render.js";
+import { Render } from "../render.js";
 import { WorldQueryResult } from "../sys-world/query.js";
 import sys_World from "../sys-world/sys-world.js";
 import { PHYS_TIMESTEP } from "./physics.js";

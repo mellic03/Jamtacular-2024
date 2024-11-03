@@ -4,7 +4,7 @@ import { Engine } from "../engine.js";
 import WorldOptimiser, { DrawItem } from "./optimiser.js";
 import WorldGenerator from "./generator.js";
 import WorldQuery, { WorldQueryResult } from "./query.js";
-import Render from "../sys-render.js";
+import { Render } from "../render.js";
 import StaticBody from "../physics/staticbody.js";
 
 

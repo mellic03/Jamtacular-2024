@@ -1,5 +1,4 @@
 import vec2 from "./math/vec2.js";
-import { math } from "./math/math.js";
 import GeometryTest from "./math/geometry.js";
 import { EventEmitter } from "./sys-event.js";
 export class RenderBuffer {
@@ -45,7 +44,6 @@ export default class RenderEngine extends EventEmitter {
         this.br = new vec2(0, 0);
         this.webgl = false;
         this.scale = 1.0;
-        this.avg_fps = 1.0 / 60.0;
         this.mouse_screen = new vec2(0, 0);
         this.mouse_world = new vec2(0, 0);
     }
@@ -90,7 +88,6 @@ export default class RenderEngine extends EventEmitter {
         scale(this.scale);
         translate(-this.view.x, -this.view.y, 0);
         background(...this.bg_color);
-        this.avg_fps = math.mix(this.avg_fps, frameRate(), 1.0 / 60.0);
     }
     endFrame() {
         pop();
@@ -99,9 +96,6 @@ export default class RenderEngine extends EventEmitter {
     }
     getOfflineContext() {
         return this.offline_ctx;
-    }
-    avgFPS() {
-        return this.avg_fps;
     }
     setBackground(r, g, b, a) {
         this.bg_color = [r, g, b, a];
@@ -174,6 +168,16 @@ export default class RenderEngine extends EventEmitter {
         rect(x, y, w, h);
         pop();
     }
+    imageCornerXY(img, x, y, w, h) {
+        const x0 = (x - this.view.x) * this.scale + (this.width / 2);
+        const y0 = (y - this.view.y) * this.scale + (this.height / 2);
+        const w0 = w * this.scale;
+        const h0 = h * this.scale;
+        if (!GTest.RectRectOverlap(x0, y0, w0, h0, 0, 0, this.width, this.height)) {
+            return;
+        }
+        image(img, x, y, w, h);
+    }
     imageRotated(img, x, y, w, h, A, B) {
         vec2.tmp().displacement(A, B);
         const theta = atan2(B.y - A.y, B.x - A.x);
@@ -185,4 +189,4 @@ export default class RenderEngine extends EventEmitter {
     }
 }
 export const Render = new RenderEngine();
-//# sourceMappingURL=sys-render.js.map
+//# sourceMappingURL=render.js.map

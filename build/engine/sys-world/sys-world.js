@@ -3,7 +3,7 @@ import vec2 from "../math/vec2.js";
 import WorldOptimiser from "./optimiser.js";
 import WorldGenerator from "./generator.js";
 import WorldQuery, { WorldQueryResult } from "./query.js";
-import Render from "../sys-render.js";
+import { Render } from "../render.js";
 import StaticBody from "../physics/staticbody.js";
 export default class sys_World extends System {
     constructor(x = 0, y = 0, width = 128, height = 128, scale = 32) {

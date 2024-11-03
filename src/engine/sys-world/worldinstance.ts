@@ -3,17 +3,21 @@ import vec2 from "../math/vec2.js";
 import WorldOptimiser, { DrawItem } from "./optimiser.js";
 import WorldGenerator from "./generator.js";
 import WorldQuery, { WorldQueryResult } from "./query.js";
-import Render from "../sys-render.js";
+import { Render } from "../render.js";
 import StaticBody from "../physics/staticbody.js";
+import { Graphics, Image } from "p5";
 
 
 export default class WorldInstance
 {
-    private img: any;
+    private img: Image;
     private img_mode    = false;
     private img_loaded  = false;
+    private callback: Function;
 
     corner:   vec2;
+    tl:       vec2;
+    br:       vec2;
     width:    number;
     height:   number;
     scale:    number;
@@ -23,17 +27,22 @@ export default class WorldInstance
     private init( x=0, y=0, width=128, height=128, scale=32 )
     {
         this.corner = new vec2(x, y).subXY(0.5*scale*width, 0.5*scale*height);
+        this.tl     = new vec2().copy(this.corner);
+        this.br     = new vec2().copy(this.tl).addXY(scale*width, scale*height);
         this.width  = width;
         this.height = height;
         this.scale  = scale;
     }
 
 
-    public generateWorld( x=0, y=0, w=128, h=128, scale=32, xoff=2048, yoff=1024 ): WorldInstance
+    public generateWorld( x=0, y=0, w=128, h=128, scale=32, xoff=2048, yoff=1024,
+                          callback?: Function ): WorldInstance
     {
         this.init(x, y, w, h, scale);
         this.data     = WorldGenerator.generateWorld(this.width, this.height, this.scale, xoff, yoff);
         this.drawlist = WorldOptimiser.generateDrawlist(this.data);
+        this.img      = WorldGenerator.generateImage(this.width, this.height, this.data);
+
         return this;
     }
 
@@ -53,13 +62,31 @@ export default class WorldInstance
     }
 
 
-    public generateColliders( cringe: Group )
+    public generateColliders( cringe: Group, view?: vec2 )
     {
+        const tl = this.tl;
+        const br = this.br;
+
         for (let block of this.drawlist)
         {
             const x = this.scale*block.col + this.corner.x;
             const y = this.scale*block.row + this.corner.y;
             const w = this.scale*block.w;
+        
+            // if (x < tlx || x > brx || y < tly || y > bry)
+            // {
+            //     continue;
+            // }
+
+            if (view)
+            {
+                // if (view.dis)
+            }
+
+            if (dist(x, y, 0, 0) > 2048)
+            {
+                continue;
+            }
 
             cringe.add((new StaticBody(x, y, w)).sprite);
         }
@@ -110,7 +137,7 @@ export default class WorldInstance
         if (this.img_loaded == true)
         {
             this.data     = WorldGenerator.loadWorld(this.width, this.height, this.img);
-            this.drawlist = WorldOptimiser.generateDrawlist(this.data);    
+            this.drawlist = WorldOptimiser.generateDrawlist(this.data);
             return true;
         }
 
@@ -132,21 +159,32 @@ export default class WorldInstance
 
     draw(): void
     {
-        rectMode(CORNER);
-        noStroke();
-        // stroke(255);
-        // noFill();
-        fill(50);
+        imageMode(CORNER);
 
-        for (let block of this.drawlist)
-        {
-            const x = this.scale*block.col + this.corner.x;
-            const y = this.scale*block.row + this.corner.y;
-            const w = this.scale*block.w;
-
-            Render.rectCornerXY(x, y, w, w);
-        }
-
+        Render.imageCornerXY(
+            this.img,
+            this.corner.x, this.corner.y,
+            this.scale*this.width, this.scale*this.height
+        );
     }
+
+    // draw(): void
+    // {
+    //     rectMode(CORNER);
+    //     noStroke();
+    //     // stroke(255);
+    //     // noFill();
+    //     fill(50);
+
+    //     for (let block of this.drawlist)
+    //     {
+    //         const x = this.scale*block.col + this.corner.x;
+    //         const y = this.scale*block.row + this.corner.y;
+    //         const w = this.scale*block.w;
+
+    //         Render.rectCornerXY(x, y, w, w);
+    //     }
+
+    // }
 
 }

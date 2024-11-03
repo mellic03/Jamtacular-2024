@@ -1,7 +1,7 @@
 import { Engine } from "../engine.js";
 import { math } from "../math/math.js";
 import vec2 from "../math/vec2.js";
-import Render from "../sys-render.js";
+import { Render } from "../render.js";
 import { PHYS_TIMESTEP } from "./physics.js";
 const LOWRES_CELL_W = 512;
 const LOWRES_CELL_HW = LOWRES_CELL_W / 2;

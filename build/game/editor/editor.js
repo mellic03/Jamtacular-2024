@@ -1,6 +1,6 @@
 import { idk_Stack } from "../../engine/ds/idk_stack.js";
 import { GameState } from "../../engine/gamestate.js";
-import Render from "../../engine/sys-render.js";
+import { Render } from "../../engine/render.js";
 import ui_Bounds from "../../engine/ui/bounds.js";
 import ui_Grid from "../../engine/ui/grid.js";
 import ui_Title from "../../engine/ui/title.js";

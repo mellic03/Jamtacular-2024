@@ -45,5 +45,25 @@ export default class WorldGenerator {
     }
     static load_file(w, h, img, output) {
     }
+    static generateImage(w, h, input) {
+        const img = createImage(w, h);
+        img.loadPixels();
+        const data = img.pixels;
+        for (let r = 0; r < h; r++) {
+            for (let c = 0; c < w; c++) {
+                const idx = 4 * (w * r + c);
+                const n = input[r][c];
+                WorldGenerator.writeRGBA(n, data, idx);
+            }
+        }
+        img.updatePixels();
+        return img;
+    }
+    static writeRGBA(n, dst, idx) {
+        dst[idx + 0] = 255 - (200 * n);
+        dst[idx + 1] = 255 - (200 * n);
+        dst[idx + 2] = 255 - (200 * n);
+        dst[idx + 3] = 255;
+    }
 }
 //# sourceMappingURL=generator.js.map

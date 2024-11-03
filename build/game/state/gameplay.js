@@ -1,4 +1,4 @@
-import Render from "../../engine/sys-render.js";
+import { Render } from "../../engine/render.js";
 import { GameState, GameStateFlag } from "../../engine/gamestate.js";
 import CharacterFloating from "../character/CharacterFloating.js";
 import CharacterBiped from "../character/CharacterBiped.js";

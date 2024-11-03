@@ -12,11 +12,12 @@ export const GameStateGameGUI = new GS_GameUI();
 export class Game {
     constructor() {
         StateManager.addState(GameStateUserInput).makeActive();
-        StateManager.addState(GameStateGameplay).makeActive();
         StateManager.addState(GameStateWorld).makeActive();
+        StateManager.addState(GameStateGameplay).makeActive();
         StateManager.addState(GameStateGameGUI).makeActive();
     }
     preload() {
+        Game.GlobalConfig = loadJSON("./assets/GlobalConfig.json");
         Game.LimbConfig = loadJSON("./assets/LimbConfig.json");
         Game.CharacterConfig = loadJSON("./assets/CharacterConfig.json");
         const audiosys = Engine.getSystem(sys_Audio);
@@ -24,59 +25,8 @@ export class Game {
     }
     setup() {
         GameStateUserInput.emit(UserInputMsg.PAUSE);
-        // console.log("WOOP: ", this.config["CharacterBiped"]);
+    }
+    update() {
     }
 }
-// class RootState extends GameState
-// {
-//     constructor()
-//     {
-//         super();
-//         const gameplay = new GS_Gameplay();
-//         const mainmenu = new GS_GameUI();
-//         const editor   = new GS_Editor();
-//         StateManager.addState(this.makeActive());
-//         // this.addSubstate(gameplay.makeActive());
-//         // this.addSubstate(editor);
-//         // this.addSubstate(mainmenu.makeActive());
-//         // this.pushState(GS_MainMenu);
-//         StateManager.addState(gameplay.makeActive());
-//         StateManager.addState(editor.makeActive());
-//         StateManager.addState(mainmenu.makeActive());
-//         gameplay.on("pause",   () => { mainmenu.makeActive();   });
-//         gameplay.on("unpause", () => { mainmenu.makeInactive(); });
-//     }
-//     public preload(): void
-//     {
-//         super.preload();
-//         const imgsys = Engine.getSystem(sys_Image);
-//         imgsys.load("assets/img/meat.jpg");
-//         imgsys.load("assets/img/michael.png");
-//         imgsys.load("assets/img/heart-red.png");
-//         imgsys.load("assets/img/rope.png");
-//     }
-//     public setup(): void
-//     {
-//         super.setup();
-//         angleMode(RADIANS);
-//     }
-//     public update(): void
-//     {
-//         super.update();
-//         // player.update();
-//         // thing.update();
-//         // const gameplay = StateManager.getState(GS_Gameplay);
-//         // const mainmenu = StateManager.getState(GS_MainMenu);
-//         // if (gameplay.isActive() == true && IO.ke)
-//     }
-//     public draw(): void
-//     {
-//         super.draw();
-//         // const state = this.currentState();
-//         // if (state)
-//         // {
-//         //     state.draw();
-//         // }
-//     }
-// }
 //# sourceMappingURL=game.js.map

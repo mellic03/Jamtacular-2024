@@ -1,10 +1,11 @@
 import { StateManager, GameState, GameStateFlag } from "../../engine/gamestate.js";
-import Render from "../../engine/sys-render.js";
+import { Render } from "../../engine/render.js";
 import { GS_MainMenuGUI } from "./ui/ui-mainmenu.js";
 import { Game, GameStateGameplay, GameStateUserInput, GameStateWorld } from "../game.js";
 import { UserInputMsg } from "./userinput.js";
 import { GS_InGameGUI } from "./ui/ui-ingame.js";
 import { GS_SettingsGUI } from "./ui/ui-settings.js";
+import { Engine } from "../../engine/engine.js";
 
 
 export class GS_GameUI extends GameState
@@ -49,7 +50,7 @@ export class GS_GameUI extends GameState
         strokeWeight(1);
         textAlign(RIGHT, CENTER);
 
-        Render.screenText(`fps: ${Render.avgFPS().toPrecision(4)}`, Render.width-25, 25);
+        Render.screenText(`fps: ${Engine.avgFPS().toPrecision(4)}`, Render.width-25, 25);
 
 
         textAlign(LEFT, CENTER);

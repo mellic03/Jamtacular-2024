@@ -1,6 +1,6 @@
 // import { GameState } from "../../engine/gamestate.js";
 // import { GS_Paused } from "./state-paused.js";
-// import Render from "../../engine/sys-render.js";
+// import { Render } from "../../engine/render.js";
 // export class StateSetup extends GameState
 // {
 //     constructor()

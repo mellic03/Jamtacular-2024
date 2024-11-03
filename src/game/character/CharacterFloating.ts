@@ -1,7 +1,7 @@
 import { Engine } from "../../engine/engine.js";
 import vec2 from "../../engine/math/vec2.js";
 import { Tentacle, TentacleConfigJSON, TentacleEvent } from "../bodypart/Tentacle2.js";
-import { iCharacterController } from "../controller/controller.js";
+import { CharacterController } from "../controller/controller.js";
 import { Game } from "../game.js";
 import { RigidBodyCharacter } from "./Character.js";
 
@@ -59,7 +59,7 @@ export default class CharacterFloating extends RigidBodyCharacter
     ray_dir    = new vec2(1, 0.001).normalize();
     grabbiness = 0;
 
-    constructor( x: number, y: number, ropegroup: Group, controller?: iCharacterController )
+    constructor( x: number, y: number, ropegroup: Group, controller?: CharacterController )
     {
         super(x, y, controller);
 

@@ -84,4 +84,37 @@ export default class WorldGenerator
     
     }
 
+    
+    static generateImage( w: number, h: number, input: Array<Array<number>> ): p5.Image
+    {
+        const img = createImage(w, h);
+
+        img.loadPixels();
+        const data = img.pixels;
+
+        for (let r=0; r<h; r++)
+        {
+            for (let c=0; c<w; c++)
+            {
+                const idx = 4 * (w*r + c);
+                const n   = input[r][c];
+
+                WorldGenerator.writeRGBA(n, data, idx);
+            }
+        }
+
+        img.updatePixels();
+
+        return img;
+    }
+
+
+    public static writeRGBA( n: number, dst: Array<number>, idx: number ): void
+    {
+        dst[idx+0] = 255 - (200 * n);
+        dst[idx+1] = 255 - (200 * n);
+        dst[idx+2] = 255 - (200 * n);
+        dst[idx+3] = 255;
+    }
+
 }

@@ -1,4 +1,4 @@
-import Render from "../sys-render.js";
+import { Render } from "../render.js";
 class ui_Style {
     constructor(bg = [75, 75, 75, 220], fg = [150, 150, 150, 220], pad = [8, 8, 8, 8], mar = [4, 4, 4, 4], rad = [16]) {
         this.padding = [8, 8, 8, 8];

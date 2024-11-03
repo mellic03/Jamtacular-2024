@@ -1,19 +1,20 @@
 import { Engine } from "../../engine/engine.js";
 import { IO, KEYCODE } from "../../engine/IO.js";
 import vec2 from "../../engine/math/vec2.js";
-import Render from "../../engine/sys-render.js";
-import { iCharacterController, iControllable } from "./controller.js";
+import { Render } from "../../engine/render.js";
+import { Game } from "../game.js";
+import { CharacterController, iControllable } from "./controller.js";
 
 
-export default class PlayerController implements iCharacterController
+export default class PlayerController extends CharacterController
 {
-    private _timer = 0;
-
     body: iControllable = null;
     cam_offset = new vec2(0, 0);
 
     constructor()
     {
+        super();
+
         IO.onMouseClick(() => {
             if (!this.body) { return; }
             const wmouse = Render.worldMouse();
@@ -89,14 +90,10 @@ export default class PlayerController implements iCharacterController
     {
         Render.view.mixXY(C.local.x, C.local.y, 0.02);
 
-        this._timer += deltaTime;
-    
-        if (this._timer < 1000/30)
+        if (this.is_good == false)
         {
             return;
         }
-
-        this._timer = 0;
 
         this.key_rotation(C);
         this.key_movement(C);

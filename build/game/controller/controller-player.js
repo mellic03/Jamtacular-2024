@@ -1,9 +1,10 @@
 import { IO, KEYCODE } from "../../engine/IO.js";
 import vec2 from "../../engine/math/vec2.js";
-import Render from "../../engine/sys-render.js";
-export default class PlayerController {
+import { Render } from "../../engine/render.js";
+import { CharacterController } from "./controller.js";
+export default class PlayerController extends CharacterController {
     constructor() {
-        this._timer = 0;
+        super();
         this.body = null;
         this.cam_offset = new vec2(0, 0);
         IO.onMouseClick(() => {
@@ -53,11 +54,9 @@ export default class PlayerController {
     }
     update(C) {
         Render.view.mixXY(C.local.x, C.local.y, 0.02);
-        this._timer += deltaTime;
-        if (this._timer < 1000 / 30) {
+        if (this.is_good == false) {
             return;
         }
-        this._timer = 0;
         this.key_rotation(C);
         this.key_movement(C);
         this.body = C;

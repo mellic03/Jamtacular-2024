@@ -1,7 +1,7 @@
 import { Engine } from "../../engine/engine.js";
 import vec2 from "../../engine/math/vec2.js";
 import { GS_Gameplay } from "../state/gameplay.js";
-import { iCharacterController } from "./controller.js";
+import { CharacterController } from "./controller.js";
 import CharacterFloating from "../character/CharacterFloating.js";
 
 enum State {
@@ -10,7 +10,7 @@ enum State {
     Charging
 };
 
-export default class FloatingController implements iCharacterController
+export default class FloatingController extends CharacterController
 {
     private state = State.Idle;
     private timer = 0.0;
@@ -76,6 +76,11 @@ export default class FloatingController implements iCharacterController
 
     update( C: CharacterFloating )
     {
+        if (this.is_good == false)
+        {
+            return;
+        }
+
         switch (this.state)
         {
             case State.Idle:      this.idle(C);      break;

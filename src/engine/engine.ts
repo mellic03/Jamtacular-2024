@@ -1,11 +1,10 @@
 import System from "./system.js";
-import sys_Event from "./sys-event.js";
 import sys_Audio from "./sys-audio.js";
 import sys_Image from "./sys-image.js";
 import sys_Particle from "./sys-particle.js";
 import { math } from "./math/math.js";
 import BasedAnimation from "./animation.js";
-import Render from "./sys-render.js";
+import { Render } from "./render.js";
 import { IO } from "./IO.js";
 import { StateManager } from "./gamestate.js";
 
@@ -38,7 +37,6 @@ class Engine_Internal
         this.addiSystem(IO);
         this.addSystem(new sys_Audio);
         this.addSystem(new sys_Image);
-        this.addSystem(new sys_Event);
         // this.addSystem(new sys_Noise);
         this.addSystem(new sys_Particle);
         // this.addSystem(new sys_Physics);

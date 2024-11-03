@@ -1,5 +1,6 @@
 import vec2 from "../../engine/math/vec2.js";
 import { GS_Gameplay } from "../state/gameplay.js";
+import { CharacterController } from "./controller.js";
 var State;
 (function (State) {
     State[State["Idle"] = 0] = "Idle";
@@ -7,8 +8,9 @@ var State;
     State[State["Charging"] = 2] = "Charging";
 })(State || (State = {}));
 ;
-export default class FloatingController {
+export default class FloatingController extends CharacterController {
     constructor() {
+        super(...arguments);
         this.state = State.Idle;
         this.timer = 0.0;
     }
@@ -49,6 +51,9 @@ export default class FloatingController {
         }
     }
     update(C) {
+        if (this.is_good == false) {
+            return;
+        }
         switch (this.state) {
             case State.Idle:
                 this.idle(C);

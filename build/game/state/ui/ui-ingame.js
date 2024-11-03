@@ -1,9 +1,9 @@
+import { Engine } from "../../../engine/engine.js";
 import { GameState, GameStateFlag } from "../../../engine/gamestate.js";
-import Render from "../../../engine/sys-render.js";
+import { Render } from "../../../engine/render.js";
 import ui_Bounds from "../../../engine/ui/bounds.js";
 import ui_Button from "../../../engine/ui/button.js";
 import ui_Grid from "../../../engine/ui/grid.js";
-// import ui_Slider from "../../../engine/ui/slider.js";
 import { setSyleSpanLimitAsPixels } from "../../../engine/ui/style.js";
 import { GameStateGameGUI, GameStateGameplay, GameStateUserInput, GameStateWorld } from "../../game.js";
 import { UserInputMsg } from "../userinput.js";
@@ -41,7 +41,7 @@ export class GS_InGameGUI extends GameState {
         textSize(24);
         strokeWeight(1);
         textAlign(RIGHT, CENTER);
-        Render.screenText(`fps: ${Render.avgFPS().toPrecision(4)}`, Render.width - 25, 25);
+        Render.screenText(`fps: ${Engine.avgFPS().toPrecision(4)}`, Render.width - 25, 25);
         textAlign(LEFT, CENTER);
         const S0 = GameStateGameplay.stack.data;
         const S1 = GameStateWorld.stack.data;
@@ -66,7 +66,7 @@ export class GS_InGameGUI extends GameState {
         Render.pushInverseViewTransform();
         this.ui.draw();
         Render.popInverseViewTransform();
-        this.diagnostics();
+        // this.diagnostics();
     }
 }
 //# sourceMappingURL=ui-ingame.js.map
