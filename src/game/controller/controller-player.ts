@@ -87,11 +87,11 @@ export default class PlayerController extends CharacterController
 
     update( C: iControllable )
     {
-        Render.view.mixXY(C.local.x, C.local.y, 0.02);
+        Render.view.mixXY(C.local.x, C.local.y, 0.1);
 
         if (this.is_good == false)
         {
-            return;
+            // return;
         }
 
         this.key_rotation(C);

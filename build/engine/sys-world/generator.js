@@ -31,7 +31,7 @@ export default class WorldGenerator {
                     output[i][j] = 0;
                 }
                 // else if (y <= x)
-                else if (-128 <= y && y < +128) {
+                else if ((-128 <= x && x < +128) || (-128 <= y && y < +128)) {
                     output[i][j] = 0;
                 }
                 else if (noise((j / 32) + xoff, (i / 32) + yoff) < 0.45) {

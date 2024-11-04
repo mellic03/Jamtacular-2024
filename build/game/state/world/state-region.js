@@ -24,7 +24,7 @@ class ChunkColliderGen {
         this.ymin = 0;
         this.ymax = 0;
         this.xstep = 0;
-        this.ystep = 1024;
+        this.ystep = 256;
     }
     reset(region, xmin, xmax, ymin, ymax) {
         this.region = region;
@@ -71,14 +71,16 @@ export class GS_Region extends GameState {
         filter(OPAQUE);
         const [W, H] = Game.GlobalConfig["World"]["ChunkSize"];
         const S = Game.GlobalConfig["World"]["ChunkScale"];
+        const view = vec2.copy(Render.view);
         if (this.first_entry == true) {
             this.worldData = new WorldInstance().generateWorld(0, 0, W, H, S, -1212, 341);
             this.first_entry = false;
+            this.task.reset(this.worldData, view.x - 2048, view.x + 2048, view.y - 2048, view.y + 2048);
+            WorkManager.dispatch(this.task);
             console.log(`[${this.name}] Loaded world data`);
         }
-        const view = vec2.copy(Render.view);
         this.curr_cell.copy(view).divXY(S * W, S * H).floor();
-        this.prev_cell.copy(view).addXY(99999);
+        this.prev_cell.copy(view).addXY(0);
     }
     exit() {
         for (let B of GS_Gameplay.groups.WORLD) {
@@ -103,12 +105,16 @@ export class GS_Region extends GameState {
         const c0 = Math.abs(this.curr_cell.x - this.prev_cell.x) >= SPRITE_CHUNK_W / 4;
         const c1 = Math.abs(this.curr_cell.y - this.prev_cell.y) >= SPRITE_CHUNK_W / 4;
         if (this.task.finished == true && (c0 || c1)) {
-            const overshoot = 0.05;
+            const overshoot = 1.75;
             const delta = vec2.copy(this.curr_cell).sub(this.prev_cell);
             delta.mulXY(overshoot);
-            delta.mulXY(0.0);
+            //   delta.mulXY(0.0);
             const tl = vec2.copy(view).add(delta).subXY(SPRITE_CHUNK_W);
             const br = vec2.copy(view).add(delta).addXY(SPRITE_CHUNK_W);
+            br.x = math.clamp(br.x, this.worldData.tl.x, this.worldData.br.x);
+            br.y = math.clamp(br.y, this.worldData.tl.y, this.worldData.br.y);
+            tl.x = math.clamp(tl.x, this.worldData.tl.x, this.worldData.br.x);
+            tl.y = math.clamp(tl.y, this.worldData.tl.y, this.worldData.br.y);
             this.prev_cell.copy(this.curr_cell);
             this.prev_tl.copy(Render.tl);
             this.prev_br.copy(Render.br);
@@ -119,9 +125,10 @@ export class GS_Region extends GameState {
     draw() {
         this.worldData.draw();
         super.draw();
-        for (let S of GS_Gameplay.groups.WORLD) {
-            rect(S.x - S.w / 2, S.y - S.h / 2, S.w, S.h);
-        }
+        // for (let S of GS_Gameplay.groups.WORLD)
+        // {
+        //     rect(S.x-S.w/2, S.y-S.h/2, S.w, S.h);
+        // }
     }
 }
 //# sourceMappingURL=state-region.js.map

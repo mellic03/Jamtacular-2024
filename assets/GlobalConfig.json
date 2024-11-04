@@ -2,8 +2,8 @@
     "CharacterControllerTickRate": 60,
 
     "World": {
-        "ChunkSize": [ 512, 512 ],
-        "ChunkScale": 32
+        "ChunkSize": [ 256, 256 ],
+        "ChunkScale": 64
     }
 }
 

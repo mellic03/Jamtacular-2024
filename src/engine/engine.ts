@@ -114,7 +114,7 @@ class Engine_Internal
         }
 
         this.dt  = deltaTime;
-        this.current_fps = math.mix(this.current_fps, frameRate(), 1.0/60.0);
+        this.current_fps = math.mix(this.current_fps, frameRate(), 1.0/8.0);
 
         Render.beginFrame();
 

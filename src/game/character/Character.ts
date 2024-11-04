@@ -170,8 +170,8 @@ export class RigidBodyCharacter extends RigidBody implements iControllable, iTra
             return;
         }
 
-        const scale = deltaTime / 16;
-        dir.normalize().mulXY(speed);
+        const scale = 1; // deltaTime / 16;
+        dir.normalize().mulXY(scale*speed);
 
         this.applyForceXY(dir.x, dir.y);
     }

@@ -2,7 +2,7 @@ import { Engine } from "./engine/engine.js";
 import { Game } from "./game/game.js";
 import { Render, RenderEvent } from "./engine/render.js";
 import { CharacterController } from "./game/controller/controller.js";
-Engine.init(1920, 1080, 144);
+Engine.init(612, 612, 144);
 const game = new Game();
 function preload() {
     Engine.preload();
@@ -11,9 +11,9 @@ function preload() {
 function setup() {
     Engine.setup();
     game.setup();
-    // Render.on(RenderEvent.WINDOW_RESIZE, (w, h) => {
-    //     Render.resize(w, h);
-    // });
+    Render.on(RenderEvent.WINDOW_RESIZE, (w, h) => {
+        Render.resize(w - 64, h - 64);
+    });
     world.gravity.y = 9.8;
     allSprites.autoDraw = false;
     Render.emit(RenderEvent.WINDOW_RESIZE, windowWidth, windowHeight);

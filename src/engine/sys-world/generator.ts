@@ -58,7 +58,7 @@ export default class WorldGenerator
                 }
 
                 // else if (y <= x)
-                else if (-128 <= y && y < +128)
+                else if ((-128 <= x && x < +128) || (-128 <= y && y < +128))
                 {
                     output[i][j] = 0;
                 }

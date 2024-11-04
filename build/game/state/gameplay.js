@@ -1,7 +1,6 @@
 import { Render } from "../../engine/render.js";
 import { GameState, GameStateFlag } from "../../engine/gamestate.js";
 import CharacterFloating from "../character/CharacterFloating.js";
-import CharacterBiped from "../character/CharacterBiped.js";
 import { UserInputMsg } from "./userinput.js";
 import PlayerController from "../controller/controller-player.js";
 import { IO } from "../../engine/IO.js";
@@ -33,10 +32,11 @@ export class GS_Gameplay extends GameState {
     setup() {
         super.setup();
         this.slider = createSlider(0, 1, 0, 0);
-        GS_Gameplay.player = new CharacterBiped(0, 0, GS_Gameplay.groups.ROPES, new PlayerController());
+        // GS_Gameplay.player = new CharacterBiped(0, 0, GS_Gameplay.groups.ROPES, new PlayerController());
+        GS_Gameplay.player = new CharacterDDL(0, 0, GS_Gameplay.groups.ROPES, new PlayerController());
         this.addCharacter(GS_Gameplay.player);
         this.addCharacter(new CharacterFloating(-256, 0, GS_Gameplay.groups.ROPES, null));
-        this.addCharacter(new CharacterDDL(256, 0, GS_Gameplay.groups.ROPES, null));
+        // this.addCharacter(new CharacterDDL(256, 0, GS_Gameplay.groups.ROPES, null));
         GS_Gameplay.groups.PLAYER.collides(GS_Gameplay.groups.PLAYER);
         GS_Gameplay.groups.ROPES.overlaps(GS_Gameplay.groups.CLICK);
         GS_Gameplay.groups.PLAYER.overlapping(GS_Gameplay.groups.CLICK, (A, B) => {

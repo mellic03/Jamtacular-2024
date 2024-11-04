@@ -52,9 +52,9 @@ export default class PlayerController extends CharacterController {
         // this.cam_offset.addXy()
     }
     update(C) {
-        Render.view.mixXY(C.local.x, C.local.y, 0.02);
+        Render.view.mixXY(C.local.x, C.local.y, 0.1);
         if (this.is_good == false) {
-            return;
+            // return;
         }
         this.key_rotation(C);
         this.key_movement(C);

@@ -89,8 +89,8 @@ export class RigidBodyCharacter extends RigidBody {
         if (Math.abs(dir.x) == 0 && Math.abs(dir.y) == 0) {
             return;
         }
-        const scale = deltaTime / 16;
-        dir.normalize().mulXY(speed);
+        const scale = 1; // deltaTime / 16;
+        dir.normalize().mulXY(scale * speed);
         this.applyForceXY(dir.x, dir.y);
     }
     moveTo(x, y) {

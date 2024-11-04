@@ -151,15 +151,12 @@ export default class CharacterFloating extends RigidBodyCharacter
 
     move( x: number, y: number ): void
     {
-        const alpha = this.aggression;
-        const scale = this.config.behaviour.moveForce;
-
         for (let T of this.tentacles)
         {
             T.move(x, y);
         }
 
-        super.move(scale*x * (1.0 + alpha), scale*y * (1.0 + alpha));
+        super.move(x, y);
     }
 
 

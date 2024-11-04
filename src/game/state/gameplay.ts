@@ -10,6 +10,8 @@ import { RigidBodyCharacter } from "../character/Character.js";
 import CharacterDDL from "../character/CharacterDDL.js";
 import { Game, GameStateUserInput } from "../game.js";
 import { CharacterController } from "../controller/controller.js";
+import { math } from "../../engine/math/math.js";
+import { Engine } from "../../engine/engine.js";
 
 
 
@@ -64,11 +66,12 @@ export class GS_Gameplay extends GameState
         super.setup();
         this.slider = createSlider(0, 1, 0, 0);
 
-        GS_Gameplay.player = new CharacterBiped(0, 0, GS_Gameplay.groups.ROPES, new PlayerController());
+        // GS_Gameplay.player = new CharacterBiped(0, 0, GS_Gameplay.groups.ROPES, new PlayerController());
+        GS_Gameplay.player = new CharacterDDL(0, 0, GS_Gameplay.groups.ROPES, new PlayerController())
 
         this.addCharacter(GS_Gameplay.player);
         this.addCharacter(new CharacterFloating(-256, 0, GS_Gameplay.groups.ROPES, null));
-        this.addCharacter(new CharacterDDL(256, 0, GS_Gameplay.groups.ROPES, null));
+        // this.addCharacter(new CharacterDDL(256, 0, GS_Gameplay.groups.ROPES, null));
 
 
         GS_Gameplay.groups.PLAYER.collides(GS_Gameplay.groups.PLAYER);
@@ -120,7 +123,6 @@ export class GS_Gameplay extends GameState
 
         const wmouse = Render.worldMouse();
         circle(wmouse.x, wmouse.y, 64);
-
     }
 
 
